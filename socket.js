@@ -27,7 +27,6 @@ module.exports = class MarstekSocket {
 
     /**
      * Connects to the Marstek device.
-     * @returns {Promise<void>}
      */
     async connect() {
         return new Promise((resolve, reject) => {
@@ -177,7 +176,7 @@ module.exports = class MarstekSocket {
         this.socket.unref();
         this.socket.destroy();
         this.socket = null;
-        _handlers = [];
+        this._handlers = [];
     }
 
     /**

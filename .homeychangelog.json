@@ -1,6 +1,6 @@
 ﻿{
   "0.5.1": {
-    "en": "Handling of errors on socket binding and broadcast flag settings."
+    "en": "Handling of errors on socket binding and broadcast flag settings for better debugging of future port binding errors. Removed some mandatory settings that gave problems during discovery."
   },
   "0.5.0": {
     "en": "Added additional readings from the battery API and energy system that are now visualised in Homey as their guideliness for batteries."

@@ -26,5 +26,12 @@ module.exports = class MarstekBatteryAPI extends Homey.App {
         }
     }
 
+    /**
+     * Retrieve the instance of the Marstek Battery socket helper
+     * @returns {MarstekSocket}
+     */
+    getSocket() {
+        return this.socket ?? null;
+    }
 
 };

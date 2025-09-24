@@ -37,6 +37,7 @@ See settings of each battery for additional details.
 
 ## Version History
 
+0.5.1 - Handling of errors on socket binding and broadcast flag settings for better debugging of future port binding errors. Removed some mandatory settings that gave problems during discovery.
 0.5.0 - Added additional readings from the battery API and energy system that are now visualised in Homey as their guideliness for batteries.
 0.4.2 - he wifi_mac setting returned by the battery is the WiFi access point MAC address, not the MAC address of the battery, since it is the same for batteries connected to same WiFi. Changed unicity checks for this.
 0.4.1 - Added a setting for devices that allows you to turn on debugging. This will log send and received data from the battery into the log for Diagnostics reports.

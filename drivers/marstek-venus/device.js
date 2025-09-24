@@ -11,7 +11,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
         if (this.getSetting("debug")) this.log('MarstekVenusDevice has been initialized');
 
         // Make sure socket is connected
-        await this.homey.app.socket.connect();
+        await this.homey.app.getSocket().connect();
 
         // Start listening on UDP server on driver
         await this.startListening();
@@ -49,13 +49,13 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     // Start listening on messages received after broadcast
     async startListening() {
         if (this.getSetting("debug")) this.log("Start listening");
-        this.homey.app.socket.on(this.handler)
+        this.homey.app.getSocket().on(this.handler)
     }
 
     // Stop listening on messages
     stopListening() {
         if (this.getSetting("debug")) this.log("Stop listening");
-        this.homey.app.socket.off(this.handler);
+        this.homey.app.getSocket().off(this.handler);
     }
 
     // Start polling at regular intervals
@@ -94,7 +94,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
                     this.setEnergySystemStatusCapabilities(json.result);
                     break;
                 default:
-                    if (this.getSetting("debug")) this.log('Ignored message ID:', json.id);
+                    if (this.getSetting("debug")) this.log('Ignored message:', JSON.stringify(json));
                     break;
             }
         }

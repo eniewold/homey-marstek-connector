@@ -12,7 +12,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
     }
     async onUninit() {
         this.log('MarstekVenusDriver has been uninitialized');
-        await this.homey.app.socket.disconnect();
+        await this.homey.app.getSocket().disconnect();
     }
 
     /**
@@ -22,13 +22,10 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      */
     async onPairListDevices() {
         // Make sure the UDP socket is open
-        await this.homey.app.socket.connect();
+        await this.homey.app.getSocket().connect();
 
         // Broadcast and detect marstek devices
-        let detectedDevices = await this.broadcastDetect();
-
-        // Return all devices
-        return detectedDevices.concat(testDevices);
+        return await this.broadcastDetect();
     }
 
     // Number of devices that requested polling
@@ -36,7 +33,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
     // Message number to broadcast (increased every poll)
     pollMessage = 0;
     // Wait time between broadcast messages (ms)
-    pollWaitTime = 1521;
+    pollWaitTime = 2500;
     // Actual message strings to broadcast
     pollMessages = [
         '{"id":"ES.GetStatus","method":"ES.GetStatus","params":{"id":0}}',
@@ -48,12 +45,14 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
     // Start polling of battery system data by broadcasting messages periodically
     pollStart() {
         this.pollCount++;
+        const socket = this.homey.app.getSocket();
         if (!this.interval) {
+            this.log("Started background polling");
             this.interval = this.homey.setInterval(() => {
-                if (this.homey.app.socket) {
+                if (socket) {
                     this.pollMessage = (this.pollMessage + 1 < this.pollMessages.length) ? (this.pollMessage + 1) : 0;
                     try {
-                        this.homey.app.socket.broadcast(this.pollMessages[this.pollMessage]);
+                        socket.broadcast(this.pollMessages[this.pollMessage]);
                     } catch (err) {
                         this.error('Error broadcasting:', error);
                     }
@@ -66,6 +65,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
     pollStop() {
         this.pollCount--;
         if (this.interval && this.pollCount === 0) {
+            this.log("Stopped background polling");
             this.homey.clearInterval(this.interval);
             this.interval = null;
         }
@@ -74,7 +74,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
     // Broadcast an UDP message to the local network, waiting for a reply from the Marstek Venus device(s)
     async broadcastDetect() {
         let devices = [];
-        const socket = this.homey.app.socket;
+        const socket = this.homey.app.getSocket();
         return new Promise((resolve, reject) => {
 
             // Handler for messages received
@@ -93,10 +93,10 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
                             },
                             settings: {
                                 src: json.src,
-                                mac: json.result.wifi_mac,      // this is not unique, seems to be mac address for wifi access point
-                                model: json.result.device + " " + json.result.ver,
-                                ble: json.result.ble_mac,       // Bluetooth MAC address
-                                wifi: json.result.wifi_name
+                                model: json.result.device + " " + json.result.ver
+                            //    mac: json.result.wifi_mac,      // this is not unique, seems to be mac address for wifi access point
+                            //    ble: json.result.ble_mac,       // Bluetooth MAC address
+                            //    wifi: json.result.wifi_name
                             }
                         })
                     }

@@ -127,22 +127,6 @@
             "en": "Model name"
           },
           "value": "(model)"
-        },
-        {
-          "id": "mac",
-          "type": "label",
-          "label": {
-            "en": "WiFi MAC address (access point)"
-          },
-          "value": "(mac)"
-        },
-        {
-          "id": "wifi",
-          "type": "label",
-          "label": {
-            "en": "Wifi access point battery is connected to"
-          },
-          "value": "(wifi)"
         }
       ]
     }
