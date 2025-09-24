@@ -1,0 +1,178 @@
+{
+  "id": "com.niewold.marstek",
+  "version": "0.5.1",
+  "compatibility": ">=12.4.5",
+  "sdk": 3,
+  "brandColor": "#373737",
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Marstek Battery Connector"
+  },
+  "description": {
+    "en": "Monitor, control and automate your Marstek home battery"
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.jpg",
+    "large": "/assets/images/large.jpg",
+    "xlarge": "/assets/images/xlarge.jpg"
+  },
+  "author": {
+    "name": "Edward Niewold",
+    "email": "edward@niewold.com"
+  },
+  "homeyCommunityTopicId": 143139,
+  "drivers": [
+    {
+      "name": {
+        "en": "Marstek Venus"
+      },
+      "class": "battery",
+      "capabilities": [
+        "battery_charging_state",
+        "meter_power",
+        "meter_power.imported",
+        "meter_power.exported",
+        "measure_power",
+        "measure_power_ongrid",
+        "measure_power_offgrid",
+        "measure_temperature",
+        "measure_battery"
+      ],
+      "energy": {
+        "homeBattery": true,
+        "meterPowerImportedCapability": "meter_power.imported",
+        "meterPowerExportedCapability": "meter_power.exported"
+      },
+      "capabilitiesOptions": {
+        "meter_power.imported": {
+          "title": {
+            "en": "Charged (Grid)"
+          }
+        },
+        "meter_power.exported": {
+          "title": {
+            "en": "Discharged (Grid)"
+          }
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/marstek-venus/assets/images/small.png",
+        "large": "/drivers/marstek-venus/assets/images/large.png",
+        "xlarge": "/drivers/marstek-venus/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "multiple": true
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "marstek-venus",
+      "settings": [
+        {
+          "id": "debug",
+          "type": "checkbox",
+          "label": {
+            "en": "Enable more logging (for diagnostics reports)"
+          },
+          "hint": {
+            "en": "Turn this on to log extra details for troubleshooting received values for this device."
+          },
+          "value": false
+        },
+        {
+          "id": "src",
+          "type": "label",
+          "label": {
+            "en": "Source label of UDP messages"
+          },
+          "value": ""
+        },
+        {
+          "id": "port",
+          "type": "label",
+          "label": {
+            "en": "UDP Port number"
+          },
+          "value": "30000",
+          "hint": {
+            "en": "This Homey App requires all batteries listed to port 30000"
+          }
+        },
+        {
+          "id": "model",
+          "type": "label",
+          "label": {
+            "en": "Model name"
+          },
+          "value": "(model)"
+        },
+        {
+          "id": "mac",
+          "type": "label",
+          "label": {
+            "en": "WiFi MAC address (access point)"
+          },
+          "value": "(mac)"
+        },
+        {
+          "id": "wifi",
+          "type": "label",
+          "label": {
+            "en": "Wifi access point battery is connected to"
+          },
+          "value": "(wifi)"
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "measure_power_offgrid": {
+      "type": "number",
+      "title": {
+        "en": "Off-Grid Power"
+      },
+      "units": {
+        "en": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "decimals": 2,
+      "uiComponent": "sensor"
+    },
+    "measure_power_ongrid": {
+      "type": "number",
+      "title": {
+        "en": "On-Grid Power"
+      },
+      "units": {
+        "en": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "decimals": 2,
+      "uiComponent": "sensor"
+    }
+  }
+}
