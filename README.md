@@ -37,22 +37,22 @@ See settings of each battery for additional details.
 
 ## Version History
 
-0.5.0 - Added additional readings from the battery API and energy system that are now visualised in Homey as their guideliness for batteries.
-0.4.2 - he wifi_mac setting returned by the battery is the WiFi access point MAC address, not the MAC address of the battery, since it is the same for batteries connected to same WiFi. Changed unicity checks for this.
-0.4.1 - Added a setting for devices that allows you to turn on debugging. This will log send and received data from the battery into the log for Diagnostics reports.
-0.4.0 - Some major changes to the polling method, now using broadcast only. Detection of new devices improved. Increased number of messages transmitted. Multiple devices can now be added at once. PLEASE REMOVE YOUR DEVICE AND ADD THEM AGAIN AFTER UPDATING THE APP.
-0.3.1 - Device detection in Homey has a timeout of 10 seconds that is a bit tighter than the time it takes for the wait of new device detection. Our wait time has been decreased to 9 seconds.
-0.3.0 - Reworked the UDP server and client into separate class that can manage UDP connections and will throttle tranmitted messages to individual batteries. UDP server is now also a singleton instance managed by the Homey App scope. Increased the wait time between messages to 5 seconds. Default polling interval is now 30 seconds.
-0.2.2 - Deleted devices kept listening to messages causing crashes, corrected the method to unhook to message events to prevent this.
-0.2.1 - Temperatures reported by battery can be in different formats; both are now detected and supported
-0.2.0 - Added preliminary support for multiple devices. (I have only a single device, so testing was limited)
-0.1.6 - Checks added to UDP listener and better handling for restarting of server and binding errors
-0.1.5 - Updated the icon of device so it resembles an actual Marstek Venus E battery
-0.1.4 - Addition error detection when creating and sending udp client messages
-0.1.3 - Added checks for invalid/missing data from the battery to prevent crashes in Homey
-0.1.2 - Cleanup and added files and properties required for publishing
-0.1.1 - Added auto-detect feature to find the Marstek Venus battery on the local network
-0.1.0 - Initial version (reads basic battery stats)
+- 0.5.0 - Added additional readings from the battery API and energy system that are now visualised in Homey as their guideliness for batteries.
+- 0.4.2 - he wifi_mac setting returned by the battery is the WiFi access point MAC address, not the MAC address of the battery, since it is the same for batteries connected to same WiFi. Changed unicity checks for this.
+- 0.4.1 - Added a setting for devices that allows you to turn on debugging. This will log send and received data from the battery into the log for Diagnostics reports.
+- 0.4.0 - Some major changes to the polling method, now using broadcast only. Detection of new devices improved. Increased number of messages transmitted. Multiple devices can now be added at once. PLEASE REMOVE YOUR DEVICE AND ADD THEM AGAIN AFTER UPDATING THE APP.
+- 0.3.1 - Device detection in Homey has a timeout of 10 seconds that is a bit tighter than the time it takes for the wait of new device detection. Our wait time has been decreased to 9 seconds.
+- 0.3.0 - Reworked the UDP server and client into separate class that can manage UDP connections and will throttle tranmitted messages to individual batteries. UDP server is now also a singleton instance managed by the Homey App scope. Increased the wait time between messages to 5 seconds. Default polling interval is now 30 seconds.
+- 0.2.2 - Deleted devices kept listening to messages causing crashes, corrected the method to unhook to message events to prevent this.
+- 0.2.1 - Temperatures reported by battery can be in different formats; both are now detected and supported
+- 0.2.0 - Added preliminary support for multiple devices. (I have only a single device, so testing was limited)
+- 0.1.6 - Checks added to UDP listener and better handling for restarting of server and binding errors
+- 0.1.5 - Updated the icon of device so it resembles an actual Marstek Venus E battery
+- 0.1.4 - Addition error detection when creating and sending udp client messages
+- 0.1.3 - Added checks for invalid/missing data from the battery to prevent crashes in Homey
+- 0.1.2 - Cleanup and added files and properties required for publishing
+- 0.1.1 - Added auto-detect feature to find the Marstek Venus battery on the local network
+- 0.1.0 - Initial version (reads basic battery stats)
 
 ## Notes
 
