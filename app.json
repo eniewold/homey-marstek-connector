@@ -1,6 +1,6 @@
 {
   "id": "com.niewold.marstek",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "compatibility": ">=12.4.5",
   "sdk": 3,
   "brandColor": "#373737",
@@ -38,6 +38,7 @@
         "meter_power",
         "meter_power.imported",
         "meter_power.exported",
+        "meter_power.load",
         "measure_power",
         "measure_power_ongrid",
         "measure_power_offgrid",
@@ -52,12 +53,17 @@
       "capabilitiesOptions": {
         "meter_power.imported": {
           "title": {
-            "en": "Charged (Grid)"
+            "en": "Charged (grid)"
           }
         },
         "meter_power.exported": {
           "title": {
-            "en": "Discharged (Grid)"
+            "en": "Discharged (grid)"
+          }
+        },
+        "meter_power.load": {
+          "title": {
+            "en": "Load (or off-grid) consumed"
           }
         }
       },
@@ -135,7 +141,7 @@
     "measure_power_offgrid": {
       "type": "number",
       "title": {
-        "en": "Off-Grid Power"
+        "en": "Off-Grid power"
       },
       "units": {
         "en": "W"
@@ -148,7 +154,20 @@
     "measure_power_ongrid": {
       "type": "number",
       "title": {
-        "en": "On-Grid Power"
+        "en": "On-Grid power"
+      },
+      "units": {
+        "en": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "decimals": 2,
+      "uiComponent": "sensor"
+    },
+    "measure_power_pv": {
+      "type": "number",
+      "title": {
+        "en": "Solar power"
       },
       "units": {
         "en": "W"

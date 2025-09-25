@@ -37,7 +37,8 @@ module.exports = class MarstekSocket {
             } else {
                 try {
                     if (this.debug) this.parent.log('[socket] Create and bind socket');
-                    // Create the UDP socket
+
+                    // Create the UDP socket and add message handler
                     this.socket = dgram.createSocket({
                         type: 'udp4',
                         reuseAddr: true,

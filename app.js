@@ -12,6 +12,15 @@ module.exports = class MarstekBatteryAPI extends Homey.App {
         this.log('MarstekBatteryAPI has been initialized');
         // Create a socket instance, used for communication by all devices
         this.socket = new MarstekSocket(this);
+
+        // Remove socket when unloading
+        this.homey.on('unload', () => {
+            this.log('MarstekBatteryAPI has been unloaded');
+            if (this.socket) {
+                this.socket.destroy();
+                this.socket = null;
+            }
+        });
     }
 
     /**

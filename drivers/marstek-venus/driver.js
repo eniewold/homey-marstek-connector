@@ -33,14 +33,16 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
     // Message number to broadcast (increased every poll)
     pollMessage = 0;
     // Wait time between broadcast messages (ms)
-    pollWaitTime = 2500;
+    pollWaitTime = 2501;
     // Actual message strings to broadcast
     pollMessages = [
-        '{"id":"ES.GetStatus","method":"ES.GetStatus","params":{"id":0}}',
-        '{"id":"Bat.GetStatus","method":"Bat.GetStatus","params":{"id":1}}'
+        { method: "ES.GetStatus", params: { id: 0 } },
+        { method: "Bat.GetStatus", params: { id: 0 } }
     ];
     // interval handle
     interval = null;
+    // message id counter
+    pollId = 9000;
 
     // Start polling of battery system data by broadcasting messages periodically
     pollStart() {
@@ -50,12 +52,14 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
             this.log("Started background polling");
             this.interval = this.homey.setInterval(() => {
                 if (socket) {
-                    this.pollMessage = (this.pollMessage + 1 < this.pollMessages.length) ? (this.pollMessage + 1) : 0;
                     try {
-                        socket.broadcast(this.pollMessages[this.pollMessage]);
+                        const pollMessage = this.pollMessages[this.pollMessage];
+                        const message = { id: "Homey-" + String(this.pollId++), method: pollMessage.method, params: pollMessage.params };
+                        socket.broadcast(JSON.stringify(message));
                     } catch (err) {
                         this.error('Error broadcasting:', error);
                     }
+                    this.pollMessage = (this.pollMessage + 1 < this.pollMessages.length) ? (this.pollMessage + 1) : 0;
                 }
             }, this.pollWaitTime);
         }
@@ -93,10 +97,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
                             },
                             settings: {
                                 src: json.src,
-                                model: json.result.device + " " + json.result.ver
-                            //    mac: json.result.wifi_mac,      // this is not unique, seems to be mac address for wifi access point
-                            //    ble: json.result.ble_mac,       // Bluetooth MAC address
-                            //    wifi: json.result.wifi_name
+                                model: json.result.device + " v" + json.result.ver
                             }
                         })
                     }

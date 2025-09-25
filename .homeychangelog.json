@@ -1,4 +1,7 @@
 ﻿{
+  "0.5.2": {
+    "en": "Added an increment unique id to all messages to battery. Restructured the way details are retrieved from messages into Homey capability values. Additional onUninit handling for removal of UDP listener. Added more capabilities received from battery (unverified)."
+  },
   "0.5.1": {
     "en": "Handling of errors on socket binding and broadcast flag settings for better debugging of future port binding errors. Removed some mandatory settings that gave problems during discovery."
   },
