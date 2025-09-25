@@ -1,4 +1,7 @@
 ﻿{
+  "0.5.4": {
+    "en": "Log structure changed to try to catch connectivity problems. Solved problem in clean-up function."
+  },
   "0.5.3": {
     "en": "Applied bug fix to broadcast IP address discovery (caused problems when no address is found)."
   },

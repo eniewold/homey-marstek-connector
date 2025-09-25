@@ -22,7 +22,25 @@ module.exports = class MarstekSocket {
         this.port = 30000;
         this.connected = false;
         this.socket = null;
-        this.debug = false;
+        this.debug = (process.env.DEBUG === '1');
+    }
+
+    // Safe write to log (of parent) with fallback to console
+    log(...args) {
+        if (this.parent) {
+            if (this.debug) this.parent.log('[socket]', ...args);
+        } else {
+            console.log(...args);
+        }
+    }
+
+    // Safe write to error log (of parent if available) with fallback to console
+    error(...args) {
+        if (this.parent) {
+            this.parent.error('[socket]', ...args);
+        } else {
+            console.error(...args);
+        }
     }
 
     /**
@@ -32,11 +50,11 @@ module.exports = class MarstekSocket {
         return new Promise((resolve, reject) => {
             // If socket already exists, just resolve
             if (this.socket && this.connected) {
-                this.parent.log('[socket] Socket already exists, resolve without binding');
+                this.log('Socket already exists, resolve without binding');
                 resolve(this.socket);
             } else {
                 try {
-                    if (this.debug) this.parent.log('[socket] Create and bind socket');
+                    this.log('Create and bind socket');
 
                     // Create the UDP socket and add message handler
                     this.socket = dgram.createSocket({
@@ -47,9 +65,9 @@ module.exports = class MarstekSocket {
                     }, (message, remote) => {
                         // ignore messages from our own broadcast
                         if (remote.address !== this.getLocalIPAddress()) {
-                            if (this.debug) this.parent.log('[socket] Message received from', remote.address);
+                            this.log('Message received from', remote.address);
                             const json = JSON.parse(message.toString());
-                            if (this.debug) this.parent.log('[socket] Message parsed', JSON.stringify(json));
+                            this.log('Message parsed', JSON.stringify(json));
                             this._handlerExecute(json, remote);
                         }
                     });
@@ -59,12 +77,12 @@ module.exports = class MarstekSocket {
                         address: null,      // make sure to bind to all local addresses    
                         exclusive: true     // exclusive usage, we are the only one listening on this port
                     }, () => {
-                        if (this.debug) this.parent.log('[socket] Socket bound to port ', this.port);
+                        this.log('Socket bound to port ', this.port);
                         // Make sure to receive all broadcasted messages (catch in case of binding problems)
                         try {
                             this.socket.setBroadcast(true);
                         } catch (err) {
-                            this.parent.error('[socket] Could not set the broadcast flag:', err);
+                            this.error('Could not set the broadcast flag:', err);
                             reject(err)
                         }
                         // Signal that the binding is completed
@@ -77,7 +95,7 @@ module.exports = class MarstekSocket {
                     // Catch socket close
                     this.socket.on('close', this.onClose);
                 } catch (err) {
-                    this.parent.error('[socket] Error binding socket:', err);
+                    this.error('Error binding socket:', err);
                     reject(err);
                 }
             }
@@ -104,7 +122,7 @@ module.exports = class MarstekSocket {
             const subnet = ip.subnet(iface.address, iface.netmask);
             return subnet ? subnet.broadcastAddress : null;
         } else {
-            this.parent.error("No external IPv4 interface found; broadcast address could not be determined");
+            this.error("No external IPv4 interface found; broadcast address could not be determined");
         }
         return null;
     }
@@ -119,23 +137,23 @@ module.exports = class MarstekSocket {
     async broadcast(message) {
         return new Promise((resolve, reject) => {
             if (!this.connected) {
-                this.parent.error("[socket] Can't broadcast, tot connected");
+                this.error("Can't broadcast, tot connected");
                 reject("Not connected")
             }
             try {
-                if (this.debug) this.parent.log("[socket] Broadcast: ", message);
+                this.log("Broadcast:", message);
                 const buffer = new Buffer.from(message);
                 const address = this.getBroadcastAddress();
                 this.socket.send(buffer, 0, buffer.length, this.port, address, (err, bytes) => {
                     if (err) {
-                        this.parent.error("[socket] Error sending broadcast:", err);
+                        this.error("Error sending broadcast:", err);
                         reject(err);
                     } else {
                         resolve();
                     }
                 });
             } catch (err) {
-                this.parent.error('[socket] Exception sending broadcast:', err);
+                this.error('Exception sending broadcast:', err);
                 reject(err);
             }
         });
@@ -144,32 +162,32 @@ module.exports = class MarstekSocket {
 
     // Add handler to listener
     on(handler) {
-        if (this.debug) this.parent.log("[socket] Handler added");
+        this.error("Handler added");
         this._handlerAdd(handler);
     }
 
     // Off function for external usage
     off(handler) {
-        if (this.debug) this.parent.log("[socket] Handler removed");
+        this.log("Handler removed");
         this._handlerRemove(handler);
     }
 
     // Close message received from the socket
     onClose() {
-        this.parent.error("[socket] Socket closed");
+        this.error("Closed event");
         this.connected = false;
         // TODO: handle unexpected closure
     }
 
     // Error message received from the socket
     onError(err) {
-        this.parent.error("[socket] Error received: ", err);
+        this.error("Error received: ", err);
         // TODO: handle errors
     }
 
     // Disconnect socket
     disconnect() {
-        this.parent.log("[socket] disconnecting");
+        this.log("Disconnecting");
         if (this.socket) {
             this.socket.close();
             this.connected = false;
@@ -179,9 +197,11 @@ module.exports = class MarstekSocket {
     // Clean up 
     destroy() {
         this.disconnect();
-        this.socket.unref();
-        this.socket.destroy();
-        this.socket = null;
+        if (this.socket) {
+            this.socket.unref();
+            this.socket.destroy();
+            this.socket = null;
+        }
         this._handlers = [];
     }
 
@@ -208,7 +228,7 @@ module.exports = class MarstekSocket {
                     const result = handler(json, remote);
                 }
             } catch (err) {
-                this.parent.error("[socket] Handler callback error", err);
+                this.error("Handler callback error", err);
             }
         });
     }
