@@ -174,14 +174,14 @@ module.exports = class MarstekSocket {
 
     // Close message received from the socket
     onClose() {
-        this.error("Closed event");
+        console.log("[socket] onClose");
         this.connected = false;
         // TODO: handle unexpected closure
     }
 
     // Error message received from the socket
     onError(err) {
-        this.error("Error received: ", err);
+        console.error("[socket] onError", err);
         // TODO: handle errors
     }
 
@@ -196,8 +196,8 @@ module.exports = class MarstekSocket {
 
     // Clean up 
     destroy() {
-        this.disconnect();
         if (this.socket) {
+            this.disconnect();
             this.socket.unref();
             this.socket = null;
         }
