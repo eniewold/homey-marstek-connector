@@ -1,4 +1,7 @@
 ﻿{
+  "0.5.5": {
+    "en": "The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App."
+  },
   "0.5.4": {
     "en": "Log structure changed to try to catch connectivity problems. Solved problem in clean-up function."
   },

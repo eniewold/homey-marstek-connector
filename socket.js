@@ -199,7 +199,6 @@ module.exports = class MarstekSocket {
         this.disconnect();
         if (this.socket) {
             this.socket.unref();
-            this.socket.destroy();
             this.socket = null;
         }
         this._handlers = [];

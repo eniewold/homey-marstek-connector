@@ -37,6 +37,7 @@ See settings of each battery for additional details.
 
 ## Version History
 
+0.5.5 - The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App.
 0.5.4 - Log structure changed to try to catch connectivity problems. Solved problem in clean-up function.
 0.5.3 - Applied bug fix to broadcast IP address discovery (caused problems when no address is found).
 0.5.2 - Added an increment unique id to all messages to battery. Restructured the way details are retrieved from messages into Homey capability values. Additional onUninit handling for removal of UDP listener. Added more capabilities received from battery (unverified).
