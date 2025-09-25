@@ -100,8 +100,13 @@ module.exports = class MarstekSocket {
     // Detect our ip broadcast address range
     getBroadcastAddress() {
         const iface = this.getInterface();
-        const subnet = ip.subnet(iface.address, iface.netmask);
-        return iface ? subnet.broadcastAddress : null;
+        if (iface) {
+            const subnet = ip.subnet(iface.address, iface.netmask);
+            return subnet ? subnet.broadcastAddress : null;
+        } else {
+            this.parent.error("No external IPv4 interface found; broadcast address could not be determined");
+        }
+        return null;
     }
 
     // Retrieve our local IP address
@@ -114,7 +119,7 @@ module.exports = class MarstekSocket {
     async broadcast(message) {
         return new Promise((resolve, reject) => {
             if (!this.connected) {
-                if (this.debug) this.parent.error("[socket] Can't broadcast, tot connected");
+                this.parent.error("[socket] Can't broadcast, tot connected");
                 reject("Not connected")
             }
             try {

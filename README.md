@@ -37,6 +37,8 @@ See settings of each battery for additional details.
 
 ## Version History
 
+0.5.3 - Applied bug fix to broadcast IP address discovery (caused problems when no address is found).
+0.5.2 - Added an increment unique id to all messages to battery. Restructured the way details are retrieved from messages into Homey capability values. Additional onUninit handling for removal of UDP listener. Added more capabilities received from battery (unverified).
 0.5.1 - Handling of errors on socket binding and broadcast flag settings for better debugging of future port binding errors. Removed some mandatory settings that gave problems during discovery.
 0.5.0 - Added additional readings from the battery API and energy system that are now visualised in Homey as their guideliness for batteries.
 0.4.2 - he wifi_mac setting returned by the battery is the WiFi access point MAC address, not the MAC address of the battery, since it is the same for batteries connected to same WiFi. Changed unicity checks for this.

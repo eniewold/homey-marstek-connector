@@ -1,4 +1,7 @@
 ﻿{
+  "0.5.3": {
+    "en": "Applied bug fix to broadcast IP address discovery (caused problems when no address is found)."
+  },
   "0.5.2": {
     "en": "Added an increment unique id to all messages to battery. Restructured the way details are retrieved from messages into Homey capability values. Additional onUninit handling for removal of UDP listener. Added more capabilities received from battery (unverified)."
   },
