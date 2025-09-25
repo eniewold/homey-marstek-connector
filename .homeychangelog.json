@@ -1,4 +1,7 @@
 ﻿{
+  "0.5.7": {
+    "en": "Correctly implemented setting of Homey capabilities as async calls."
+  },
   "0.5.6": {
     "en": "Scope seems no longer available during close event handling, so logging close event is now hard-coded to console."
   },

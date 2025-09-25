@@ -37,6 +37,8 @@ See settings of each battery for additional details.
 
 ## Version History
 
+0.5.7 - Correctly implemented setting of Homey capabilities as async calls.
+0.5.6 - Scope seems no longer available during close event handling, so logging close event is now hard-coded to console.
 0.5.5 - The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App.
 0.5.4 - Log structure changed to try to catch connectivity problems. Solved problem in clean-up function.
 0.5.3 - Applied bug fix to broadcast IP address discovery (caused problems when no address is found).

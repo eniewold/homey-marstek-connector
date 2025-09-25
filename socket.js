@@ -1,3 +1,5 @@
+'use strict';
+
 // socket.js
 // Socket communication module for Marstek Venus driver
 
@@ -62,13 +64,13 @@ module.exports = class MarstekSocket {
                         reuseAddr: true,
                         reusePort: true,
                         receiveBlockList: this.blocklist
-                    }, (message, remote) => {
+                    }, async (message, remote) => {
                         // ignore messages from our own broadcast
                         if (remote.address !== this.getLocalIPAddress()) {
                             this.log('Message received from', remote.address);
                             const json = JSON.parse(message.toString());
                             this.log('Message parsed', JSON.stringify(json));
-                            this._handlerExecute(json, remote);
+                            await this._handlerExecute(json, remote);
                         }
                     });
                     // Bind to our IP address(es)
@@ -219,12 +221,12 @@ module.exports = class MarstekSocket {
             this._handlers.splice(index, 1);
         }
     }
-    _handlerExecute(json, remote) {
-        this._handlers.forEach((handler) => {
+    async _handlerExecute(json, remote) {
+        this._handlers.forEach(async (handler) => {
             // TODO: prevent non-existant device handler execution
             try {
                 if (typeof handler === 'function') {
-                    const result = handler(json, remote);
+                    const result = await handler(json, remote);
                 }
             } catch (err) {
                 this.error("Handler callback error", err);
