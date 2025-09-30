@@ -10,7 +10,7 @@ const ip = require('ip');               // For converting broadcast IP address
 module.exports = class MarstekSocket {
 
     /**
-     * Creates a new VenusSocket instance.
+     * Creates a new MarstekSocket instance.
      * @param {parent} object - the Homey parent that is creating this class
      */
     constructor(parent) {
@@ -32,7 +32,7 @@ module.exports = class MarstekSocket {
         if (this.parent) {
             if (this.debug) this.parent.log('[socket]', ...args);
         } else {
-            console.log(...args);
+            console.log('[socket]', ...args);
         }
     }
 
@@ -41,7 +41,7 @@ module.exports = class MarstekSocket {
         if (this.parent) {
             this.parent.error('[socket]', ...args);
         } else {
-            console.error(...args);
+            console.error('[socket]', ...args);
         }
     }
 
@@ -54,53 +54,66 @@ module.exports = class MarstekSocket {
             if (this.socket && this.connected) {
                 this.log('Socket already exists, resolve without binding');
                 resolve(this.socket);
-            } else {
-                try {
-                    this.log('Create and bind socket');
+                return;
+            }
 
-                    // Create the UDP socket and add message handler
-                    this.socket = dgram.createSocket({
-                        type: 'udp4',
-                        reuseAddr: true,
-                        reusePort: true,
-                        receiveBlockList: this.blocklist
-                    }, async (message, remote) => {
-                        // ignore messages from our own broadcast
-                        if (remote.address !== this.getLocalIPAddress()) {
-                            this.log('Message received from', remote.address);
-                            const json = JSON.parse(message.toString());
-                            this.log('Message parsed', JSON.stringify(json));
-                            await this._handlerExecute(json, remote);
-                        }
-                    });
-                    // Bind to our IP address(es)
-                    this.socket.bind({
-                        port: this.port,    // Although variable, this is set to 30000
-                        address: null,      // make sure to bind to all local addresses    
-                        exclusive: true     // exclusive usage, we are the only one listening on this port
-                    }, () => {
-                        this.log('Socket bound to port ', this.port);
-                        // Make sure to receive all broadcasted messages (catch in case of binding problems)
-                        try {
-                            this.socket.setBroadcast(true);
-                        } catch (err) {
-                            this.error('Could not set the broadcast flag:', err);
-                            reject(err)
-                        }
+            // If socket not found, create and connect (bind)
+            try {
+                this.log('Create and bind socket');
+
+                // If socket is available, make sure to disconnect
+                if (this.socket) this.disconnect();
+
+                // Create the UDP socket and add message handler
+                this.socket = dgram.createSocket({
+                    type: 'udp4',
+                //    reuseAddr: true,
+                //    reusePort: true,
+                }, async (message, remote) => {
+                    // ignore messages from our own broadcast
+                    if (remote.address !== this.getLocalIPAddress()) {
+                        this.log('Message received from', remote.address);
+                        const json = JSON.parse(message.toString());
+                        this.log('Message parsed', JSON.stringify(json));
+                        await this._handlerExecute(json, remote);
+                    }
+                });
+
+                // Bind to our IP address(es)
+                this.socket.bind({
+                    port: this.port,    // Although variable, this is set to 30000
+                    address: null,      // make sure to bind to all local addresses    
+                    exclusive: true     // exclusive usage, we are the only one listening on this port
+                }, () => {
+                    this.log('Socket bound to port', this.port);
+                    // Make sure to receive all broadcasted messages (catch in case of binding problems)
+                    try {
+                        this.socket.setBroadcast(true);
                         // Signal that the binding is completed
                         this.connected = true;
-                        // Finally resolve our promise
-                        resolve(this.socket);
-                    });
-                    // Catch any error
-                    this.socket.on("error", this.onError);
-                    // Catch socket close
-                    this.socket.on('close', this.onClose);
-                } catch (err) {
-                    this.error('Error binding socket:', err);
-                    reject(err);
-                }
+                    } catch (err) {
+                        this.error('Could not set the broadcast flag:', err);
+                        this.disconnect();
+                        reject(err)
+                        return;
+                    }
+                    // Finally resolve our promise
+                    resolve(this.socket);
+                });
+
+                // Handle error events
+                this.socket.on("error", this.onError.bind(this));
+
+                // Handle close events
+                this.socket.on('close', this.onClose.bind(this));
+
+            } catch ({ name, message }) {
+                this.error('Error binding socket:', message);
+                this.disconnect();
+                reject(err);
+                return;
             }
+
         });
     }
 
@@ -137,11 +150,17 @@ module.exports = class MarstekSocket {
 
     // Immediately broadcast a mesasge (will not throttle)
     async broadcast(message) {
-        return new Promise((resolve, reject) => {
-            if (!this.connected) {
-                this.error("Can't broadcast, tot connected");
-                reject("Not connected")
+        // Try to connect, if not connected
+        if (!this.connected) {
+            try {
+                await this.connect();
+            } catch (err) {
+                this.error("Can't broadcast, not connected");
+                return;
             }
+        }
+
+        return new Promise((resolve, reject) => {
             try {
                 this.log("Broadcast:", message);
                 const buffer = new Buffer.from(message);
@@ -157,6 +176,7 @@ module.exports = class MarstekSocket {
             } catch (err) {
                 this.error('Exception sending broadcast:', err);
                 reject(err);
+                return;
             }
         });
     }
@@ -164,7 +184,7 @@ module.exports = class MarstekSocket {
 
     // Add handler to listener
     on(handler) {
-        this.error("Handler added");
+        this.log("Handler added");
         this._handlerAdd(handler);
     }
 
@@ -176,33 +196,29 @@ module.exports = class MarstekSocket {
 
     // Close message received from the socket
     onClose() {
-        console.log("[socket] onClose");
+        this.error("onClose");
         this.connected = false;
-        // TODO: handle unexpected closure
     }
 
     // Error message received from the socket
     onError(err) {
-        console.error("[socket] onError", err);
-        // TODO: handle errors
+        this.error("onError", err);
+        this.disconnect();
+        this.connected = false;
     }
 
     // Disconnect socket
     disconnect() {
-        this.log("Disconnecting");
         if (this.socket) {
             this.socket.close();
-            this.connected = false;
+            this.socket = null;
         }
+        this.connected = false;
     }
 
     // Clean up 
     destroy() {
-        if (this.socket) {
-            this.disconnect();
-            this.socket.unref();
-            this.socket = null;
-        }
+        this.disconnect();
         this._handlers = [];
     }
 

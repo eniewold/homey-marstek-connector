@@ -37,6 +37,7 @@ See settings of each battery for additional details.
 
 ## Version History
 
+0.6.0 - Auto re-connect implemented; retry port binding at every broadcast when listener is no longer available. Fixed errors on multiple devices trying to start connecting at the same time. Couple of other minor bugs in several places fixed.
 0.5.7 - Correctly implemented setting of Homey capabilities as async calls.
 0.5.6 - Scope seems no longer available during close event handling, so logging close event is now hard-coded to console.
 0.5.5 - The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App.
@@ -62,3 +63,4 @@ See settings of each battery for additional details.
 
 - Sometimes UDP communication stops after a while (without any exception, warning).
 - Not all transmitted UDP packages are being answered by the battery (it is silently ignoring them).
+- Does not seem to work well in conjuction with CT002 or CT003, battery seems to stop communicating. 

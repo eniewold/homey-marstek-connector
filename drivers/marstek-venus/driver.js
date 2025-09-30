@@ -21,19 +21,14 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * This should return an array with the data of devices that are available for pairing.
      */
     async onPairListDevices() {
-        // Make sure the UDP socket is open
-        await this.homey.app.getSocket().connect();
-
         // Broadcast and detect marstek devices
         return await this.broadcastDetect();
     }
 
-    // Number of devices that requested polling
-    pollCount = 0;
     // Message number to broadcast (increased every poll)
     pollMessage = 0;
     // Wait time between broadcast messages (ms)
-    pollWaitTime = 2501;
+    pollWaitTime = 15009;
     // Actual message strings to broadcast
     pollMessages = [
         { method: "ES.GetStatus", params: { id: 0 } },
@@ -45,33 +40,43 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
     pollId = 9000;
 
     // Start polling of battery system data by broadcasting messages periodically
-    pollStart() {
-        this.pollCount++;
+    pollDevices = []
+
+    // Actual poll function (periodically called)
+    async poll() {
         const socket = this.homey.app.getSocket();
+        if (socket) {
+            try {
+                const pollMessage = this.pollMessages[this.pollMessage];
+                const message = { id: "Homey-" + String(this.pollId++), method: pollMessage.method, params: pollMessage.params };
+                await socket.broadcast(JSON.stringify(message));
+            } catch (err) {
+                this.error('Error broadcasting:', err);
+            }
+            this.pollMessage = (this.pollMessage + 1 < this.pollMessages.length) ? (this.pollMessage + 1) : 0;
+        }
+    }
+
+    // Add a new device to the pollers
+    pollStart(device) {
+        this.pollDevices.push(device);
         if (!this.interval) {
             this.log("Started background polling");
-            this.interval = this.homey.setInterval(() => {
-                if (socket) {
-                    try {
-                        const pollMessage = this.pollMessages[this.pollMessage];
-                        const message = { id: "Homey-" + String(this.pollId++), method: pollMessage.method, params: pollMessage.params };
-                        socket.broadcast(JSON.stringify(message));
-                    } catch (err) {
-                        this.error('Error broadcasting:', error);
-                    }
-                    this.pollMessage = (this.pollMessage + 1 < this.pollMessages.length) ? (this.pollMessage + 1) : 0;
-                }
-            }, this.pollWaitTime);
+            this.interval = this.homey.setInterval(async () => this.poll(), this.pollWaitTime);
+            this.poll()
         }
     }
 
     // Stop polling, called by device. When no devices need polling; the polling will stop.
-    pollStop() {
-        this.pollCount--;
-        if (this.interval && this.pollCount === 0) {
-            this.log("Stopped background polling");
+    pollStop(device) {
+        // Remove the device from the polling devices
+        const index = this.pollDevices.indexOf(device);
+        if (index !== -1) this.pollDevices.splice(index, 1);
+        // When no more devices are left; stop interval polling
+        if (this.interval && this.pollDevices.length === 0) {
             this.homey.clearInterval(this.interval);
             this.interval = null;
+            this.log("Stopped background polling");
         }
     }
 
@@ -91,12 +96,12 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
                     const unique = json.src;
                     if (!devices.find((element) => element.data.id === unique)) {
                         devices.push({
-                            name: json.src,
+                            name: unique,
                             data: {
                                 id: unique,   // this seems to be the only unique id in the response
                             },
                             settings: {
-                                src: json.src,
+                                src: unique,
                                 model: `${json.result.device} v${json.result.ver}`
                             }
                         })

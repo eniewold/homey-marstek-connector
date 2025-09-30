@@ -10,9 +10,6 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     async onInit() {
         if (this.getSetting("debug")) this.log('MarstekVenusDevice has been initialized');
 
-        // Make sure socket is connected
-        await this.homey.app.getSocket().connect();
-
         // Start listening on UDP server on driver
         await this.startListening();
 
@@ -65,13 +62,13 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     // Start polling at regular intervals
     startPolling() {
         if (this.getSetting("debug")) this.log("Start polling");
-        this.driver.pollStart();
+        this.driver.pollStart(this.getSetting("src"));
     }
 
     // End the polling interval
     stopPolling() {
         if (this.getSetting("debug")) this.log("Stop polling");
-        this.driver.pollStop();
+        this.driver.pollStop(this.getSetting("src"));
     }
 
     /**

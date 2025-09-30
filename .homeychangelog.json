@@ -1,4 +1,7 @@
 ﻿{
+  "0.6.0": {
+    "en": "Auto re-connect implemented; retry port binding at every broadcast when listener is no longer available. Fixed errors on multiple devices trying to start connecting at the same time. Couple of other minor bugs in several places fixed. Only broadcasting the next message every 15 seconds; effectively updating all data every 30 seconds."
+  },
   "0.5.7": {
     "en": "Correctly implemented setting of Homey capabilities as async calls."
   },
