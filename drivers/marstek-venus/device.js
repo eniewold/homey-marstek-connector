@@ -89,6 +89,15 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
             // Debug received details (if requested)
             if (this.getSetting("debug")) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(rinfo));
 
+            // Try to retrieve the firmware version from the settings (including deprecated method) -- this.getSettings("firmware") ?? 
+            let firmware = 0;
+            if (this.getSetting("firmware")) {
+                firmware = Number(this.getSetting("firmware"));
+            } else {
+                const model = this.getSetting("model");
+                if (model) firmware = Number(model.split(' v')[1]);
+            }
+
             // Determine the capabilities to changed based on the content of the received message
             if (json.result) {
                 const result = json.result;
@@ -96,12 +105,12 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
                 // Main battery temperature (In degrees celcius)
                 if (!isNaN(result.bat_temp)) {
                     // Some batteries have different decimal multiplier
-                    if (result.bat_temp > 100) result.bat_temp = result.bat_temp / 10.0;
+                    if (result.bat_temp > 100) result.bat_temp = result.bat_temp / ((firmware >= 154) ? 1.0 : 10.0);
                     await this.setCapabilityValue('measure_temperature', result.bat_temp);
                 }
 
                 // Power remaining (In kWh)
-                if (!isNaN(result.bat_capacity)) await this.setCapabilityValue('meter_power', result.bat_capacity / 100.0);
+                if (!isNaN(result.bat_capacity)) await this.setCapabilityValue('meter_power', result.bat_capacity / ((firmware >= 154) ? 1000.0 : 100.0));
 
                 // Battery state of charge
                 if (!isNaN(result.bat_soc)) await this.setCapabilityValue('measure_battery', result.bat_soc);
@@ -110,13 +119,13 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
                 if (!isNaN(result.bat_power)) {
                     // Charge state (Possible values: "idle", "charging", "discharging")
                     await this.setCapabilityValue('battery_charging_state', (result.bat_power > 0) ? "charging" : (result.bat_power < 0) ? "discharging" : "idle");
-                    await this.setCapabilityValue('measure_power', result.bat_power / 10.0);
+                    await this.setCapabilityValue('measure_power', result.bat_power / ((firmware >= 154) ? 1.0 : 10.0));
                 }
 
                 // Input and output energy (kWh)
-                if (!isNaN(result.total_grid_input_energy)) await this.setCapabilityValue('meter_power.imported', result.total_grid_input_energy / 100);
-                if (!isNaN(result.total_grid_output_energy)) await this.setCapabilityValue('meter_power.exported', result.total_grid_output_energy / 100);
-                if (!isNaN(result.total_load_energy)) await this.setCapabilityValue('meter_power.load', result.total_load_energy / 100);
+                if (!isNaN(result.total_grid_input_energy)) await this.setCapabilityValue('meter_power.imported', result.total_grid_input_energy / ((firmware >= 154) ? 10.0 : 100.0));
+                if (!isNaN(result.total_grid_output_energy)) await this.setCapabilityValue('meter_power.exported', result.total_grid_output_energy / ((firmware >= 154) ? 10.0 : 100.0));
+                if (!isNaN(result.total_load_energy)) await this.setCapabilityValue('meter_power.load', result.total_load_energy / ((firmware >= 154) ? 10.0 : 100.0));
 
                 // Additional capabilities as communicated by Marstek to display in Homey (Watt)
                 if (!isNaN(result.ongrid_power)) await this.setCapabilityValue('measure_power_ongrid', result.ongrid_power * -1);

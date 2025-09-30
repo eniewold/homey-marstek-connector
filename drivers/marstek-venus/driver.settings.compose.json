@@ -32,5 +32,13 @@
       "en": "Model name"
     },
     "value": "(model)"
+  },
+  {
+    "id": "firmware",
+    "type": "label",
+    "label": {
+      "en": "Firmware"
+    },
+    "value": "(unknown)"
   }
 ]

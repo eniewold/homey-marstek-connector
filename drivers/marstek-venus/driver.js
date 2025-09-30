@@ -98,11 +98,12 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
                         devices.push({
                             name: unique,
                             data: {
-                                id: unique,   // this seems to be the only unique id in the response
+                                id: unique,                 // this seems to be the only unique id in the response
                             },
                             settings: {
                                 src: unique,
-                                model: `${json.result.device} v${json.result.ver}`
+                                model: `${json.result.device} v${json.result.ver}`,
+                                firmware: json.result.ver    // firmware number
                             }
                         })
                     }
