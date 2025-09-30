@@ -37,16 +37,16 @@ See settings of each battery for additional details.
 
 ## Version History
 
-0.6.1 - Firmware 154 seems to communicate values with a different multipliers. The app now detects the firmware and corrects this.
-0.6.0 - Auto re-connect implemented; retry port binding at every broadcast when listener is no longer available. Fixed errors on multiple devices trying to start connecting at the same time. Couple of other minor bugs in several places fixed.
-0.5.7 - Correctly implemented setting of Homey capabilities as async calls.
-0.5.6 - Scope seems no longer available during close event handling, so logging close event is now hard-coded to console.
-0.5.5 - The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App.
-0.5.4 - Log structure changed to try to catch connectivity problems. Solved problem in clean-up function.
-0.5.3 - Applied bug fix to broadcast IP address discovery (caused problems when no address is found).
-0.5.2 - Added an increment unique id to all messages to battery. Restructured the way details are retrieved from messages into Homey capability values. Additional onUninit handling for removal of UDP listener. Added more capabilities received from battery (unverified).
-0.5.1 - Handling of errors on socket binding and broadcast flag settings for better debugging of future port binding errors. Removed some mandatory settings that gave problems during discovery.
-0.5.0 - Added additional readings from the battery API and energy system that are now visualised in Homey as their guideliness for batteries.
+- 0.6.1 - Firmware 154 seems to communicate values with a different multipliers. The app now detects the firmware and corrects this.
+- 0.6.0 - Auto re-connect implemented; retry port binding at every broadcast when listener is no longer available. Fixed errors on multiple devices trying to start connecting at the same time. Couple of other minor bugs in several places fixed.
+- 0.5.7 - Correctly implemented setting of Homey capabilities as async calls.
+- 0.5.6 - Scope seems no longer available during close event handling, so logging close event is now hard-coded to console.
+- 0.5.5 - The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App.
+- 0.5.4 - Log structure changed to try to catch connectivity problems. Solved problem in clean-up function.
+- 0.5.3 - Applied bug fix to broadcast IP address discovery (caused problems when no address is found).
+- 0.5.2 - Added an increment unique id to all messages to battery. Restructured the way details are retrieved from messages into Homey capability values. Additional onUninit handling for removal of UDP listener. Added more capabilities received from battery (unverified).
+- 0.5.1 - Handling of errors on socket binding and broadcast flag settings for better debugging of future port binding errors. Removed some mandatory settings that gave problems during discovery.
+- 0.5.0 - Added additional readings from the battery API and energy system that are now visualised in Homey as their guideliness for batteries.
 (older history details are left out)
 
 ## Notes
