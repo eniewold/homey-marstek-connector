@@ -26,6 +26,7 @@
     "name": "Edward Niewold",
     "email": "edward@niewold.com"
   },
+  "source": "https://github.com/eniewold/homey-marstek-connector",
   "homeyCommunityTopicId": 143139,
   "drivers": [
     {
