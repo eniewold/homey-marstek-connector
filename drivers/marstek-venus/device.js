@@ -29,6 +29,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
         if (!this.hasCapability('measure_power_ongrid')) await this.addCapability('measure_power_ongrid');
         if (!this.hasCapability('measure_power_offgrid')) await this.addCapability('measure_power_offgrid');
         if (!this.hasCapability('measure_power_pv')) await this.addCapability('measure_power_pv');
+        if (!this.hasCapability('last_message_received')) await this.addCapability('last_message_received');
 
         // Default capability values
         await this.setCapabilityValue('battery_charging_state', null);      // Charte state (Possible values: "idle", "charging", "discharging")
@@ -42,6 +43,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
         await this.setCapabilityValue('measure_power_ongrid', null);        // Current power usage of on-grid port (in W)
         await this.setCapabilityValue('measure_power_offgrid', null);       // Current power usage of off-grid port (in W)
         await this.setCapabilityValue('measure_power_pv', null);            // Current power usage of off-grid port (in W)
+        await this.setCapabilityValue('last_message_received', null);       // ISO timestamp of the last received message
     }
 
     // Create an handler that we can use to bind/unbind the onMessage function
@@ -132,6 +134,8 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
                 if (!isNaN(result.offgrid_power)) await this.setCapabilityValue('measure_power_offgrid', result.offgrid_power * -1);
                 if (!isNaN(result.pv_power)) await this.setCapabilityValue('measure_power_pv', result.pv_power * -1);
             }
+
+            await this.setCapabilityValue('last_message_received', new Date().toISOString());
 
         }
         catch (error) {

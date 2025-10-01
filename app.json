@@ -44,7 +44,8 @@
         "measure_power_ongrid",
         "measure_power_offgrid",
         "measure_temperature",
-        "measure_battery"
+        "measure_battery",
+        "last_message_received"
       ],
       "energy": {
         "homeBattery": true,
@@ -185,6 +186,16 @@
       "setable": false,
       "decimals": 2,
       "uiComponent": "sensor"
+    },
+    "last_message_received": {
+      "type": "string",
+      "title": {
+        "en": "Last message received"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "insights": false
     }
   }
 }
