@@ -74,11 +74,6 @@
       "connectivity": [
         "lan"
       ],
-      "images": {
-        "small": "/drivers/marstek-venus/assets/images/small.png",
-        "large": "/drivers/marstek-venus/assets/images/large.png",
-        "xlarge": "/drivers/marstek-venus/assets/images/xlarge.png"
-      },
       "pair": [
         {
           "id": "list_devices",
