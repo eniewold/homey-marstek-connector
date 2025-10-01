@@ -1,0 +1,56 @@
+{
+  "type": "group",
+  "children": [
+    {
+      "id": "debug",
+      "type": "checkbox",
+      "label": {
+        "en": "Enable verbose logging"
+      },
+      "hint": {
+        "en": "Turn on for extra logging while troubleshooting BLE communication."
+      },
+      "value": false
+    },
+    {
+      "id": "peripheralUuid",
+      "type": "label",
+      "label": {
+        "en": "Peripheral UUID"
+      },
+      "value": ""
+    },
+    {
+      "id": "peripheralId",
+      "type": "label",
+      "label": {
+        "en": "Peripheral ID"
+      },
+      "value": ""
+    },
+    {
+      "id": "mac",
+      "type": "label",
+      "label": {
+        "en": "MAC address"
+      },
+      "value": ""
+    },
+    {
+      "id": "model",
+      "type": "label",
+      "label": {
+        "en": "Model"
+      },
+      "value": "(unknown)"
+    },
+    {
+      "id": "firmware",
+      "type": "label",
+      "label": {
+        "en": "Firmware"
+      },
+      "value": "(unknown)"
+    }
+  ]
+}

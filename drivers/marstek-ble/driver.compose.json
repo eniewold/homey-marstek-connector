@@ -1,0 +1,69 @@
+{
+  "name": {
+    "en": "Marstek BLE Battery"
+  },
+  "class": "battery",
+  "capabilities": [
+    "battery_charging_state",
+    "meter_power",
+    "meter_power.imported",
+    "meter_power.exported",
+    "meter_power.load",
+    "measure_power",
+    "measure_power_ongrid",
+    "measure_power_offgrid",
+    "measure_power_pv",
+    "measure_temperature",
+    "measure_battery"
+  ],
+  "energy": {
+    "homeBattery": true,
+    "meterPowerImportedCapability": "meter_power.imported",
+    "meterPowerExportedCapability": "meter_power.exported"
+  },
+  "capabilitiesOptions": {
+    "meter_power.imported": {
+      "title": { "en": "Charged (grid)" }
+    },
+    "meter_power.exported": {
+      "title": { "en": "Discharged (grid)" }
+    },
+    "meter_power.load": {
+      "title": { "en": "Load (or off-grid) consumed" }
+    }
+  },
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "ble"
+  ],
+  "pair": [
+    {
+      "id": "loading",
+      "template": "loading",
+      "navigation": {
+        "next": "list_devices"
+      },
+      "options": {
+        "title": {
+          "en": "Scanning for Marstek BLE devices"
+        },
+        "body": {
+          "en": "Discovery can take up to 30 seconds. Please wait while Homey scans nearby devices."
+        }
+      }
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}
