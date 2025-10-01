@@ -103,7 +103,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
                             settings: {
                                 src: unique,
                                 model: `${json.result.device} v${json.result.ver}`,
-                                firmware: json.result.ver    // firmware number
+                                firmware: String(json.result.ver)    // firmware number
                             }
                         })
                     }

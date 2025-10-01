@@ -1,4 +1,7 @@
 ﻿{
+  "0.6.2": {
+    "en": "Firmware setting was stored as incorrect settings type."
+  },
   "0.6.1": {
     "en": "Firmware 154 seems to communicate values with a different multipliers. The app now detects the firmware and corrects this."
   },

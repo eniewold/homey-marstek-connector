@@ -89,7 +89,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
             // Debug received details (if requested)
             if (this.getSetting("debug")) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(rinfo));
 
-            // Try to retrieve the firmware version from the settings (including deprecated method) -- this.getSettings("firmware") ?? 
+            // Try to retrieve the firmware version from the settings (including deprecated method)
             let firmware = 0;
             if (this.getSetting("firmware")) {
                 firmware = Number(this.getSetting("firmware"));
