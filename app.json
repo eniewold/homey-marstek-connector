@@ -1,9 +1,9 @@
 {
   "id": "com.niewold.marstek",
-  "version": "0.6.1",
+  "version": "0.6.3",
   "compatibility": ">=12.4.5",
   "sdk": 3,
-  "brandColor": "#373737",
+  "brandColor": "#555555",
   "platforms": [
     "local"
   ],
@@ -44,7 +44,8 @@
         "measure_power_ongrid",
         "measure_power_offgrid",
         "measure_temperature",
-        "measure_battery"
+        "measure_battery",
+        "last_message_received"
       ],
       "energy": {
         "homeBattery": true,
@@ -147,6 +148,17 @@
     }
   ],
   "capabilities": {
+    "last_message_received": {
+      "type": "number",
+      "title": {
+        "en": "Last message (sec)"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "insights": false,
+      "icon": "/assets/clock-outline-badged.svg"
+    },
     "measure_power_offgrid": {
       "type": "number",
       "title": {
@@ -158,7 +170,8 @@
       "getable": true,
       "setable": false,
       "decimals": 2,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/disconnect.svg"
     },
     "measure_power_ongrid": {
       "type": "number",
@@ -171,7 +184,8 @@
       "getable": true,
       "setable": false,
       "decimals": 2,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/connect.svg"
     },
     "measure_power_pv": {
       "type": "number",
@@ -184,7 +198,8 @@
       "getable": true,
       "setable": false,
       "decimals": 2,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/sun.svg"
     }
   }
 }

@@ -1,0 +1,9 @@
+{
+  "type": "number",
+  "title": { "en": "Last message (sec)" },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "insights": false,
+  "icon": "/assets/clock-outline-badged.svg"
+}

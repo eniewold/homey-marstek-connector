@@ -29,10 +29,12 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
     pollMessage = 0;
     // Wait time between broadcast messages (ms)
     pollWaitTime = 15009;
-    // Actual message strings to broadcast
+    // Actual messages to broadcast (request Energy System more frequently)
     pollMessages = [
         { method: "ES.GetStatus", params: { id: 0 } },
-        { method: "Bat.GetStatus", params: { id: 0 } }
+        { method: "Bat.GetStatus", params: { id: 0 } },
+        { method: "ES.GetStatus", params: { id: 0 } },
+        { method: "ES.GetStatus", params: { id: 0 } },
     ];
     // interval handle
     interval = null;
@@ -53,7 +55,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
             } catch (err) {
                 this.error('Error broadcasting:', err);
             }
-            this.pollMessage = (this.pollMessage + 1 < this.pollMessages.length) ? (this.pollMessage + 1) : 0;
+            this.pollMessage = (this.pollMessage + 1) % this.pollMessages.length;
         }
     }
 
@@ -98,12 +100,12 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
                         devices.push({
                             name: unique,
                             data: {
-                                id: unique,                 // this seems to be the only unique id in the response
+                                id: unique,
                             },
                             settings: {
                                 src: unique,
                                 model: `${json.result.device} v${json.result.ver}`,
-                                firmware: String(json.result.ver)    // firmware number
+                                firmware: String(json.result.ver)    // firmware number, make sure to cast to string due to label (read-only) configuration
                             }
                         })
                     }
@@ -112,7 +114,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
             socket.on(handler);
 
             // Message to detect batteries as documented in the API
-            const message = '{"id":0,"method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
+            const message = '{"id":"Homey-Detect","method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
             this.log("Detection broadcasting:", message);
             socket.broadcast(message).then(() => {
                 // Start broadcasting message

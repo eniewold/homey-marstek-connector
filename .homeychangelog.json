@@ -1,4 +1,7 @@
 ﻿{
+  "0.6.3": {
+    "en": "Added a property that monitors the number of seconds the last message was received from battery. Added icons for custom capabilities."
+  },
   "0.6.2": {
     "en": "Firmware setting was stored as incorrect settings type."
   },

@@ -29,6 +29,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
         if (!this.hasCapability('measure_power_ongrid')) await this.addCapability('measure_power_ongrid');
         if (!this.hasCapability('measure_power_offgrid')) await this.addCapability('measure_power_offgrid');
         if (!this.hasCapability('measure_power_pv')) await this.addCapability('measure_power_pv');
+        if (!this.hasCapability('last_message_received')) await this.addCapability('last_message_received');
 
         // Default capability values
         await this.setCapabilityValue('battery_charging_state', null);      // Charte state (Possible values: "idle", "charging", "discharging")
@@ -42,6 +43,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
         await this.setCapabilityValue('measure_power_ongrid', null);        // Current power usage of on-grid port (in W)
         await this.setCapabilityValue('measure_power_offgrid', null);       // Current power usage of off-grid port (in W)
         await this.setCapabilityValue('measure_power_pv', null);            // Current power usage of off-grid port (in W)
+        await this.setCapabilityValue('last_message_received', null);       // number of seconds the last received message
     }
 
     // Create an handler that we can use to bind/unbind the onMessage function
@@ -63,12 +65,21 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     startPolling() {
         if (this.getSetting("debug")) this.log("Start polling");
         this.driver.pollStart(this.getSetting("src"));
+        // Also start updating the last received message capability
+        this.interval = this.homey.setInterval(async () => {
+            if (this.timestamp) {
+                const diff = Date.now() - this.timestamp;
+                await this.setCapabilityValue('last_message_received', parseInt(diff / 1000));
+            }
+        }, 1000);
     }
 
     // End the polling interval
+    interval = null;
     stopPolling() {
         if (this.getSetting("debug")) this.log("Stop polling");
         this.driver.pollStop(this.getSetting("src"));
+        if (this.interval) this.homey.clearInterval(this.interval);
     }
 
     /**
@@ -76,6 +87,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
      * @param {any} json - json object received from source
      * @param {any} rinfo - remote source address details
      */
+    timestamp = null;
     async onMessage(json, rinfo) {
         // Check if device is still present
         if (!this.getAvailable()) {
@@ -101,6 +113,10 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
             // Determine the capabilities to changed based on the content of the received message
             if (json.result) {
                 const result = json.result;
+
+                // Remember our timestamp for last message received
+                this.timestamp = Date.now();
+                await this.setCapabilityValue('last_message_received', 0);       // number of seconds the last received message
 
                 // Main battery temperature (In degrees celcius)
                 if (!isNaN(result.bat_temp)) {

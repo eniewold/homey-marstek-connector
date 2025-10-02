@@ -1,0 +1,10 @@
+{
+  "type": "number",
+  "title": { "en": "Solar power" },
+  "units": { "en": "W" },
+  "getable": true,
+  "setable": false,
+  "decimals": 2,
+  "uiComponent": "sensor",
+  "icon": "/assets/sun.svg"
+}

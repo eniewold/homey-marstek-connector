@@ -37,6 +37,8 @@ See settings of each battery for additional details.
 
 ## Version History
 
+- 0.6.3 - Added a property that monitors the number of seconds the last message was received from battery. Added icons for custom capabilities.
+- 0.6.2 - Firmware setting was stored as incorrect settings type.
 - 0.6.1 - Firmware 154 seems to communicate values with a different multipliers. The app now detects the firmware and corrects this.
 - 0.6.0 - Auto re-connect implemented; retry port binding at every broadcast when listener is no longer available. Fixed errors on multiple devices trying to start connecting at the same time. Couple of other minor bugs in several places fixed.
 - 0.5.7 - Correctly implemented setting of Homey capabilities as async calls.
