@@ -1,0 +1,21 @@
+[
+  {
+    "id": "debug",
+    "type": "checkbox",
+    "label": {
+      "en": "Enable more logging (for diagnostics reports)"
+    },
+    "hint": {
+      "en": "Turn this on to log extra details for troubleshooting received values for this device."
+    },
+    "value": false
+  },
+  {
+    "id": "username",
+    "type": "label",
+    "label": {
+      "en": "Account"
+    },
+    "value": "(unknown)"
+  }
+]

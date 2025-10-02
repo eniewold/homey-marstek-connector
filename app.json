@@ -1,6 +1,6 @@
 {
   "id": "com.niewold.marstek",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "compatibility": ">=12.4.5",
   "sdk": 3,
   "brandColor": "#555555",
@@ -145,13 +145,108 @@
           "value": "(unknown)"
         }
       ]
+    },
+    {
+      "name": {
+        "en": "Marstek Venus (Cloud)"
+      },
+      "class": "battery",
+      "capabilities": [
+        "measure_battery",
+        "measure_power",
+        "measure_power.charge",
+        "measure_power.discharge",
+        "last_message_received"
+      ],
+      "energy": {
+        "homeBattery": true
+      },
+      "capabilitiesOptions": {
+        "measure_power": {
+          "title": {
+            "en": "Power Grid (W)"
+          }
+        },
+        "measure_power.charge": {
+          "title": {
+            "en": "Charge Grid (W)"
+          }
+        },
+        "measure_power.discharge": {
+          "title": {
+            "en": "Discharge Grid (W)"
+          }
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "cloud"
+      ],
+      "pair": [
+        {
+          "id": "login_credentials",
+          "template": "login_credentials",
+          "options": {
+            "title": {
+              "en": "Sign in to your Marstek account"
+            },
+            "usernameLabel": {
+              "en": "E-mail"
+            },
+            "passwordLabel": {
+              "en": "Password"
+            },
+            "buttonLabel": {
+              "en": "Sign in"
+            }
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "multiple": false
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "marstek-venus-cloud",
+      "settings": [
+        {
+          "id": "debug",
+          "type": "checkbox",
+          "label": {
+            "en": "Enable more logging (for diagnostics reports)"
+          },
+          "hint": {
+            "en": "Turn this on to log extra details for troubleshooting received values for this device."
+          },
+          "value": false
+        },
+        {
+          "id": "username",
+          "type": "label",
+          "label": {
+            "en": "Account"
+          },
+          "value": "(unknown)"
+        }
+      ]
     }
   ],
   "capabilities": {
     "last_message_received": {
       "type": "number",
       "title": {
-        "en": "Last message (sec)"
+        "en": "Data age (sec)"
       },
       "getable": true,
       "setable": false,

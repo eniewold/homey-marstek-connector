@@ -1,0 +1,59 @@
+{
+  "name": {
+    "en": "Marstek Venus (Cloud)"
+  },
+  "class": "battery",
+  "capabilities": [
+    "measure_battery",
+    "measure_power",
+    "measure_power.charge",
+    "measure_power.discharge",
+    "last_message_received"
+  ],
+  "energy": {
+    "homeBattery": true
+  },
+  "capabilitiesOptions": {
+    "measure_power": {
+      "title": { "en": "Power Grid (W)" }
+    },
+    "measure_power.charge": {
+      "title": { "en": "Charge Grid (W)" }
+    },
+    "measure_power.discharge": {
+      "title": { "en": "Discharge Grid (W)" }
+    }
+  },
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "cloud"
+  ],
+  "pair": [
+    {
+      "id": "login_credentials",
+      "template": "login_credentials",
+      "options": {
+        "title": { "en": "Sign in to your Marstek account" },
+        "usernameLabel": { "en": "E-mail" },
+        "passwordLabel": { "en": "Password" },
+        "buttonLabel": { "en": "Sign in" }
+      }
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      },
+      "options": {
+        "multiple": false
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}

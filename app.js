@@ -1,7 +1,7 @@
 'use strict';
 
 const Homey = require('homey');
-const MarstekSocket = require('./socket');
+const MarstekSocket = require('./lib/marstek-api');
 
 module.exports = class MarstekBatteryAPI extends Homey.App {
 
