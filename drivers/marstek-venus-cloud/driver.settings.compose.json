@@ -17,21 +17,5 @@
       "en": "Account"
     },
     "value": "(unknown)"
-  },
-  {
-    "id": "siteId",
-    "type": "label",
-    "label": {
-      "en": "Site identifier"
-    },
-    "value": "(unknown)"
-  },
-  {
-    "id": "deviceSn",
-    "type": "label",
-    "label": {
-      "en": "Device serial number"
-    },
-    "value": "(unknown)"
   }
 ]

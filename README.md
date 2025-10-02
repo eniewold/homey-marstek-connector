@@ -18,13 +18,13 @@ When a device is detected and communication is working, the device will display 
 This app requires Homey and a Marstek Venus battery system.
 
 - When using the **local API driver** the Homey and battery must be connected to the same network with the local API enabled (see below). Auto-detection of Marstek Venus batteries is supported on the same local network and when IP range is 192.168.x.y; it will search within the last octet (y) from 1 to 254.
-- When using the **cloud driver** you need an active Marstek cloud account. During pairing Homey will ask for the username and password to authenticate with the Marstek cloud service.
+- When using the **cloud driver** you need an active Marstek cloud/app account. During pairing Homey will ask for the username and password to authenticate with the Marstek cloud service.
 
 ### Cloud driver pairing
 
 Choose the “Marstek Venus (Cloud)” device during pairing, sign in with your Marstek cloud credentials and select the site/device you want to add. Credentials are securely stored in the device store and used solely for refreshing the battery statistics from the Marstek cloud endpoints.
 
-### Enable Local API
+### Local API pairing
 
 The Local API is disabled by default, this needs te be enabled on the Marstek Venus battery system. This can be done in two ways:
 - Use the BLE Test Tool (https://rweijnen.github.io/marstek-venus-monitor/latest/) on your smartphone (or laptop) near the battery. Connect and use 'Enable Local API (30000)' button in 'System' tab.
@@ -32,12 +32,17 @@ The Local API is disabled by default, this needs te be enabled on the Marstek Ve
 
 *The local API must be enabled for port number 30000 (on each device). Currently no other port numbers are supported.*
 
-## Installation
+## How to add devices in Homey
 
 1. Install the MarstekHomey app from the Homey App Store.
-2. After the auto-detection has run, select/check all devices to add and click continue.
-3. Devices are added by Homey
-4. Watch the magic happen as the battery statistics are retrieved and displayed in the device card(s).
+2. Add new device using Marstek Battery Connector
+3. Select type of connection to make:
+- For API: system will auto detect
+- For Cloud: Enter your App/Cloud credentials and let it auto detect
+4. Select/check all devices to add and click continue to add them to Homey.
+5. Watch the magic happen as the battery statistics are retrieved and displayed in the device card(s).
+
+1. You can devices from both API and Cloud.
 
 See settings of each battery for additional details. 
 

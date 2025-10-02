@@ -1,34 +1,38 @@
 'use strict';
 
 const Homey = require('homey');
-const MarstekCloudClient = require('../../lib/marstek-cloud-client');
+const MarstekCloud = require('../../lib/marstek-cloud');
+const crypto = require('crypto');
 
 module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
 
     async onInit() {
         this.log('MarstekVenusCloudDriver has been initialized');
         this._pairSessions = new Map();
+        this._clients = new Map();
     }
 
     async onUninit() {
         this.log('MarstekVenusCloudDriver has been uninitialized');
         this._pairSessions.clear();
+        this._clients.clear();
     }
 
     async onPair(session) {
         this._pairSessions.set(session, {});
 
-        session.setHandler('login', async ({ username, password, baseUrl }) => {
+        session.setHandler('login', async ({ username, password }) => {
+            // Make sure to encode password immediately
             const credentials = {
                 username: username?.trim(),
-                password,
-                baseUrl: baseUrl?.trim() || undefined,
+                password: this.encode(password)
             };
             if (!credentials.username || !credentials.password) {
                 throw new Error('Please enter both username and password');
             }
 
-            const client = new MarstekCloudClient({ ...credentials, logger: this });
+            // Create a cloud client instance and store details into session (for other discovered devices)
+            const client = this.getClient(credentials);
             await client.login();
             this._pairSessions.set(session, { credentials, client });
             return true;
@@ -37,28 +41,27 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
         session.setHandler('list_devices', async () => {
             const state = this._pairSessions.get(session);
             if (!state || !state.client) throw new Error('Not authenticated');
-
             const devices = await state.client.fetchDevices();
             if (!devices || devices.length === 0) {
                 throw new Error('No devices were returned by the Marstek cloud account');
             }
 
+            // Map received devices into known format
             return devices.map((device) => ({
                 name: device.name,
                 data: {
-                    id: device.id,
+                    id: device.devid,
                 },
                 store: {
-                    credentials: state.credentials,
-                    siteId: device.siteId,
-                    deviceSn: device.deviceSn,
-                    deviceId: device.deviceId,
-                    productName: device.productName,
+                    username: state.credentials.username,
+                    password: state.credentials.password,
+                    name: device.name,
+                    type: device.type,
+                    devid: device.devid,
                 },
                 settings: {
                     username: state.credentials.username,
-                    siteId: device.siteId || '(unknown)',
-                    deviceSn: device.deviceSn || '(unknown)',
+                    type: device.type || '(unknown)',
                 },
             }));
         });
@@ -67,4 +70,25 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
             this._pairSessions.delete(session);
         });
     }
+
+    // Retrieve Marstek Cloud Client related to username
+    getClient(credentials, logger) {
+        // Check if there already a client
+        const client = this._clients.get(credentials.username);
+        if (!client) {
+            const newClient = new MarstekCloud({ ...credentials, logger: logger || this });
+            this._clients.set(credentials.username, newClient);
+            return newClient;
+        } else {
+            return client;
+        }
+        return null;
+    }
+
+    // encode password using MD5
+    encode(password) {
+        return crypto.createHash('md5').update(password).digest('hex');
+    }
+
+
 };

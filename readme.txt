@@ -12,7 +12,7 @@ Installation and Setup
 2) Start the pairing wizard in Homey by adding a new device from the Marstek Battery Connector.
 3) Choose between the local API driver or the cloud driver:
    - Local: the app will scan your local network to discover your Marstek battery (if not found, retry once more).
-   - Cloud: sign in with your Marstek cloud username and password, then select the site/device you want to add.
+   - Cloud: sign in with your Marstek cloud/app username and password, then select the site/device you want to add.
 4) Once added, the device tile will display the battery charge level in percent, the current power in watts, and the total energy in kilowatt hours.
 
 Usage in Flows

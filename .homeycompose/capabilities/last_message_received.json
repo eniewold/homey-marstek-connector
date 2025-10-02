@@ -1,6 +1,6 @@
 {
   "type": "number",
-  "title": { "en": "Last message (sec)" },
+  "title": { "en": "Data age (sec)" },
   "getable": true,
   "setable": false,
   "uiComponent": "sensor",
