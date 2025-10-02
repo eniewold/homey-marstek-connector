@@ -184,6 +184,11 @@
       "connectivity": [
         "cloud"
       ],
+      "images": {
+        "small": "/drivers/marstek-venus-cloud/assets/images/small.png",
+        "large": "/drivers/marstek-venus-cloud/assets/images/large.png",
+        "xlarge": "/drivers/marstek-venus-cloud/assets/images/xlarge.png"
+      },
       "pair": [
         {
           "id": "login_credentials",

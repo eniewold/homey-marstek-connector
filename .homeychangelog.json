@@ -1,4 +1,7 @@
 ﻿{
+  "0.7.0": {
+    "en": "Added support for a Marstek cloud driver that retrieves battery statistics using your Marstek cloud account credentials."
+  },
   "0.6.3": {
     "en": "Added a property that monitors the number of seconds the last message was received from battery. Added icons for custom capabilities."
   },

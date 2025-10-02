@@ -1,8 +1,6 @@
 # Marstek Venus battery stats in Homey (local & cloud)
 
-This Homey app connects to a Marstek Venus battery system either through the local network or via the Marstek cloud service and retrieves battery statistics.
-It allows you to monitor the battery status, charge level, and other relevant information directly from your Homey smart home system.
-When using the local driver there is an auto-detect algorithm that tries to find your Marstek Venus battery on the network.
+This Homey app connects to a Marstek Venus battery system either through the local network or via the Marstek cloud service and retrieves battery statistics. It allows you to monitor the battery status, charge level, and other relevant information directly from your Homey smart home system. There is an auto-detect algorithm that tries to find your Marstek Venus batteries.
 
 ## Features
 
@@ -10,8 +8,10 @@ When a device is detected and communication is working, the device will display 
 - Battery charge level
 - Status (charging, discharging, idle)
 - Power left (in kilowatts/hours)
+- Grid/Off-grid power
 - Current power output or intake (Watt)
 - Battery Temperature
+- Charge and discharge totals (kWh)
 
 ## Requirements
 
@@ -42,9 +42,7 @@ The Local API is disabled by default, this needs te be enabled on the Marstek Ve
 4. Select/check all devices to add and click continue to add them to Homey.
 5. Watch the magic happen as the battery statistics are retrieved and displayed in the device card(s).
 
-1. You can devices from both API and Cloud.
-
-See settings of each battery for additional details. 
+You can devices from both API and Cloud. See settings of each battery for additional details. 
 
 ## Version History
 
@@ -73,6 +71,7 @@ See settings of each battery for additional details.
 - It seems opening the Marstek mobile blocks some of the UDP communication periodically.
 - Only UDP port 30000 is currently supported on the local API.
 - When upgrading the app, it might be needed to remove already added battery devices first and then adding them again. 
+- The Marstek Cloud API is undocumented, so things might change without notice.
 
 ## Known issues
 
