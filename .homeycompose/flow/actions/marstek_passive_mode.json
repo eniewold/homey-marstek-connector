@@ -1,7 +1,10 @@
 {
-  "id": "marstek_passive_mode_set",
+  "id": "marstek_passive_mode",
   "title": {
-    "en": "Set battery 'Passive' mode to [[power]] W for [[seconds]] seconds"
+    "en": "Set battery 'Passive' mode to Power (W) for (S) seconds"
+  },
+  "titleFormatted": {
+    "en": "Set battery 'Passive' mode to [[power]] Watt for [[seconds]] seconds"
   },
   "args": [
     {
@@ -15,7 +18,6 @@
       "label": {
         "en": "Power (W)"
       },
-      "min": 0,
       "step": 1
     },
     {
@@ -25,7 +27,7 @@
         "en": "Seconds"
       },
       "min": 0,
-      "step": 1
+      "step": 60
     }
   ]
 }

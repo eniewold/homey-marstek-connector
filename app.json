@@ -1,7 +1,7 @@
 {
   "id": "com.niewold.marstek",
-  "version": "0.7.0",
-  "compatibility": ">=12.4.5",
+  "version": "0.7.1",
+  "compatibility": ">=12.5.0",
   "sdk": 3,
   "brandColor": "#555555",
   "platforms": [
@@ -28,6 +28,166 @@
   },
   "source": "https://github.com/eniewold/homey-marstek-connector",
   "homeyCommunityTopicId": 143139,
+  "flow": {
+    "actions": [
+      {
+        "id": "marstek_ai_mode",
+        "title": {
+          "en": "Set battery mode to 'AI'"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus"
+          }
+        ]
+      },
+      {
+        "id": "marstek_auto_mode",
+        "title": {
+          "en": "Set battery mode to 'Auto'"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus"
+          }
+        ]
+      },
+      {
+        "id": "marstek_manual_mode",
+        "title": {
+          "en": "Set battery mode to 'Manual'"
+        },
+        "titleFormatted": {
+          "en": "Set battery mode to 'Manual' using from [[start_time]] to [[end_time]] on [[days]] with [[power]] Watt and enable [[enable]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus"
+          },
+          {
+            "name": "start_time",
+            "type": "time",
+            "title": {
+              "en": "Start time"
+            }
+          },
+          {
+            "name": "end_time",
+            "type": "time",
+            "title": {
+              "en": "End time"
+            }
+          },
+          {
+            "title": {
+              "en": "Day(s)"
+            },
+            "name": "days",
+            "type": "multiselect",
+            "conjunction": "or",
+            "values": [
+              {
+                "id": "7",
+                "title": {
+                  "en": "Monday"
+                }
+              },
+              {
+                "id": "6",
+                "title": {
+                  "en": "Tuesday"
+                }
+              },
+              {
+                "id": "5",
+                "title": {
+                  "en": "Wednesday"
+                }
+              },
+              {
+                "id": "4",
+                "title": {
+                  "en": "Thursday"
+                }
+              },
+              {
+                "id": "3",
+                "title": {
+                  "en": "Friday"
+                }
+              },
+              {
+                "id": "2",
+                "title": {
+                  "en": "Saturday"
+                }
+              },
+              {
+                "id": "1",
+                "title": {
+                  "en": "Sunday"
+                }
+              }
+            ]
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Watt (negative = charge)"
+            },
+            "step": 1
+          },
+          {
+            "name": "enable",
+            "type": "checkbox",
+            "title": {
+              "en": "Enable schedule"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marstek_passive_mode",
+        "title": {
+          "en": "Set battery 'Passive' mode to Power (W) for (S) seconds"
+        },
+        "titleFormatted": {
+          "en": "Set battery 'Passive' mode to [[power]] Watt for [[seconds]] seconds"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus"
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "label": {
+              "en": "Power (W)"
+            },
+            "step": 1
+          },
+          {
+            "name": "seconds",
+            "type": "number",
+            "label": {
+              "en": "Seconds"
+            },
+            "min": 0,
+            "step": 60
+          }
+        ]
+      }
+    ]
+  },
   "drivers": [
     {
       "name": {
@@ -247,145 +407,6 @@
       ]
     }
   ],
-  "flow": {
-    "actions": [
-      {
-        "id": "marstek_auto_mode_on",
-        "title": {
-          "en": "Turn battery mode 'Auto' On"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=marstek-venus"
-          }
-        ]
-      },
-      {
-        "id": "marstek_auto_mode_off",
-        "title": {
-          "en": "Turn battery mode 'Auto' Off"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=marstek-venus"
-          }
-        ]
-      },
-      {
-        "id": "marstek_ai_mode_on",
-        "title": {
-          "en": "Turn battery mode 'AI' On"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=marstek-venus"
-          }
-        ]
-      },
-      {
-        "id": "marstek_ai_mode_off",
-        "title": {
-          "en": "Turn battery mode 'AI' Off"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=marstek-venus"
-          }
-        ]
-      },
-      {
-        "id": "marstek_manual_mode_on",
-        "title": {
-          "en": "Turn battery mode 'Manual' On"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=marstek-venus"
-          }
-        ]
-      },
-      {
-        "id": "marstek_manual_mode_off",
-        "title": {
-          "en": "Turn battery mode 'Manual' Off"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=marstek-venus"
-          }
-        ]
-      },
-      {
-        "id": "marstek_passive_mode_on",
-        "title": {
-          "en": "Turn battery mode 'Passive' On"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=marstek-venus"
-          }
-        ]
-      },
-      {
-        "id": "marstek_passive_mode_off",
-        "title": {
-          "en": "Turn battery mode 'Passive' Off"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=marstek-venus"
-          }
-        ]
-      },
-      {
-        "id": "marstek_passive_mode_set",
-        "title": {
-          "en": "Set battery 'Passive' mode to [[power]] W for [[seconds]] seconds"
-        },
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=marstek-venus"
-          },
-          {
-            "name": "power",
-            "type": "number",
-            "label": {
-              "en": "Power (W)"
-            },
-            "min": 0,
-            "step": 1
-          },
-          {
-            "name": "seconds",
-            "type": "number",
-            "label": {
-              "en": "Seconds"
-            },
-            "min": 0,
-            "step": 1
-          }
-        ]
-      }
-    ]
-  },
   "capabilities": {
     "last_message_received": {
       "type": "number",

@@ -1,7 +1,7 @@
 {
-  "id": "marstek_manual_mode_off",
+  "id": "marstek_ai_mode",
   "title": {
-    "en": "Turn battery mode 'Manual' Off"
+    "en": "Set battery mode to 'AI'"
   },
   "args": [
     {

@@ -1,0 +1,76 @@
+{
+  "id": "marstek_manual_mode",
+  "title": {
+    "en": "Set battery mode to 'Manual'"
+  },
+  "titleFormatted": {
+    "en": "Set battery mode to 'Manual' using from [[start_time]] to [[end_time]] on [[days]] with [[power]] Watt and enable [[enable]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus"
+    },
+    {
+      "name": "start_time",
+      "type": "time",
+      "title": { "en": "Start time" }
+    },
+    {
+      "name": "end_time",
+      "type": "time",
+      "title": { "en": "End time" }
+    },
+    {
+      "title": {
+        "en": "Day(s)"
+      },
+      "name": "days",
+      "type": "multiselect",
+      "conjunction": "or",
+      "values": [
+        {
+          "id": "7",
+          "title": { "en": "Monday" }
+        },
+        {
+          "id": "6",
+          "title": { "en": "Tuesday" }
+        },
+        {
+          "id": "5",
+          "title": { "en": "Wednesday" }
+        },
+        {
+          "id": "4",
+          "title": { "en": "Thursday" }
+        },
+        {
+          "id": "3",
+          "title": { "en": "Friday" }
+        },
+        {
+          "id": "2",
+          "title": { "en": "Saturday" }
+        },
+        {
+          "id": "1",
+          "title": { "en": "Sunday" }
+        }
+      ]
+    },
+    {
+      "name": "power",
+      "type": "number",
+      "title": { "en": "Watt (negative = charge)" },
+      "step": 1
+    },
+    {
+      "name": "enable",
+      "type": "checkbox",
+      "title": { "en": "Enable schedule" }
+    }
+
+  ]
+}

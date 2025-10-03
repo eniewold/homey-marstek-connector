@@ -46,6 +46,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 ## Version History
 
+- 0.7.1 - Added flow card for changing the battery charging mode through local API.
 - 0.7.0 - Added support for a Marstek cloud driver that retrieves battery statistics using your Marstek cloud account credentials.
 - 0.6.3 - Added a property that monitors the number of seconds the last message was received from battery. Added icons for custom capabilities.
 - 0.6.2 - Firmware setting was stored as incorrect settings type.
@@ -78,3 +79,4 @@ You can devices from both API and Cloud. See settings of each battery for additi
 - Sometimes UDP communication stops after a while (without any exception, warning).
 - Not all transmitted UDP packages are being answered by the battery (it is silently ignoring them).
 - Does not seem to work well in conjuction with CT002 or CT003, battery seems to stop communicating. 
+- Cloud data does not take back-up power port correctly into account.

@@ -9,7 +9,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      */
     async onInit() {
         this.log('MarstekVenusDriver has been initialized');
-        await this._registerFlowListeners();
+        await this.registerFlowListeners();
     }
     async onUninit() {
         this.log('MarstekVenusDriver has been uninitialized');
@@ -83,7 +83,9 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
         }
     }
 
-    async _registerFlowListeners() {
+    // Register flow listeners to take action when flow is action is taken
+    async registerFlowListeners() {
+        // Inline function to register handlers
         const register = (id, handler) => {
             const card = this.homey.flow.getActionCard(id);
             card.registerRunListener(async (args) => {
@@ -92,57 +94,93 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
             });
         };
 
-        register('marstek_auto_mode_on', async ({ device }) => this._setModeEnabled(device, 'Auto', true));
-        register('marstek_auto_mode_off', async ({ device }) => this._setModeEnabled(device, 'Auto', false));
-        register('marstek_ai_mode_on', async ({ device }) => this._setModeEnabled(device, 'AI', true));
-        register('marstek_ai_mode_off', async ({ device }) => this._setModeEnabled(device, 'AI', false));
-        register('marstek_manual_mode_on', async ({ device }) => this._setModeEnabled(device, 'Manual', true));
-        register('marstek_manual_mode_off', async ({ device }) => this._setModeEnabled(device, 'Manual', false));
-        register('marstek_passive_mode_on', async ({ device }) => this._setPassiveMode(device, true));
-        register('marstek_passive_mode_off', async ({ device }) => this._setPassiveMode(device, false));
-        register('marstek_passive_mode_set', async ({ device, power, seconds }) => this._configurePassiveMode(device, power, seconds));
+        // Make sure to register all flow handlers
+        register('marstek_auto_mode', async ({ device }) => this.setModeAuto(device));
+        register('marstek_ai_mode', async ({ device }) => this.setModeAI(device));
+        register('marstek_manual_mode', async ({ device, start_time, end_time, days, power, enable }) => this.setModeManual(device, start_time, end_time, days, power, enable));
+        register('marstek_passive_mode', async ({ device, power, seconds }) => this.setModePassive(device, power, seconds));
     }
 
-    async _setModeEnabled(device, mode, enabled) {
-        const config = await this._getModeConfiguration(device);
-        const updated = this._cloneConfig(config);
-
-        if (enabled) updated.mode = mode;
-
-        switch (mode) {
-            case 'Auto':
-                updated.auto_cfg = Object.assign({}, updated.auto_cfg, { enable: enabled ? 1 : 0 });
-                break;
-            case 'AI':
-                updated.ai_cfg = Object.assign({}, updated.ai_cfg, { enable: enabled ? 1 : 0 });
-                break;
-            case 'Manual':
-                updated.manual_cfg = Object.assign({}, updated.manual_cfg, { enable: enabled ? 1 : 0 });
-                break;
-            default:
-                throw new Error(`Unsupported mode: ${mode}`);
+    // Create config object for device mode 'Auto'
+    async setModeAuto(device) {
+        const config = {
+            mode: "Auto",
+            auto_cfg: {
+                enable: 1
+            }
         }
-
-        await this._setModeConfiguration(device, updated);
+        await this.setModeConfiguration(device, config);
     }
 
-    async _setPassiveMode(device, enabled) {
-        const config = await this._getModeConfiguration(device);
-        const updated = this._cloneConfig(config);
-
-        updated.passive_cfg = Object.assign({}, updated.passive_cfg);
-
-        if (enabled) {
-            updated.mode = 'Passive';
-        } else {
-            updated.passive_cfg.cd_time = 0;
-            updated.mode = 'Auto';
+    // Create config object for device mode 'AI'
+    async setModeAI(device) {
+        const config = {
+            mode: "AI",
+            ai_cfg: {
+                enable: 1
+            }
         }
-
-        await this._setModeConfiguration(device, updated);
+        await this.setModeConfiguration(device, config);
     }
 
-    async _configurePassiveMode(device, power, seconds) {
+    /**  Create config object for device mode 'Manual'
+     * Example JSON:
+    {
+        "id": 1,
+        "method": "ES.SetMode",
+        "params": {
+            "id": 0,
+                "config": {
+                "mode": "Manual",
+                "manual_cfg": {
+                    "time_num": 1,
+                    "start_time": "08:30",
+                    "end_time": "20:30",
+                    "week_set": 127,
+                    "power": 100,
+                    "enable": 1
+                }
+            }
+        }
+    }
+     */
+    async setModeManual(device, start_time, end_time, days, power, enable) {
+        let bitArray = [..."00000000"];
+        days.forEach((day) => { bitArray[parseInt(day)] = "1" });
+        const bitString = bitArray.join("");
+        let bitValue = parseInt(bitString, 2);
+        const config = {
+            mode: "Manual",
+            manual_cfg: {
+                time_num: 9,
+                start_time: start_time,
+                end_time: end_time,
+                week_set: bitValue,
+                power: power,
+                enable: enable ? 1 : 0
+            }
+        }
+        await this.setModeConfiguration(device, config);
+    }
+
+    /** Create config object for device mode 'Passive'
+     * {
+            "id": 1,
+            "method": "ES.SetMode",
+            "params": {
+                "id": 0,
+                    "config": {
+                    "mode": "Passive",
+                    "passive_cfg": {
+                        "power": 100,
+                        "cd_time": 300
+                    }
+                }
+            }
+        }
+     * 
+     */
+    async setModePassive(device, power, seconds) {
         const numericPower = Number(power);
         const numericSeconds = Number(seconds);
 
@@ -153,69 +191,57 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
             throw new Error('Power and seconds must be zero or greater');
         }
 
-        const config = await this._getModeConfiguration(device);
-        const updated = this._cloneConfig(config);
-
-        updated.mode = 'Passive';
-        updated.passive_cfg = Object.assign({}, updated.passive_cfg, {
-            power: numericPower,
-            cd_time: numericSeconds,
-        });
-
-        await this._setModeConfiguration(device, updated);
-    }
-
-    _cloneConfig(config) {
-        return JSON.parse(JSON.stringify(config ?? {}));
-    }
-
-    async _getModeConfiguration(device) {
-        const result = await this._sendCommand(device, 'ES.GetMode', { id: 0 }, { waitForResponse: true });
-        const config = result && typeof result === 'object' ? (result.config ?? result) : null;
-        if (!config || typeof config !== 'object') {
-            throw new Error('Failed to retrieve mode configuration');
+        const config = {
+            mode: 'Passive',
+            passive_cfg: {
+                power: numericPower,
+                cd_time: numericSeconds,
+            }
         }
-        return config;
+
+        await this.setModeConfiguration(device, config);
     }
 
-    async _setModeConfiguration(device, config) {
-        const sanitized = this._cloneConfig(config);
-        const result = await this._sendCommand(device, 'ES.SetMode', { id: 0, config: sanitized }, { waitForResponse: true });
+    // Prepare mode configuration message, transmit and check response
+    async setModeConfiguration(device, config) {
+        // Send command
+        const result = await this.sendCommand(device, 'ES.SetMode', { id: 0, config: config }, { waitForResponse: true });
+        // Only resolve when exact expected result is found { result: { id: 0, set_result: true }}
         if (result && typeof result === 'object' && 'set_result' in result && !result.set_result) {
+            // TODO: retry on failures?
             throw new Error('Device rejected the requested mode change');
         }
     }
 
-    async _sendCommand(device, method, params = {}, { waitForResponse = false, timeout = 5000 } = {}) {
+    // Send a command using the UDP server
+    async sendCommand(device, method, params = {}, { waitForResponse = false, timeout = 15000 } = {}) {
         const socket = this.homey.app.getSocket();
-        if (!socket) throw new Error('Socket connection is not available');
+        const address = device.getStoreValue("address");
+        if (!socket) throw new Error('Socket connection is not available.');
+        if (!address) throw new Error('Device IP address it not available. Re-pair device or wait for first response from battery.');
 
-        const messageId = `Homey-${method}-${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
-        const deviceSrc = device && typeof device.getSetting === 'function' ? device.getSetting('src') : null;
-        const paramsPayload = Object.assign({ id: 0 }, params);
-        if (deviceSrc) paramsPayload.src = paramsPayload.src ?? deviceSrc;
-
+        // Create payload with unique id
+        const unique = "Homey-" + String(this.pollId++);
         const payload = {
-            id: messageId,
+            id: unique,
             method,
-            params: paramsPayload,
+            params: params,
         };
 
         if (!waitForResponse) {
-            await socket.broadcast(JSON.stringify(payload));
+            await socket.send(JSON.stringify(payload), address);
             return null;
         }
 
-        if (!deviceSrc) throw new Error('Device source identifier is missing');
-
         return await new Promise((resolve, reject) => {
-            const handler = (json) => {
-                if (!json || json.src !== deviceSrc || json.id !== messageId) return;
-                cleanup();
-                if (json.error) {
-                    reject(new Error(json.error.message || 'Device returned an error'));
-                } else {
-                    resolve(json.result ?? null);
+            const handler = (json, remote) => {
+                if (json.id === unique) {
+                    cleanup();
+                    if (json && json.result) {
+                        resolve(json.result ?? null);
+                    } else {
+                        reject(new Error('Received json response is not as expected'));
+                    }
                 }
             };
 
@@ -225,13 +251,14 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
             };
 
             const timer = this.homey.setTimeout(() => {
+                this.error("Timeout while waiting for mode change response");
                 cleanup();
                 reject(new Error('Timed out waiting for device response'));
             }, timeout);
 
             socket.on(handler);
 
-            socket.broadcast(JSON.stringify(payload)).catch((err) => {
+            socket.send(JSON.stringify(payload), address).catch((err) => {
                 cleanup();
                 reject(err);
             });
@@ -261,7 +288,10 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
                             settings: {
                                 src: unique,
                                 model: `${json.result.device} v${json.result.ver}`,
-                                firmware: String(json.result.ver)    // firmware number, make sure to cast to string due to label (read-only) configuration
+                                firmware: String(json.result.ver)   // firmware number, make sure to cast to string due to label (read-only) configuration
+                            },
+                            store: {
+                                address: remote.address             // Store initial IP address
                             }
                         })
                     }

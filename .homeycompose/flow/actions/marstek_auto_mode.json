@@ -1,7 +1,7 @@
 {
-  "id": "marstek_ai_mode_off",
+  "id": "marstek_auto_mode",
   "title": {
-    "en": "Turn battery mode 'AI' Off"
+    "en": "Set battery mode to 'Auto'"
   },
   "args": [
     {

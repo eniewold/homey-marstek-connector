@@ -85,10 +85,10 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     /**
      * Handle incoming UDP messages
      * @param {any} json - json object received from source
-     * @param {any} rinfo - remote source address details
+     * @param {any} remote - remote source address details
      */
     timestamp = null;
-    async onMessage(json, rinfo) {
+    async onMessage(json, remote) {
         // Check if device is still present
         if (!this.getAvailable()) {
             this.error('Device is deleted or not available (yet)');
@@ -99,7 +99,10 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
             if (json.src !== this.getSetting("src")) return;
 
             // Debug received details (if requested)
-            if (this.getSetting("debug")) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(rinfo));
+            if (this.getSetting("debug")) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(remote));
+
+            // Update remote IP address of device (can change due to DHCP leases)
+            if (remote.address) this.setStoreValue("address", remote.address);
 
             // Try to retrieve the firmware version from the settings (including deprecated method)
             let firmware = 0;
