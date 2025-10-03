@@ -1,4 +1,7 @@
 ﻿{
+  "0.7.1": {
+    "en": "Added flow card for changing the battery charging mode through local API."
+  },
   "0.7.0": {
     "en": "Added support for a Marstek cloud driver that retrieves battery statistics using your Marstek cloud account credentials."
   },
