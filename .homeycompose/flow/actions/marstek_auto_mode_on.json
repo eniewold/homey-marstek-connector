@@ -1,0 +1,13 @@
+{
+  "id": "marstek_auto_mode_on",
+  "title": {
+    "en": "Turn battery mode 'Auto' On"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus"
+    }
+  ]
+}
