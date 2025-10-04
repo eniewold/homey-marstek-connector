@@ -46,13 +46,14 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 ## Version History
 
+- 0.7.2 - Temperature for firmware 154 was reported incorrectly. Added retry meganism to the flow cards that set battery mode. Improved readability of some library classes.
 - 0.7.1 - Added flow card for changing the battery charging mode through local API.
 - 0.7.0 - Added support for a Marstek cloud driver that retrieves battery statistics using your Marstek cloud account credentials.
 - 0.6.3 - Added a property that monitors the number of seconds the last message was received from battery. Added icons for custom capabilities.
 - 0.6.2 - Firmware setting was stored as incorrect settings type.
 - 0.6.1 - Firmware 154 seems to communicate values with a different multipliers. The app now detects the firmware and corrects this.
 - 0.6.0 - Auto re-connect implemented; retry port binding at every broadcast when listener is no longer available. Fixed errors on multiple devices trying to start connecting at the same time. Couple of other minor bugs in several places fixed.
-- 0.5.7 - Correctly implemented setting of Homey capabilities as async calls.
+**- 0.5.7 - Correctly implemented setting of Homey capabilities as async calls.** current non-TEST release
 - 0.5.6 - Scope seems no longer available during close event handling, so logging close event is now hard-coded to console.
 - 0.5.5 - The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App.
 - 0.5.4 - Log structure changed to try to catch connectivity problems. Solved problem in clean-up function.
@@ -73,10 +74,12 @@ You can devices from both API and Cloud. See settings of each battery for additi
 - Only UDP port 30000 is currently supported on the local API.
 - When upgrading the app, it might be needed to remove already added battery devices first and then adding them again. 
 - The Marstek Cloud API is undocumented, so things might change without notice.
+- Mode change messages are not always processed by battery, there is no build-in retry (yet).
 
 ## Known issues
 
 - Sometimes UDP communication stops after a while (without any exception, warning).
 - Not all transmitted UDP packages are being answered by the battery (it is silently ignoring them).
 - Does not seem to work well in conjuction with CT002 or CT003, battery seems to stop communicating. 
-- Cloud data does not take back-up power port correctly into account.
+- Cloud data does not take back-up power port correctly into account (show 1 Watt)
+- Using Cloud device seems to log-out app (single login token only allowed by Marstek)

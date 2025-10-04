@@ -72,11 +72,15 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
     }
 
     // Retrieve Marstek Cloud Client related to username
-    getClient(credentials, logger) {
+    getClient(credentials) {
         // Check if there already a client
         const client = this._clients.get(credentials.username);
         if (!client) {
-            const newClient = new MarstekCloud({ ...credentials, logger: logger || this });
+            const newClient = new MarstekCloud(
+                credentials.username,
+                credentials.password,
+                this                    // pass our Homey Driver object for logging method access
+            );
             this._clients.set(credentials.username, newClient);
             return newClient;
         } else {
@@ -89,6 +93,5 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
     encode(password) {
         return crypto.createHash('md5').update(password).digest('hex');
     }
-
 
 };

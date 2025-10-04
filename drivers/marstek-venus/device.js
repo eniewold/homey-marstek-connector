@@ -21,29 +21,26 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     }
 
     // Reset all capabilities to null so that they are invalidated and shown as unknown in Homey
+    // Also make sure they are added when device does not have capability; useful for version upgrades with new capabilites
     async resetCapabilities() {
-        // Check if device has all capabilities (introduced in v0.5.0)
-        if (!this.hasCapability('meter_power.imported')) await this.addCapability('meter_power.imported');
-        if (!this.hasCapability('meter_power.exported')) await this.addCapability('meter_power.exported');
-        if (!this.hasCapability('meter_power.load')) await this.addCapability('meter_power.load');
-        if (!this.hasCapability('measure_power_ongrid')) await this.addCapability('measure_power_ongrid');
-        if (!this.hasCapability('measure_power_offgrid')) await this.addCapability('measure_power_offgrid');
-        if (!this.hasCapability('measure_power_pv')) await this.addCapability('measure_power_pv');
-        if (!this.hasCapability('last_message_received')) await this.addCapability('last_message_received');
-
-        // Default capability values
-        await this.setCapabilityValue('battery_charging_state', null);      // Charte state (Possible values: "idle", "charging", "discharging")
-        await this.setCapabilityValue('meter_power', null);                 // Power remaining (In kWh)
-        await this.setCapabilityValue('measure_power', null);               // Power usage/delivery (In Watts)
-        await this.setCapabilityValue('measure_temperature', null);         // Main battery temperature (In degrees celcius)
-        await this.setCapabilityValue('measure_battery', null);             // State of Charge in %
-        await this.setCapabilityValue('meter_power.imported', null);        // Total power imported (in kWh)
-        await this.setCapabilityValue('meter_power.exported', null);        // Total power exported (in kWh)
-        await this.setCapabilityValue('meter_power.load', null);            // Total power exported (in kWh)
-        await this.setCapabilityValue('measure_power_ongrid', null);        // Current power usage of on-grid port (in W)
-        await this.setCapabilityValue('measure_power_offgrid', null);       // Current power usage of off-grid port (in W)
-        await this.setCapabilityValue('measure_power_pv', null);            // Current power usage of off-grid port (in W)
-        await this.setCapabilityValue('last_message_received', null);       // number of seconds the last received message
+        const capabilities = [
+            'battery_charging_state',      // Charte state (Possible values: "idle", "charging", "discharging")
+            'meter_power',                 // Power remaining (In kWh)
+            'measure_power',               // Power usage/delivery (In Watts)
+            'measure_temperature',         // Main battery temperature (In degrees celcius)
+            'measure_battery',             // State of Charge in %
+            'meter_power.imported',        // Total power imported (in kWh)
+            'meter_power.exported',        // Total power exported (in kWh)
+            'meter_power.load',            // Total power exported (in kWh)
+            'measure_power_ongrid',        // Current power usage of on-grid port (in W)
+            'measure_power_offgrid',       // Current power usage of off-grid port (in W)
+            'measure_power_pv',            // Current power usage of off-grid port (in W)
+            'last_message_received'        // number of seconds the last received message
+        ];
+        for (const cap of capabilities) {
+            if (!this.hasCapability(cap)) await this.addCapability(cap);
+            await this.setCapabilityValue(cap, null);
+        }
     }
 
     // Create an handler that we can use to bind/unbind the onMessage function
@@ -84,8 +81,8 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
 
     /**
      * Handle incoming UDP messages
-     * @param {any} json - json object received from source
-     * @param {any} remote - remote source address details
+     * @param {any} json json object received from source
+     * @param {any} remote remote source address details
      */
     timestamp = null;
     async onMessage(json, remote) {
@@ -124,7 +121,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
                 // Main battery temperature (In degrees celcius)
                 if (!isNaN(result.bat_temp)) {
                     // Some batteries have different decimal multiplier
-                    if (result.bat_temp > 100) result.bat_temp = result.bat_temp / ((firmware >= 154) ? 1.0 : 10.0);
+                    result.bat_temp /= ((firmware >= 154) ? 1.0 : 10.0);
                     await this.setCapabilityValue('measure_temperature', result.bat_temp);
                 }
 

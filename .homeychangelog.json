@@ -1,4 +1,7 @@
 ﻿{
+  "0.7.2": {
+    "en": "Temperature for firmware 154 was reported incorrectly. Added retry meganism to the flow cards that set battery mode. Improved readability of some library classes."
+  },
   "0.7.1": {
     "en": "Added flow card for changing the battery charging mode through local API."
   },

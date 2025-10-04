@@ -202,19 +202,41 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
         await this.setModeConfiguration(device, config);
     }
 
+       
     // Prepare mode configuration message, transmit and check response
     async setModeConfiguration(device, config) {
-        // Send command
-        const result = await this.sendCommand(device, 'ES.SetMode', { id: 0, config: config }, { waitForResponse: true });
-        // Only resolve when exact expected result is found { result: { id: 0, set_result: true }}
-        if (result && typeof result === 'object' && 'set_result' in result && !result.set_result) {
-            // TODO: retry on failures?
-            throw new Error('Device rejected the requested mode change');
+        const maxRetries = 5;
+        let attempt = 0;
+        let lastError;
+
+        while (attempt < maxRetries) {
+            try {
+                // Send command
+                const result = await this.sendCommand(
+                    device,
+                    'ES.SetMode',
+                    { id: 0, config: config }
+                );
+                // Only resolve when exact expected result is found { result: { id: 0, set_result: true }}
+                if (result && typeof result === 'object' && 'set_result' in result && !result.set_result) {
+                    throw new Error('Device rejected the requested mode change');
+                }
+                // Success
+                return;
+            } catch (err) {
+                lastError = err;
+                attempt++;
+                if (attempt < maxRetries) {
+                    this.log(`Retrying setModeConfiguration (attempt ${attempt + 1}/${maxRetries}) due to error:`, err.message);
+                }
+            }
         }
+        // If all retries failed, throw the last error
+        throw lastError;
     }
 
     // Send a command using the UDP server
-    async sendCommand(device, method, params = {}, { waitForResponse = false, timeout = 15000 } = {}) {
+    async sendCommand(device, method, params = {}, timeout = 15000) {
         const socket = this.homey.app.getSocket();
         const address = device.getStoreValue("address");
         if (!socket) throw new Error('Socket connection is not available.');
@@ -227,11 +249,6 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
             method,
             params: params,
         };
-
-        if (!waitForResponse) {
-            await socket.send(JSON.stringify(payload), address);
-            return null;
-        }
 
         return await new Promise((resolve, reject) => {
             const handler = (json, remote) => {
