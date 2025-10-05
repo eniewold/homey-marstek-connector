@@ -5,15 +5,36 @@ const Homey = require('homey');
 /**
  * Driver responsible for managing Marstek Venus devices that communicate over UDP.
  * It provides device discovery, background polling, flow card actions and command handling.
- *
  * @extends Homey.Driver
  */
 module.exports = class MarstekVenusDriver extends Homey.Driver {
 
+    // Index of the message currently being broadcast.
+    pollMessage = 0;
+
+    // Delay between poll broadcasts in milliseconds.
+    pollWaitTime = 15009;
+
+    // Rotating list of messages that should be broadcast to request device status.
+    pollMessages = [
+        { method: "ES.GetStatus", params: { id: 0 } },
+        { method: "Bat.GetStatus", params: { id: 0 } },
+        { method: "ES.GetStatus", params: { id: 0 } },
+        { method: "ES.GetStatus", params: { id: 0 } },
+    ];
+
+    // Interval handle for the poll loop.
+    interval = null;
+
+    // Message identifier counter used to keep requests unique.
+    pollId = 9000;
+
+    // Identifiers of devices currently participating in polling.
+    pollDevices = []
+
     /**
      * Called when the driver is initialised.
      * Sets up flow listeners and logs driver startup.
-     *
      * @returns {Promise<void>} Resolves once initialisation completes.
      */
     async onInit() {
@@ -23,7 +44,6 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Called when the driver is uninitialised by Homey.
-     *
      * @returns {Promise<void>} Resolves after cleaning up the shared socket connection.
      */
     async onUninit() {
@@ -33,7 +53,6 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Handles the `list_devices` pairing view request by broadcasting discovery messages.
-     *
      * @returns {Promise<Array<{name: string, data: {id: string}, settings: object, store: object}>>}
      * Resolves with the list of devices available for pairing.
      */
@@ -43,55 +62,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
     }
 
     /**
-     * Index of the message currently being broadcast.
-     *
-     * @type {number}
-     */
-    pollMessage = 0;
-
-    /**
-     * Delay between poll broadcasts in milliseconds.
-     *
-     * @type {number}
-     */
-    pollWaitTime = 15009;
-
-    /**
-     * Rotating list of messages that should be broadcast to request device status.
-     *
-     * @type {{ method: string, params: any }[]}
-     */
-    pollMessages = [
-        { method: "ES.GetStatus", params: { id: 0 } },
-        { method: "Bat.GetStatus", params: { id: 0 } },
-        { method: "ES.GetStatus", params: { id: 0 } },
-        { method: "ES.GetStatus", params: { id: 0 } },
-    ];
-
-    /**
-     * Interval handle for the poll loop.
-     *
-     * @type {NodeJS.Timeout | null}
-     */
-    interval = null;
-
-    /**
-     * Message identifier counter used to keep requests unique.
-     *
-     * @type {number}
-     */
-    pollId = 9000;
-
-    /**
-     * Identifiers of devices currently participating in polling.
-     *
-     * @type {string[]}
-     */
-    pollDevices = []
-
-    /**
      * Broadcasts a status request to the connected devices based on the rotating poll configuration.
-     *
      * @returns {Promise<void>} Resolves once the message has been broadcast.
      */
     async poll() {
@@ -110,7 +81,6 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Adds a device to the poll list and starts the polling interval if necessary.
-     *
      * @param {string} device - Unique identifier of the device to poll.
      */
     pollStart(device) {
@@ -124,7 +94,6 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Removes a device from the poll list and stops the interval when no devices remain.
-     *
      * @param {string} device - Unique identifier of the device to stop polling for.
      */
     pollStop(device) {
@@ -141,7 +110,6 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Registers listeners for the flow action cards supplied by the driver.
-     *
      * @returns {Promise<void>} Resolves once the listeners are registered.
      */
     async registerFlowListeners() {
@@ -163,8 +131,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Configures the device for automatic mode.
-     *
-     * @param {import('./device')} device - Target device instance.
+     * @param {Homey.device} device - Target device instance.
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
     async setModeAuto(device) {
@@ -179,8 +146,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Configures the device for AI mode.
-     *
-     * @param {import('./device')} device - Target device instance.
+     * @param {Homey.device} device - Target device instance.
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
     async setModeAI(device) {
@@ -215,13 +181,12 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
             }
         }
     }
-     *
-     * @param {import('./device')} device - Target device instance.
-     * @param {string} start_time - Start time (HH:mm) for the manual schedule.
-     * @param {string} end_time - End time (HH:mm) for the manual schedule.
-     * @param {string[]} days - Collection of weekday indices (0-6) when the schedule applies.
-     * @param {number} power - Target power setting for manual mode.
-     * @param {boolean} enable - Whether the manual schedule should be enabled.
+     * @param {Homey.device} device Target device instance.
+     * @param {string} start_time Start time (HH:mm) for the manual schedule.
+     * @param {string} end_time End time (HH:mm) for the manual schedule.
+     * @param {string[]} days Collection of weekday indices (0-6) when the schedule applies.
+     * @param {number} power Target power setting for manual mode.
+     * @param {boolean} enable Whether the manual schedule should be enabled.
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
     async setModeManual(device, start_time, end_time, days, power, enable) {
@@ -261,10 +226,9 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
                 }
             }
         }
-     *
-     * @param {import('./device')} device - Target device instance.
-     * @param {number|string} power - Desired power value (can be provided as string from flow).
-     * @param {number|string} seconds - Cooldown duration in seconds (can be provided as string from flow).
+     * @param {Homey.device} device Target device instance.
+     * @param {number|string} power Desired power value (can be provided as string from flow).
+     * @param {number|string} seconds Cooldown duration in seconds (can be provided as string from flow).
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
     async setModePassive(device, power, seconds) {
@@ -292,9 +256,8 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Sends the supplied mode configuration to the device and retries on transient errors.
-     *
-     * @param {import('./device')} device - Target device instance.
-     * @param {object} config - Mode configuration payload.
+     * @param {import('./device')} device Target device instance.
+     * @param {object} config Mode configuration payload.
      * @returns {Promise<void>} Resolves once the device confirms the configuration.
      * @throws {Error} When the device rejects the configuration or all retries fail.
      */
@@ -331,11 +294,10 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Sends a command to a device via the shared UDP socket and waits for the response.
-     *
-     * @param {import('./device')} device - Target device instance.
-     * @param {string} method - RPC method to invoke.
-     * @param {object} [params={}] - Parameters to include in the payload.
-     * @param {number} [timeout=15000] - Time in milliseconds to wait for a response.
+     * @param {Homey.device} device Target device instance.
+     * @param {string} method RPC method to invoke.
+     * @param {object} [params={}] Parameters to include in the payload.
+     * @param {number} [timeout=15000] Time in milliseconds to wait for a response.
      * @returns {Promise<any>} Resolves with the JSON payload returned by the device.
      * @throws {Error} When the socket or device address are missing, or the operation times out.
      */
@@ -387,7 +349,6 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Discovers Marstek Venus devices by broadcasting a detection message and collecting responses.
-     *
      * @returns {Promise<Array<{name: string, data: {id: string}, settings: object, store: object}>>} Resolves with the discovered devices.
      */
     async broadcastDetect() {

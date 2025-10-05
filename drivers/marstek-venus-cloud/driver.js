@@ -7,7 +7,6 @@ const crypto = require('crypto');
 /**
  * Driver for Marstek Venus devices connected via the Marstek cloud service.
  * Manages pairing, credential reuse and provides access to shared cloud clients.
- *
  * @extends Homey.Driver
  */
 module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
@@ -15,7 +14,6 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
     /**
      * Called when the driver is initialised.
      * Prepares state for pairing sessions and client caching.
-     *
      * @returns {Promise<void>} Resolves when initialisation completes.
      */
     async onInit() {
@@ -28,7 +26,6 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
     /**
      * Called when the driver is uninitialised by Homey.
      * Clears any cached sessions and clients to free resources.
-     *
      * @returns {Promise<void>} Resolves once cleanup completes.
      */
     async onUninit() {
@@ -40,8 +37,7 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
     /**
      * Handles a pairing session for the cloud driver.
      * Sets up handlers for login, device listing and session teardown.
-     *
-     * @param {Object} session - The pairing session provided by Homey.
+     * @param {Object} session The pairing session provided by Homey.
      * @returns {Promise<void>} Resolves once handlers have been registered.
      */
     async onPair(session) {
@@ -99,8 +95,7 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
 
     /**
      * Retrieves or creates a cached Marstek cloud client for the provided credentials.
-     *
-     * @param {{ username: string, password: string }} credentials - Cloud account credentials.
+     * @param {{ username: string, password: string }} credentials Cloud account credentials.
      * @returns {MarstekCloud|null} The cached client instance or a newly created one.
      */
     getClient(credentials) {
@@ -124,8 +119,7 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
 
     /**
      * Encodes a plain-text password using MD5 hashing as required by the Marstek cloud API.
-     *
-     * @param {string} password - Plain-text password to encode.
+     * @param {string} password Plain-text password to encode.
      * @returns {string} The hashed password string.
      */
     encode(password) {

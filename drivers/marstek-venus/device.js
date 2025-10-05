@@ -6,16 +6,20 @@ const Homey = require('homey');
  * Represents a Marstek Venus device connected locally via UDP.
  * The device listens for broadcast messages, keeps capabilities in sync,
  * and exposes polling controls.
- *
  * @extends Homey.Device
  */
 module.exports = class MarstekVenusDevice extends Homey.Device {
+
+    // Handler bound to the socket listener so it can be registered/unregistered.
+    handler = this.onMessage.bind(this);
+
+    //Identifier for the interval that updates the last received timestamp.
+    interval = null;
 
     /**
      * Called by Homey when the device is initialized.
      * Starts listening to the shared UDP socket, resets capabilities,
      * and schedules background polling.
-     *
      * @returns {Promise<void>} Resolves once startup work completes.
      */
     async onInit() {
@@ -35,7 +39,6 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
      * Resets the registered capabilities to `null` so they appear as unknown in Homey.
      * Also ensures each capability exists on the device, adding any that are missing
      * to support upgrades that introduce new capabilities.
-     *
      * @returns {Promise<void>} Resolves once all capabilities are synchronised.
      */
     async resetCapabilities() {
@@ -60,15 +63,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     }
 
     /**
-     * Handler bound to the socket listener so it can be registered/unregistered.
-     *
-     * @type {(json: any, remote: any) => Promise<void>}
-     */
-    handler = this.onMessage.bind(this);
-
-    /**
      * Registers the UDP message listener for this device on the shared socket.
-     *
      * @returns {Promise<void>} Resolves when the listener has been registered.
      */
     async startListening() {
@@ -102,13 +97,6 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     }
 
     /**
-     * Identifier for the interval that updates the last received timestamp.
-     *
-     * @type {NodeJS.Timeout | null}
-     */
-    interval = null;
-
-    /**
      * Stops the periodic polling routine and clears the update interval.
      */
     stopPolling() {
@@ -121,9 +109,8 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
      * Handles incoming UDP messages received by the shared socket.
      * Updates device state when the payload belongs to this device and
      * exposes diagnostic information when debug logging is enabled.
-     *
-     * @param {any} json - JSON payload received from the UDP socket.
-     * @param {any} remote - Metadata describing the remote sender (e.g. address).
+     * @param {any} json JSON payload received from the UDP socket.
+     * @param {any} remote Metadata describing the remote sender (e.g. address).
      * @returns {Promise<void>} Resolves once the payload has been processed.
      */
     timestamp = null;
@@ -201,7 +188,6 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     /**
      * Called when the user removes the device from Homey.
      * Cleans up polling and socket listeners.
-     *
      * @returns {Promise<void>} Resolves once cleanup finishes.
      */
     async onDeleted() {
@@ -213,7 +199,6 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     /**
      * Called when the device instance is uninitialised by Homey.
      * Cleans up background resources similar to {@link MarstekVenusDevice#onDeleted}.
-     *
      * @returns {Promise<void>} Resolves once cleanup completes.
      */
     async onUninit() {

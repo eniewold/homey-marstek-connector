@@ -5,7 +5,6 @@ const Homey = require('homey');
 /**
  * Represents a Marstek Venus device connected via the Marstek cloud APIs.
  * Handles authentication, capability updates and periodic polling of cloud status.
- *
  * @extends Homey.Device
  */
 module.exports = class MarstekVenusCloudDevice extends Homey.Device {
@@ -14,7 +13,6 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
      * Called when the device is initialised.
      * Loads credentials, initialises the shared cloud client, resets capabilities,
      * and starts the polling cycle.
-     *
      * @returns {Promise<void>} Resolves once initialisation completes.
      */
     async onInit() {
@@ -28,7 +26,6 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
     /**
      * Called after the device has been added to Homey.
      * Currently used for debug logging only.
-     *
      * @returns {Promise<void>} Resolves once logging completes.
      */
     async onAdded() {
@@ -38,7 +35,6 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
     /**
      * Called when the device is removed by the user.
      * Stops background polling and logs the action when debug is enabled.
-     *
      * @returns {Promise<void>} Resolves once cleanup completes.
      */
     async onDeleted() {
@@ -49,7 +45,6 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
     /**
      * Called when Homey uninitialises the device.
      * Ensures polling is stopped to free up resources.
-     *
      * @returns {Promise<void>} Resolves once cleanup completes.
      */
     async onUninit() {
@@ -59,7 +54,6 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
 
     /**
      * Loads the credentials and device identifier from Homey's store.
-     *
      * @returns {Promise<void>} Resolves once configuration values are retrieved.
      * @throws {Error} When required credentials are missing.
      */
@@ -76,7 +70,6 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
 
     /**
      * Retrieves or creates the Marstek cloud client for the stored credentials and ensures it is authenticated.
-     *
      * @returns {Promise<void>} Resolves once the client is authenticated.
      * @throws {Error} When authentication fails.
      */
@@ -107,7 +100,6 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
 
     /**
      * Resets the relevant device capabilities to `null` until fresh data is received.
-     *
      * @returns {Promise<void>} Resolves once capability values are cleared.
      */
     async _updateCapabilitiesWithNull() {
@@ -155,7 +147,6 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
 
     /**
      * Executes a single poll by requesting device status from the cloud API and updating capabilities.
-     *
      * @returns {Promise<void>} Resolves when the capability updates complete.
      */
     async _poll() {
@@ -171,7 +162,6 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
 
     /**
      * Processes the payload returned from the cloud API and updates device capabilities.
-     *
      * @param {any} status - Raw status payload returned by the cloud API.
      * @returns {Promise<void>} Resolves once the capability values have been updated.
      */
