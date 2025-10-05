@@ -13,6 +13,8 @@ When a device is detected and communication is working, the device will display 
 - Battery Temperature
 - Charge and discharge totals (kWh)
 
+You can also send commands to the battery to change the operating mode to 'Manual', 'AI', 'Passive' or 'Auto'. These commands can be transmitted using Homey flows ('Then...').
+
 ## Requirements
 
 This app requires Homey and a Marstek Venus battery system.
@@ -53,7 +55,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 - 0.6.2 - Firmware setting was stored as incorrect settings type.
 - 0.6.1 - Firmware 154 seems to communicate values with a different multipliers. The app now detects the firmware and corrects this.
 - 0.6.0 - Auto re-connect implemented; retry port binding at every broadcast when listener is no longer available. Fixed errors on multiple devices trying to start connecting at the same time. Couple of other minor bugs in several places fixed.
-**- 0.5.7 - Correctly implemented setting of Homey capabilities as async calls.** current non-TEST release
+- **0.5.7 - Correctly implemented setting of Homey capabilities as async calls.** current non-TEST release
 - 0.5.6 - Scope seems no longer available during close event handling, so logging close event is now hard-coded to console.
 - 0.5.5 - The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App.
 - 0.5.4 - Log structure changed to try to catch connectivity problems. Solved problem in clean-up function.
@@ -68,13 +70,11 @@ You can devices from both API and Cloud. See settings of each battery for additi
 - This app uses the 'API over UDP' features as mentioned in the API documentation. 
 - The app is developed and tested with a Venus E battery system (firmware v153, communication module 202409090159). Let me know if any other models work as well!
 - When the device can't be auto-detected, please check if the Marstek Venus battery is powered on and connected to the same network as Homey.
-- In some occasions the Marstek Venus battery does not respond to the API request. If this happens for a longer period of time, try to restart the battery system. (use the BTE Test Tool)
 - Support for multiple Marstek Venus batteries is implemented, but since I only have one battery to test with, some is uncharted.
-- It seems opening the Marstek mobile blocks some of the UDP communication periodically.
 - Only UDP port 30000 is currently supported on the local API.
 - When upgrading the app, it might be needed to remove already added battery devices first and then adding them again. 
 - The Marstek Cloud API is undocumented, so things might change without notice.
-- Mode change messages are not always processed by battery, there is no build-in retry (yet).
+- Battery mode changes have an automatic retry for a maximum of 5 tries with a 15 seconds timeout.
 
 ## Known issues
 
@@ -83,3 +83,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 - Does not seem to work well in conjuction with CT002 or CT003, battery seems to stop communicating. 
 - Cloud data does not take back-up power port correctly into account (show 1 Watt)
 - Using Cloud device seems to log-out app (single login token only allowed by Marstek)
+
+# Troubleshooting
+
+The local API of battery has some communication issues. Not all UDP messages are answered and there seem to be some conflicts when using other methods to communicate with the battery at the same time. The communication seems to deteriorate over time until it stops completely. Users with firmware 154 report less problems. Communication can be kick-started by using the BLE Test Tool (https://rweijnen.github.io/marstek-venus-monitor/latest/) v2.0 under the 'Advances' tab using the 'System Reset' function. Note that power delivery will be interrupted for a brief moment, and after that the communication stack will respond again to all messages.
