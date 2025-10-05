@@ -2,10 +2,25 @@
 
 const Homey = require('homey');
 
+/**
+ * Represents a Marstek Venus device connected locally via UDP.
+ * The device listens for broadcast messages, keeps capabilities in sync,
+ * and exposes polling controls.
+ * @extends Homey.Device
+ */
 module.exports = class MarstekVenusDevice extends Homey.Device {
 
+    // Handler bound to the socket listener so it can be registered/unregistered.
+    handler = this.onMessage.bind(this);
+
+    //Identifier for the interval that updates the last received timestamp.
+    interval = null;
+
     /**
-     * onInit is called when the device is initialized.
+     * Called by Homey when the device is initialized.
+     * Starts listening to the shared UDP socket, resets capabilities,
+     * and schedules background polling.
+     * @returns {Promise<void>} Resolves once startup work completes.
      */
     async onInit() {
         if (this.getSetting("debug")) this.log('MarstekVenusDevice has been initialized');
@@ -20,8 +35,12 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
         this.startPolling();
     }
 
-    // Reset all capabilities to null so that they are invalidated and shown as unknown in Homey
-    // Also make sure they are added when device does not have capability; useful for version upgrades with new capabilites
+    /**
+     * Resets the registered capabilities to `null` so they appear as unknown in Homey.
+     * Also ensures each capability exists on the device, adding any that are missing
+     * to support upgrades that introduce new capabilities.
+     * @returns {Promise<void>} Resolves once all capabilities are synchronised.
+     */
     async resetCapabilities() {
         const capabilities = [
             'battery_charging_state',      // Charte state (Possible values: "idle", "charging", "discharging")
@@ -43,22 +62,28 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
         }
     }
 
-    // Create an handler that we can use to bind/unbind the onMessage function
-    handler = this.onMessage.bind(this);
-
-    // Start listening on messages received after broadcast
+    /**
+     * Registers the UDP message listener for this device on the shared socket.
+     * @returns {Promise<void>} Resolves when the listener has been registered.
+     */
     async startListening() {
         if (this.getSetting("debug")) this.log("Start listening");
         this.homey.app.getSocket().on(this.handler)
     }
 
-    // Stop listening on messages
+    /**
+     * Removes the UDP message listener for this device from the shared socket.
+     */
     stopListening() {
         if (this.getSetting("debug")) this.log("Stop listening");
         this.homey.app.getSocket().off(this.handler);
     }
 
-    // Start polling at regular intervals
+    /**
+     * Starts the periodic polling routine for the device.
+     * The driver initiates UDP broadcasts and an interval keeps the
+     * `last_message_received` capability updated.
+     */
     startPolling() {
         if (this.getSetting("debug")) this.log("Start polling");
         this.driver.pollStart(this.getSetting("src"));
@@ -71,8 +96,9 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
         }, 1000);
     }
 
-    // End the polling interval
-    interval = null;
+    /**
+     * Stops the periodic polling routine and clears the update interval.
+     */
     stopPolling() {
         if (this.getSetting("debug")) this.log("Stop polling");
         this.driver.pollStop(this.getSetting("src"));
@@ -80,9 +106,12 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     }
 
     /**
-     * Handle incoming UDP messages
-     * @param {any} json json object received from source
-     * @param {any} remote remote source address details
+     * Handles incoming UDP messages received by the shared socket.
+     * Updates device state when the payload belongs to this device and
+     * exposes diagnostic information when debug logging is enabled.
+     * @param {any} json JSON payload received from the UDP socket.
+     * @param {any} remote Metadata describing the remote sender (e.g. address).
+     * @returns {Promise<void>} Resolves once the payload has been processed.
      */
     timestamp = null;
     async onMessage(json, remote) {
@@ -157,7 +186,9 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     }
 
     /**
-     * onDeleted is called when the user deleted the device.
+     * Called when the user removes the device from Homey.
+     * Cleans up polling and socket listeners.
+     * @returns {Promise<void>} Resolves once cleanup finishes.
      */
     async onDeleted() {
         this.stopPolling();
@@ -165,6 +196,11 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
         if (this.getSetting("debug")) this.log('MarstekVenusDevice has been deleted');
     }
 
+    /**
+     * Called when the device instance is uninitialised by Homey.
+     * Cleans up background resources similar to {@link MarstekVenusDevice#onDeleted}.
+     * @returns {Promise<void>} Resolves once cleanup completes.
+     */
     async onUninit() {
         this.stopPolling();
         this.stopListening();
