@@ -4,8 +4,18 @@ const Homey = require('homey');
 const MarstekCloud = require('../../lib/marstek-cloud');
 const crypto = require('crypto');
 
+/**
+ * Driver for Marstek Venus devices connected via the Marstek cloud service.
+ * Manages pairing, credential reuse and provides access to shared cloud clients.
+ * @extends Homey.Driver
+ */
 module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
 
+    /**
+     * Called when the driver is initialised.
+     * Prepares state for pairing sessions and client caching.
+     * @returns {Promise<void>} Resolves when initialisation completes.
+     */
     async onInit() {
         this.log('MarstekVenusCloudDriver has been initialized');
         this._pairSessions = new Map();
@@ -13,12 +23,23 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
         this.debug = (process.env.DEBUG === '1');
     }
 
+    /**
+     * Called when the driver is uninitialised by Homey.
+     * Clears any cached sessions and clients to free resources.
+     * @returns {Promise<void>} Resolves once cleanup completes.
+     */
     async onUninit() {
         this.log('MarstekVenusCloudDriver has been uninitialized');
         this._pairSessions.clear();
         this._clients.clear();
     }
 
+    /**
+     * Handles a pairing session for the cloud driver.
+     * Sets up handlers for login, device listing and session teardown.
+     * @param {Object} session The pairing session provided by Homey.
+     * @returns {Promise<void>} Resolves once handlers have been registered.
+     */
     async onPair(session) {
         this._pairSessions.set(session, {});
 
@@ -72,7 +93,11 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
         });
     }
 
-    // Retrieve Marstek Cloud Client related to username
+    /**
+     * Retrieves or creates a cached Marstek cloud client for the provided credentials.
+     * @param {{ username: string, password: string }} credentials Cloud account credentials.
+     * @returns {MarstekCloud|null} The cached client instance or a newly created one.
+     */
     getClient(credentials) {
         // Check if there already a client
         const client = this._clients.get(credentials.username);
@@ -92,7 +117,11 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
         return null;
     }
 
-    // encode password using MD5
+    /**
+     * Encodes a plain-text password using MD5 hashing as required by the Marstek cloud API.
+     * @param {string} password Plain-text password to encode.
+     * @returns {string} The hashed password string.
+     */
     encode(password) {
         return crypto.createHash('md5').update(password).digest('hex');
     }
