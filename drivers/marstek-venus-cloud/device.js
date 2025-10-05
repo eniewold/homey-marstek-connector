@@ -29,7 +29,7 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
     async _loadConfiguration() {
         // Load credentials from store
         this._username = await this.getStoreValue('username');
-        this._password = await this.getStoreValue('password');  // MD5 Encoded
+        this._password = await this.getStoreValue('password');  // Already stored as MD5 Encoded
         this._devid = await this.getStoreValue('devid');
 
         if (!this._username || !this._password || !this._devid) {
@@ -87,7 +87,7 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
                 const diff = Date.now() - this.lastTimestamp;
                 await this.setCapabilityValue('last_message_received', parseInt(diff / 1000));
             }
-        }, 1000);
+        }, 5000);
 
     }
 
@@ -96,8 +96,8 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
             if (this.getSetting('debug')) this.log('[cloud] polling stopped');
             this.homey.clearInterval(this._pollInterval);
             this._pollInterval = null;
-            if (this.lastInterval) this.homey.clearInterval(this.lastInterval);
         }
+        if (this.lastInterval) this.homey.clearInterval(this.lastInterval);
     }
 
     async _poll() {

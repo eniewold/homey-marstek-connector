@@ -1,6 +1,19 @@
 {
   "type": "number",
-  "title": { "en": "Data age (sec)" },
+  "title": {
+    "en": "Data age (sec)",
+    "nl": "Gegevensleeftijd (sec)",
+    "da": "Data alder (sek)",
+    "de": "Datenalter (Sek)",
+    "es": "Edad de los datos (seg)",
+    "fr": "Âge des données (sec)",
+    "it": "Età dei dati (sec)",
+    "no": "Dataalder (sek)",
+    "sv": "Dataålder (sek)",
+    "pl": "Wiek danych (sek)",
+    "ru": "Возраст данных (сек)",
+    "ko": "데이터 연령 (초)"
+  },
   "getable": true,
   "setable": false,
   "uiComponent": "sensor",

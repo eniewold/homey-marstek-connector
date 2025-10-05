@@ -1,4 +1,7 @@
 ﻿{
+  "0.7.3": {
+    "en": "Cloud login could fail for users with multiple devices. Added some translations."
+  },
   "0.7.2": {
     "en": "Temperature for firmware 154 was reported incorrectly. Added retry meganism to the flow cards that set battery mode. Improved readability of some library classes."
   },

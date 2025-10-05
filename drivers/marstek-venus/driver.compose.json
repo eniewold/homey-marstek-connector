@@ -1,6 +1,17 @@
 {
   "name": {
-    "en": "Marstek Venus (API)"
+    "en": "Marstek Venus (API)",
+    "nl": "Marstek Venus (API)",
+    "da": "Marstek Venus (API)",
+    "de": "Marstek Venus (API)",
+    "es": "Marstek Venus (API)",
+    "fr": "Marstek Venus (API)",
+    "it": "Marstek Venus (API)",
+    "no": "Marstek Venus (API)",
+    "sv": "Marstek Venus (API)",
+    "pl": "Marstek Venus (API)",
+    "ru": "Marstek Venus (API)",
+    "ko": "마르스텍 비너스 (API)"
   },
   "class": "battery",
   "capabilities": [
@@ -23,13 +34,52 @@
   },
   "capabilitiesOptions": {
     "meter_power.imported": {
-      "title": { "en": "Charged (grid)" }
+      "title": {
+        "en": "Charged (grid)",
+        "nl": "Opgeladen (net)",
+        "da": "Opladet (net)",
+        "de": "Aufgeladen (Netz)",
+        "es": "Cargado (red)",
+        "fr": "Chargé (réseau)",
+        "it": "Carico (rete)",
+        "no": "Ladet (nett)",
+        "sv": "Laddad (nät)",
+        "pl": "Naładowany (sieć)",
+        "ru": "Заряжено (сеть)",
+        "ko": "충전됨 (그리드)"
+      }
     },
     "meter_power.exported": {
-      "title": { "en": "Discharged (grid)" }
+      "title": {
+        "en": "Discharged (grid)",
+        "nl": "Ontladen (net)",
+        "da": "Afladet (net)",
+        "de": "Entladen (Netz)",
+        "es": "Descargado (red)",
+        "fr": "Déchargé (réseau)",
+        "it": "Scaricato (rete)",
+        "no": "Utladet (nett)",
+        "sv": "Utladdad (nät)",
+        "pl": "Rozładowany (sieć)",
+        "ru": "Разряжено (сеть)",
+        "ko": "방전됨 (그리드)"
+      }
     },
     "meter_power.load": {
-      "title": { "en": "Load (or off-grid) consumed" }
+      "title": {
+        "en": "Load (or off-grid) consumed",
+        "nl": "Belasting (of off-grid) verbruikt",
+        "da": "Belastning (eller off-grid) forbrugt",
+        "de": "Last (oder off-grid) verbraucht",
+        "es": "Carga (u fuera de la red) consumida",
+        "fr": "Charge (ou hors réseau) consommée",
+        "it": "Carico (o off-grid) consumato",
+        "no": "Belastning (eller off-grid) forbrukt",
+        "sv": "Belastning (eller off-grid) förbrukad",
+        "pl": "Obciążenie (lub off-grid) zużyte",
+        "ru": "Потреблено (или вне сети)",
+        "ko": "로드(또는 오프 그리드) 소모됨"
+      }
     }
   },
   "platforms": [

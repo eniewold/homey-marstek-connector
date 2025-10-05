@@ -3,16 +3,51 @@
     "id": "debug",
     "type": "checkbox",
     "label": {
-      "en": "Enable more logging (for diagnostics reports)"
+      "en": "Enable more logging (for diagnostics reports)",
+      "nl": "Meer logging inschakelen (voor diagnoserapporten)",
+      "da": "Aktivér mere logning (til diagnose-rapporter)",
+      "de": "Mehr Protokollierung aktivieren (für Diagnoseberichte)",
+      "es": "Activar más registros (para informes de diagnóstico)",
+      "fr": "Activer plus de journalisation (pour les rapports de diagnostic)",
+      "it": "Abilita più registrazioni (per i rapporti diagnostici)",
+      "no": "Aktiver mer logging (for diagnostikkrapporter)",
+      "sv": "Aktivera mer loggning (för diagnostikrapporter)",
+      "pl": "Włącz więcej logowania (dla raportów diagnostycznych)",
+      "ru": "Включить больше логирования (для диагностических отчетов)",
+      "ko": "더 많은 로깅 활성화 (진단 보고서용)"
     },
-    "hint": { "en": "Turn this on to log extra details for troubleshooting received values for this device." },
+    "hint": {
+      "en": "Turn this on to log extra details for troubleshooting received values for this device.",
+      "nl": "Zet dit aan om extra details te loggen voor het oplossen van problemen met ontvangen waarden voor dit apparaat.",
+      "da": "Tænd for dette for at logge ekstra detaljer til fejlfinding af modtagne værdier for denne enhed.",
+      "de": "Aktivieren Sie dies, um zusätzliche Details zu protokollieren, die zur Fehlerbehebung bei empfangenen Werten für dieses Gerät erforderlich sind.",
+      "es": "Activa esto para registrar detalles adicionales para solucionar problemas con los valores recibidos para este dispositivo.",
+      "fr": "Activez ceci pour enregistrer des détails supplémentaires pour résoudre les problèmes de valeurs reçues pour cet appareil.",
+      "it": "Attiva questa opzione per registrare dettagli extra per la risoluzione dei problemi relativi ai valori ricevuti per questo dispositivo.",
+      "no": "Aktiver dette for å logge ekstra detaljer for feilsøking av mottatte verdier for denne enheten.",
+      "sv": "Slå på detta för att logga extra detaljer för att felsöka mottagna värden för denna enhet.",
+      "pl": "Włącz to, aby logować dodatkowe szczegóły do rozwiązywania problemów z otrzymanymi wartościami dla tego urządzenia.",
+      "ru": "Включите это, чтобы записывать дополнительные детали для устранения неполадок с полученными значениями для этого устройства.",
+      "ko": "이 장치의 수신된 값 문제 해결을 위해 추가 세부 정보를 로깅하려면 이 옵션을 켜세요."
+    },
     "value": false
   },
   {
     "id": "src",
     "type": "label",
     "label": {
-      "en": "Source label of UDP messages"
+      "en": "Source label of UDP messages",
+      "nl": "Bronlabel van UDP-berichten",
+      "da": "Kildemærke for UDP-beskeder",
+      "de": "Quellkennzeichen von UDP-Nachrichten",
+      "es": "Etiqueta de origen de mensajes UDP",
+      "fr": "Étiquette source des messages UDP",
+      "it": "Etichetta sorgente dei messaggi UDP",
+      "no": "Kildeetikett for UDP-meldinger",
+      "sv": "Källmärkning av UDP-meddelanden",
+      "pl": "Etykieta źródłowa wiadomości UDP",
+      "ru": "Исходная метка UDP-сообщений",
+      "ko": "UDP 메시지의 소스 레이블"
     },
     "value": ""
   },
@@ -20,16 +55,51 @@
     "id": "port",
     "type": "label",
     "label": {
-      "en": "UDP Port number"
+      "en": "UDP Port number",
+      "nl": "UDP Poortnummer",
+      "da": "UDP-portnummer",
+      "de": "UDP-Portnummer",
+      "es": "Número de puerto UDP",
+      "fr": "Numéro de port UDP",
+      "it": "Numero di porta UDP",
+      "no": "UDP-portnummer",
+      "sv": "UDP-portnummer",
+      "pl": "Numer portu UDP",
+      "ru": "Номер UDP-порта",
+      "ko": "UDP 포트 번호"
     },
     "value": "30000",
-    "hint": { "en": "This Homey App requires all batteries listed to port 30000" }
+    "hint": {
+      "en": "This Homey App requires all batteries listed to port 30000",
+      "nl": "Deze Homey-app vereist dat alle batterijen worden vermeld op poort 30000",
+      "da": "Denne Homey App kræver, at alle batterier er angivet til port 30000",
+      "de": "Diese Homey-App erfordert, dass alle Batterien auf Port 30000 gelistet sind",
+      "es": "Esta aplicación Homey requiere que todas las baterías se enumeren en el puerto 30000",
+      "fr": "Cette application Homey nécessite que toutes les piles soient listées sur le port 30000",
+      "it": "Questa app Homey richiede che tutte le batterie siano elencate sulla porta 30000",
+      "no": "Denne Homey-appen krever at alle batterier er oppført til port 30000",
+      "sv": "Denna Homey-app kräver att alla batterier listas på port 30000",
+      "pl": "Ta aplikacja Homey wymaga, aby wszystkie baterie były wymienione na porcie 30000",
+      "ru": "Это приложение Homey требует, чтобы все батареи были указаны на порту 30000",
+      "ko": "이 Homey 앱은 모든 배터리가 포트 30000에 나열되어야 합니다."
+    }
   },
   {
     "id": "model",
     "type": "label",
     "label": {
-      "en": "Model name"
+      "en": "Model name",
+      "nl": "Modelnaam",
+      "da": "Modellavn",
+      "de": "Modellname",
+      "es": "Nombre del modelo",
+      "fr": "Nom du modèle",
+      "it": "Nome del modello",
+      "no": "Modellnavn",
+      "sv": "Modellnamn",
+      "pl": "Nazwa modelu",
+      "ru": "Наименование модели",
+      "ko": "모델명"
     },
     "value": "(model)"
   },
@@ -37,7 +107,18 @@
     "id": "firmware",
     "type": "label",
     "label": {
-      "en": "Firmware"
+      "en": "Firmware",
+      "nl": "Firmware",
+      "da": "Firmware",
+      "de": "Firmware",
+      "es": "Firmware",
+      "fr": "Firmware",
+      "it": "Firmware",
+      "no": "Firmware",
+      "sv": "Firmware",
+      "pl": "Oprogramowanie układowe",
+      "ru": "Прошивка",
+      "ko": "펌웨어"
     },
     "value": "(unknown)"
   }

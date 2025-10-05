@@ -10,6 +10,7 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
         this.log('MarstekVenusCloudDriver has been initialized');
         this._pairSessions = new Map();
         this._clients = new Map();
+        this.debug = (process.env.DEBUG === '1');
     }
 
     async onUninit() {
@@ -76,6 +77,7 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
         // Check if there already a client
         const client = this._clients.get(credentials.username);
         if (!client) {
+            if (this.debug) this.log("Cloud client not found, create new instance with stored credentials.")
             const newClient = new MarstekCloud(
                 credentials.username,
                 credentials.password,
@@ -84,6 +86,7 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
             this._clients.set(credentials.username, newClient);
             return newClient;
         } else {
+            if (this.debug) this.log("Using available instance of cloud client.")
             return client;
         }
         return null;

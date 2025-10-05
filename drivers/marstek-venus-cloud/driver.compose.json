@@ -1,6 +1,17 @@
 {
   "name": {
-    "en": "Marstek Venus (Cloud)"
+    "en": "Marstek Venus (Cloud)",
+    "nl": "Marstek Venus (Cloud)",
+    "da": "Marstek Venus (Cloud)",
+    "de": "Marstek Venus (Cloud)",
+    "es": "Marstek Venus (Cloud)",
+    "fr": "Marstek Venus (Cloud)",
+    "it": "Marstek Venus (Cloud)",
+    "no": "Marstek Venus (Cloud)",
+    "sv": "Marstek Venus (Cloud)",
+    "pl": "Marstek Venus (Cloud)",
+    "ru": "Marstek Venus (Cloud)",
+    "ko": "Marstek Venus (Cloud)"
   },
   "class": "battery",
   "capabilities": [
@@ -15,13 +26,52 @@
   },
   "capabilitiesOptions": {
     "measure_power": {
-      "title": { "en": "Power Grid (W)" }
+      "title": {
+        "en": "Power Grid (W)",
+        "nl": "Stroomnet (W)",
+        "da": "Elnet (W)",
+        "de": "Stromnetz (W)",
+        "es": "Red Eléctrica (W)",
+        "fr": "Réseau Électrique (W)",
+        "it": "Rete Elettrica (W)",
+        "no": "Strømnett (W)",
+        "sv": "Kraftnät (W)",
+        "pl": "Sieć Elektryczna (W)",
+        "ru": "Электросеть (Вт)",
+        "ko": "전력망 (W)"
+      }
     },
     "measure_power.charge": {
-      "title": { "en": "Charge Grid (W)" }
+      "title": {
+        "en": "Charge Grid (W)",
+        "nl": "Laadnet (W)",
+        "da": "Ladningsnet (W)",
+        "de": "Ladenetz (W)",
+        "es": "Red de Carga (W)",
+        "fr": "Réseau de Charge (W)",
+        "it": "Rete di Carica (W)",
+        "no": "Ladenett (W)",
+        "sv": "Laddningsnät (W)",
+        "pl": "Sieć Ładowania (W)",
+        "ru": "Сеть Зарядки (Вт)",
+        "ko": "충전망 (W)"
+      }
     },
     "measure_power.discharge": {
-      "title": { "en": "Discharge Grid (W)" }
+      "title": {
+        "en": "Discharge Grid (W)",
+        "nl": "Ontlaadnet (W)",
+        "da": "Afladningsnet (W)",
+        "de": "Entladenetz (W)",
+        "es": "Red de Descarga (W)",
+        "fr": "Réseau de Décharge (W)",
+        "it": "Rete di Scarica (W)",
+        "no": "Utladningsnett (W)",
+        "sv": "Utladdningsnät (W)",
+        "pl": "Sieć Rozładowania (W)",
+        "ru": "Сеть Разрядки (Вт)",
+        "ko": "방전망 (W)"
+      }
     }
   },
   "platforms": [
@@ -40,10 +90,62 @@
       "id": "login_credentials",
       "template": "login_credentials",
       "options": {
-        "title": { "en": "Sign in to your Marstek account" },
-        "usernameLabel": { "en": "E-mail" },
-        "passwordLabel": { "en": "Password" },
-        "buttonLabel": { "en": "Sign in" }
+        "title": {
+          "en": "Sign in to your Marstek account",
+          "nl": "Log in op uw Marstek-account",
+          "da": "Log ind på din Marstek-konto",
+          "de": "Melden Sie sich bei Ihrem Marstek-Konto an",
+          "es": "Inicia sesión en tu cuenta de Marstek",
+          "fr": "Connectez-vous à votre compte Marstek",
+          "it": "Accedi al tuo account Marstek",
+          "no": "Logg inn på din Marstek-konto",
+          "sv": "Logga in på ditt Marstek-konto",
+          "pl": "Zaloguj się na swoje konto Marstek",
+          "ru": "Войдите в свою учетную запись Marstek",
+          "ko": "Marstek 계정에 로그인하세요"
+        },
+        "usernameLabel": {
+          "en": "E-mail",
+          "nl": "E-mail",
+          "da": "E-mail",
+          "de": "E-Mail",
+          "es": "Correo electrónico",
+          "fr": "E-mail",
+          "it": "E-mail",
+          "no": "E-post",
+          "sv": "E-post",
+          "pl": "E-mail",
+          "ru": "Эл. почта",
+          "ko": "이메일"
+        },
+        "passwordLabel": {
+          "en": "Password",
+          "nl": "Wachtwoord",
+          "da": "Adgangskode",
+          "de": "Passwort",
+          "es": "Contraseña",
+          "fr": "Mot de passe",
+          "it": "Password",
+          "no": "Passord",
+          "sv": "Lösenord",
+          "pl": "Hasło",
+          "ru": "Пароль",
+          "ko": "비밀번호"
+        },
+        "buttonLabel": {
+          "en": "Sign in",
+          "nl": "Inloggen",
+          "da": "Log på",
+          "de": "Anmelden",
+          "es": "Iniciar sesión",
+          "fr": "Se connecter",
+          "it": "Accedi",
+          "no": "Logg inn",
+          "sv": "Logga in",
+          "pl": "Zaloguj się",
+          "ru": "Войти",
+          "ko": "로그인"
+        }
       }
     },
     {

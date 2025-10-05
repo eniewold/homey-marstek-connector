@@ -1,10 +1,32 @@
 {
   "id": "marstek_passive_mode",
   "title": {
-    "en": "Set battery 'Passive' mode to Power (W) for (S) seconds"
+    "en": "Set battery 'Passive' mode to Power (W) for (S) seconds",
+    "nl": "Stel batterij 'Passieve' modus in op Vermogen (W) voor (S) seconden",
+    "da": "Indstil batteriets 'Passive' tilstand til Effekt (W) i (S) sekunder",
+    "de": "Stellen Sie den Batteriemodus 'Passiv' auf Leistung (W) für (S) Sekunden ein",
+    "es": "Configura el modo 'Pasivo' de la batería a Potencia (W) por (S) segundos",
+    "fr": "Définissez le mode 'Passif' de la batterie sur Puissance (W) pour (S) secondes",
+    "it": "Imposta la modalità 'Passiva' della batteria su Potenza (W) per (S) secondi",
+    "no": "Sett batteri 'Passiv' modus til Effekt (W) i (S) sekunder",
+    "sv": "Ställ in batteriets 'Passiva' läge till Effekt (W) i (S) sekunder",
+    "pl": "Ustaw tryb 'Pasywny' baterii na Moc (W) na (S) sekund",
+    "ru": "Установите режим 'Пассивный' батареи на мощность (Вт) на (S) секунд",
+    "ko": "배터리 '수동' 모드를 (S)초 동안 전력(W)으로 설정"
   },
   "titleFormatted": {
-    "en": "Set battery 'Passive' mode to [[power]] Watt for [[seconds]] seconds"
+    "en": "Set battery 'Passive' mode to [[power]] Watt for [[seconds]] seconds",
+    "nl": "Stel batterij 'Passieve' modus in op [[power]] Watt voor [[seconds]] seconden",
+    "da": "Indstil batteriets 'Passive' tilstand til [[power]] Watt i [[seconds]] sekunder",
+    "de": "Stellen Sie den Batteriemodus 'Passiv' auf [[power]] Watt für [[seconds]] Sekunden ein",
+    "es": "Configura el modo 'Pasivo' de la batería a [[power]] Watt por [[seconds]] segundos",
+    "fr": "Définissez le mode 'Passif' de la batterie sur [[power]] Watt pendant [[seconds]] secondes",
+    "it": "Imposta la modalità 'Passiva' della batteria su [[power]] Watt per [[seconds]] secondi",
+    "no": "Sett batteri 'Passiv' modus til [[power]] Watt i [[seconds]] sekunder",
+    "sv": "Ställ in batteriets 'Passiva' läge till [[power]] Watt i [[seconds]] sekunder",
+    "pl": "Ustaw tryb 'Pasywny' baterii na [[power]] Watt na [[seconds]] sekund",
+    "ru": "Установите режим 'Пассивный' батареи на [[power]] Ватт на [[seconds]] секунд",
+    "ko": "배터리 '수동' 모드를 [[seconds]]초 동안 [[power]] 와트로 설정"
   },
   "args": [
     {
@@ -16,7 +38,18 @@
       "name": "power",
       "type": "number",
       "label": {
-        "en": "Power (W)"
+        "en": "Power (W)",
+        "nl": "Vermogen (W)",
+        "da": "Effekt (W)",
+        "de": "Leistung (W)",
+        "es": "Potencia (W)",
+        "fr": "Puissance (W)",
+        "it": "Potenza (W)",
+        "no": "Effekt (W)",
+        "sv": "Effekt (W)",
+        "pl": "Moc (W)",
+        "ru": "Мощность (Вт)",
+        "ko": "전력 (W)"
       },
       "step": 1
     },
@@ -24,7 +57,18 @@
       "name": "seconds",
       "type": "number",
       "label": {
-        "en": "Seconds"
+        "en": "Seconds",
+        "nl": "Seconden",
+        "da": "Sekunder",
+        "de": "Sekunden",
+        "es": "Segundos",
+        "fr": "Secondes",
+        "it": "Secondi",
+        "no": "Sekunder",
+        "sv": "Sekunder",
+        "pl": "Sekundy",
+        "ru": "Секунды",
+        "ko": "초"
       },
       "min": 0,
       "step": 60
