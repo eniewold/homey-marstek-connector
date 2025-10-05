@@ -48,6 +48,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 ## Version History
 
+- 0.7.3 - Cloud login could fail for users with multiple devices. Added some translations.
 - 0.7.2 - Temperature for firmware 154 was reported incorrectly. Added retry meganism to the flow cards that set battery mode. Improved readability of some library classes.
 - 0.7.1 - Added flow card for changing the battery charging mode through local API.
 - 0.7.0 - Added support for a Marstek cloud driver that retrieves battery statistics using your Marstek cloud account credentials.
