@@ -120,8 +120,8 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
 
                 // Main battery temperature (In degrees celcius)
                 if (!isNaN(result.bat_temp)) {
-                    // Some batteries have different decimal multiplier
-                    result.bat_temp /= ((firmware >= 154) ? 1.0 : 10.0);
+                    // TODO: figure out what the actual multipliers are per firmware, for now, use sanity check
+                    if (result.bat_temp > 50) result.bat_temp /= 10.0;
                     await this.setCapabilityValue('measure_temperature', result.bat_temp);
                 }
 

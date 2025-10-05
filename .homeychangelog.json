@@ -1,4 +1,7 @@
 ﻿{
+  "0.7.4": {
+    "en": "Temperature reported by same firmware has different multiplier; sanity calculation added."
+  },
   "0.7.3": {
     "en": "Cloud login could fail for users with multiple devices. Added some translations."
   },
