@@ -1,6 +1,6 @@
 {
   "id": "com.niewold.marstek",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "compatibility": ">=12.5.0",
   "sdk": 3,
   "brandColor": "#555555",

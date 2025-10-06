@@ -1,6 +1,6 @@
 ﻿{
   "0.7.4": {
-    "en": "Temperature reported by same firmware has different multiplier; sanity calculation added."
+    "en": "Temperature reported by same firmware has different multiplier; sanity calculation added. Marstek Cloud login problems were not handled correctly. Requests for multiple batteries are not correctly cached."
   },
   "0.7.3": {
     "en": "Cloud login could fail for users with multiple devices. Added some translations. Improved readability of some source code."

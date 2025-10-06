@@ -88,14 +88,6 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
             await this.setUnavailable('Unable to authenticate with Marstek cloud');
             return;
         }
-
-        try {
-            await this._client.login();
-        } catch (err) {
-            this.error('Initial login failed:', err);
-            await this.setUnavailable('Unable to authenticate with Marstek cloud');
-            throw err;
-        }
     }
 
     /**
@@ -107,6 +99,7 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
         await this.setCapabilityValue('measure_power', null);
         await this.setCapabilityValue('measure_power.charge', null);
         await this.setCapabilityValue('measure_power.discharge', null);
+        await this.setCapabilityValue('last_message_received', null);
     }
 
     /**
@@ -151,11 +144,20 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
      */
     async _poll() {
         try {
-            const payload = await this._client.fetchDeviceStatus(this._devid);
-            await this._handleStatusPayload(payload);
-            if (!this.getAvailable()) await this.setAvailable();
+            // retrieve data of all devices
+            const payload = await this._client.fetchDeviceStatus();
+
+            // Filter correct device
+            const status = payload.find((device) => device.devid === this._devid);
+            if (status) {
+                await this._handleStatusPayload(status);
+                if (!this.getAvailable()) await this.setAvailable();
+            } else {
+                this.error('[cloud] Device details not found in payload for device', this._devid);
+                this._updateCapabilitiesWithNull();
+            }
         } catch (err) {
-            this.error('Error fetching Marstek cloud data:', err);
+            this.error('[cloud] Error fetching Marstek cloud data:', err);
             await this.setUnavailable('Unable to reach Marstek cloud.');
         }
     }
@@ -167,10 +169,10 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
      */
     async _handleStatusPayload(status) {
         if (!status) {
-            this.error("Payload not found or no data in payload");
+            this.error("[cloud] Payload not found or no data in payload", status);
             return;
         };
-        if (this.getSetting('debug')) this.log('[cloud] payload', JSON.stringify(status));
+        if (this.getSetting('debug')) this.log('[cloud] Device payload to proces', JSON.stringify(status));
 
         // Log report time
         this.lastTimestamp = new Date(status.report_time * 1000);

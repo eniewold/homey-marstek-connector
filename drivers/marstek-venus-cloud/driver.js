@@ -55,7 +55,13 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
 
             // Create a cloud client instance and store details into session (for other discovered devices)
             const client = this.getClient(credentials);
-            await client.login();
+            try {
+                if (this.debug) this.log("[cloud] Login during pairing; always request a new token");
+                await client.login();
+            } catch (err) {
+                this.error("Login failed:", err);
+                return false;
+            }
             this._pairSessions.set(session, { credentials, client });
             return true;
         });
@@ -102,7 +108,7 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
         // Check if there already a client
         const client = this._clients.get(credentials.username);
         if (!client) {
-            if (this.debug) this.log("Cloud client not found, create new instance with stored credentials.")
+            if (this.debug) this.log("[cloud] Client not found, create new instance with stored credentials.")
             const newClient = new MarstekCloud(
                 credentials.username,
                 credentials.password,
@@ -111,7 +117,7 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
             this._clients.set(credentials.username, newClient);
             return newClient;
         } else {
-            if (this.debug) this.log("Using available instance of cloud client.")
+            if (this.debug) this.log("[cloud] Using available instance of client, with token:", client.token);
             return client;
         }
         return null;
