@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 const Homey = require('homey');
 const MarstekSocket = require('./lib/marstek-api');

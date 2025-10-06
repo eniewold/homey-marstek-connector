@@ -59,7 +59,7 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
                 if (this.debug) this.log("[cloud] Login during pairing; always request a new token");
                 await client.login();
             } catch (err) {
-                this.error("Login failed:", err);
+                this.error("[cloud] Login failed:", err.message || err);
                 return false;
             }
             this._pairSessions.set(session, { credentials, client });
@@ -117,7 +117,8 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
             this._clients.set(credentials.username, newClient);
             return newClient;
         } else {
-            if (this.debug) this.log("[cloud] Using available instance of client, with token:", client.token);
+            if (this.debug) this.log("[cloud] Using available instance of client.");
+            client.password = credentials.password;
             return client;
         }
         return null;

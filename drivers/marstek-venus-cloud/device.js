@@ -157,7 +157,7 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
                 this._updateCapabilitiesWithNull();
             }
         } catch (err) {
-            this.error('[cloud] Error fetching Marstek cloud data:', err);
+            this.error('[cloud] Error fetching Marstek cloud data:', err.message || err);
             await this.setUnavailable('Unable to reach Marstek cloud.');
         }
     }

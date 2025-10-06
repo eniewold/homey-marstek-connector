@@ -1,4 +1,7 @@
 ﻿{
+  "0.7.5": {
+    "en": "Incorrect password for Marstek Cloud could not be corrected without removing app first. Technical errors on the Marstek Cloud service are not correctly caught."
+  },
   "0.7.4": {
     "en": "Temperature reported by same firmware has different multiplier; sanity calculation added. Marstek Cloud login problems were not handled correctly. Requests for multiple batteries are not correctly cached."
   },
