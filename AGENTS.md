@@ -17,14 +17,14 @@ These instructions apply to the entire repository.
 - Publishing to the Homey App store is done through the `homey run publish` command; note that this requires some user interaction and is not suitable for automation.
 
 ## Coding Standards
-- Use modern JavaScript (ES2019+) syntax that is compatible with Homey SDK v3.
+- Use modern Typescript (fallback to modern JavaScript ES2019+) syntax that is compatible with Homey SDK v3.
 - Use CommonJS standard for Javascript modules and definities.
 - When adding comments to any source code files, format them using valid JSDoc syntax.
 - Keep logging concise; prefer Homey's logging facilities where available and guard verbose logging behind debug flags/settings.
 - Preserve existing asynchronous patterns—await promises and avoid blocking I/O in the app lifecycle methods.
 
 ## File & Directory Guidelines
-- `app.json`: Keep versioning consistent. If you change user-facing behavior, consider whether the version number should be incremented and whether release notes (README) need updates.
+- `app.json`: Do not update this file in the root, since it is generated automatically. Always apply changes for this file in `.homeycompose/app.json` 
 - `locales/`: Add or update translation keys in every available language file when introducing new user-facing strings. Keys should remain consistent across languages (see https://apps.developer.homey.app/the-basics/app/internationalization)
 - `drivers/*`: Driver modules should export Homey driver/device classes with clear separation between pairing logic and runtime device behavior.
 - `lib/`: Shared utilities should remain side-effect free. Document exported functions with JSDoc and keep them reusable across drivers.

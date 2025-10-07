@@ -1,13 +1,29 @@
 'use strict';
 
-const Homey = require('homey');
+import Homey from 'homey'
+import type MarstekVenusCloudDriver from './driver'
+import type MarstekCloud from '../../lib/marstek-cloud'
 
 /**
  * Represents a Marstek Venus device connected via the Marstek cloud APIs.
  * Handles authentication, capability updates and periodic polling of cloud status.
  * @extends Homey.Device
  */
-module.exports = class MarstekVenusCloudDevice extends Homey.Device {
+export default class MarstekVenusCloudDevice extends Homey.Device {
+
+    // Private properties
+    private username?: string = undefined;
+    private password?: string = undefined; // Stored as MD5 Encoded
+    private devid?: string = undefined; // unique device id received from cloud
+    private client?: MarstekCloud = undefined;
+    private pollInterval?: NodeJS.Timeout = undefined;  // handle for interval used for polling data
+    private lastInterval?: NodeJS.Timeout = undefined;  // handle for interval used for updating last message received
+
+    // Timestamp last received details
+    private timestamp?: Date = undefined;
+
+    // Cast pointers to our app
+    private myDriver: MarstekVenusCloudDriver = this.driver as MarstekVenusCloudDriver;
 
     /**
      * Called when the device is initialised.
@@ -59,11 +75,11 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
      */
     async _loadConfiguration() {
         // Load credentials from store
-        this._username = await this.getStoreValue('username');
-        this._password = await this.getStoreValue('password');  // Already stored as MD5 Encoded
-        this._devid = await this.getStoreValue('devid');
+        this.username = await this.getStoreValue('username');
+        this.password = await this.getStoreValue('password');  
+        this.devid = await this.getStoreValue('devid');
 
-        if (!this._username || !this._password || !this._devid) {
+        if (!this.username || !this.password || !this.devid) {
             throw new Error('Missing cloud account credentials or device details. Please re-pair (remove and add) the device.');
         }
     }
@@ -75,15 +91,14 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
      */
     async _initialiseClient() {
         // Retrieve client related to the current credentials
-        this._client = this.driver.getClient(
+        this.client = this.myDriver.getClient(
             {
-                username: this._username,
-                password: this._password
-            },
-            this
+                username: this.username,
+                password: this.password
+            }
         );
 
-        if (!this._client) {
+        if (!this.client) {
             this.error('[cloud] No client available for these credentials');
             await this.setUnavailable('Unable to authenticate with Marstek cloud');
             return;
@@ -107,20 +122,21 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
      */
     _startPolling() {
         // Start retrieving details from cloud service
-        if (this._pollInterval) return;
+        if (this.pollInterval) return;
         if (this.getSetting('debug')) this.log('[cloud] polling started');
 
         // Poll every 60 seconds
-        this._pollInterval = this.homey.setInterval(() => this._poll(), 60000);
+        this.pollInterval = this.homey.setInterval(() => this._poll(), 60000);
 
         // Initial poll
         this._poll();
 
         // Also start updating the last received message capability
         this.lastInterval = this.homey.setInterval(async () => {
-            if (this.lastTimestamp) {
-                const diff = Date.now() - this.lastTimestamp;
-                await this.setCapabilityValue('last_message_received', parseInt(diff / 1000));
+            if (this.timestamp) {
+                const now = new Date();
+                const diff = (now.getTime() - this.timestamp.getTime());
+                await this.setCapabilityValue('last_message_received', Math.round(diff / 1000));
             }
         }, 5000);
 
@@ -130,10 +146,10 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
      * Stops the polling cycle and clears both the poll and last-message intervals.
      */
     _stopPolling() {
-        if (this._pollInterval) {
+        if (this.pollInterval) {
             if (this.getSetting('debug')) this.log('[cloud] polling stopped');
-            this.homey.clearInterval(this._pollInterval);
-            this._pollInterval = null;
+            this.homey.clearInterval(this.pollInterval);
+            this.pollInterval = undefined;
         }
         if (this.lastInterval) this.homey.clearInterval(this.lastInterval);
     }
@@ -145,19 +161,19 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
     async _poll() {
         try {
             // retrieve data of all devices
-            const payload = await this._client.fetchDeviceStatus();
+            const payload = await this.client?.fetchDeviceStatus();
 
             // Filter correct device
-            const status = payload.find((device) => device.devid === this._devid);
+            const status = payload.find((device: any) => device.devid === this.devid);
             if (status) {
                 await this._handleStatusPayload(status);
                 if (!this.getAvailable()) await this.setAvailable();
             } else {
-                this.error('[cloud] Device details not found in payload for device', this._devid);
+                this.error('[cloud] Device details not found in payload for device', this.devid);
                 this._updateCapabilitiesWithNull();
             }
         } catch (err) {
-            this.error('[cloud] Error fetching Marstek cloud data:', err.message || err);
+            this.error('[cloud] Error fetching Marstek cloud data:', (err as Error).message || err);
             await this.setUnavailable('Unable to reach Marstek cloud.');
         }
     }
@@ -167,7 +183,7 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
      * @param {any} status - Raw status payload returned by the cloud API.
      * @returns {Promise<void>} Resolves once the capability values have been updated.
      */
-    async _handleStatusPayload(status) {
+    async _handleStatusPayload(status: any) {
         if (!status) {
             this.error("[cloud] Payload not found or no data in payload", status);
             return;
@@ -175,7 +191,7 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
         if (this.getSetting('debug')) this.log('[cloud] Device payload to proces', JSON.stringify(status));
 
         // Log report time
-        this.lastTimestamp = new Date(status.report_time * 1000);
+        this.timestamp = new Date(status.report_time * 1000);
         if (this.getSetting('debug')) this.log('[cloud] Last cloud update:', new Date(status.report_time * 1000));
 
         // State of Charge (%)
@@ -187,5 +203,7 @@ module.exports = class MarstekVenusCloudDevice extends Homey.Device {
         await this.setCapabilityValue('measure_power.discharge', status.discharge);
     }
 
-
 };
+
+// Also use module.exports for Homey
+module.exports = MarstekVenusCloudDevice;

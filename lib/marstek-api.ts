@@ -1,40 +1,41 @@
 'use strict';
 
-const os = require('os');               // For resolving IP address
-const ip = require('ip');               // For converting broadcast IP address
-const dgram = require('dgram');         // For UDP binding and sending
+import os from 'os'
+import ip from 'ip'; // For converting broadcast IP address
+import dgram from 'dgram'               // For UDP binding and sending
 
 /**
  * @description Manages UDP socket communication specific for Marstek Venus home batteries
  * @class
  */
-module.exports = class MarstekSocket {
+export default class MarstekSocket {
+
+    // Private properties
+    private parent: any = undefined;
+    private port: number = 30000;
+    private connected: boolean = false;
+    private socket?: dgram.Socket;
+    private handlers: Array<Function> = [];
+    private debug: boolean = (process.env.DEBUG === '1');
 
     /**
      * Creates a new MarstekSocket instance.
      * @constructor
      * @param {object} parent - the Homey parent that is creating this class (for logging)
      */
-    constructor(parent) {
+    constructor(parent: any) {
         // Check if required parameters are passed
         if (!parent) throw new Error("[socket] Parent parameter required");
 
         // Remember our Homey parent object
         this.parent = parent;
-
-        // Default values
-        this.port = 30000;
-        this.connected = false;
-        this.socket = null;
-        this.handlers = [];
-        this.debug = (process.env.DEBUG === '1');
     }
 
     /**
      * Safe write to log (of Homey parent) with fallback to console
      * @param {...any} args
      */
-    log(...args) {
+    log(...args: any[]) {
         if (this.parent) {
             if (this.debug) this.parent.log('[socket]', ...args);
         } else {
@@ -46,7 +47,7 @@ module.exports = class MarstekSocket {
      * Safe write to error log (of Homey parent) with fallback to console
      * @param {...any} args
      */
-    error(...args) {
+    error(...args: any[]) {
         if (this.parent) {
             this.parent.error('[socket]', ...args);
         } else {
@@ -94,17 +95,17 @@ module.exports = class MarstekSocket {
                 // Bind to our IP address(es)
                 this.socket.bind({
                     port: this.port,    // Although variable, this is set to 30000
-                    address: null,      // make sure to bind to all local addresses    
+                    address: undefined,      // make sure to bind to all local addresses    
                     exclusive: true     // exclusive usage, we are the only one listening on this port
                 }, () => {
                     this.log('Socket bound to port', this.port);
                     // Make sure to receive all broadcasted messages (catch in case of binding problems)
                     try {
-                        this.socket.setBroadcast(true);
+                        this.socket?.setBroadcast(true);
                         // Signal that the binding is completed
                         this.connected = true;
                     } catch (err) {
-                        this.error('Could not set the broadcast flag:', err);
+                        this.error('Could not set the broadcast flag:', (err as Error).message || err);
                         this.disconnect();
                         reject(err)
                         return;
@@ -126,8 +127,8 @@ module.exports = class MarstekSocket {
                     this.connected = false;
                 });
 
-            } catch ({ name, message }) {
-                this.error('Error binding socket:', message);
+            } catch (err) {
+                this.error('Error binding socket:', (err as Error).message || err);
                 this.disconnect();
                 reject(err);
                 return;
@@ -143,13 +144,15 @@ module.exports = class MarstekSocket {
     getInterface() {
         const interfaces = os.networkInterfaces();
         for (const name of Object.keys(interfaces)) {
-            for (const iface of interfaces[name]) {
+            const ifaceList = interfaces[name];
+            if (!ifaceList) continue;
+            for (const iface of ifaceList) {
                 if (iface.family === 'IPv4' && !iface.internal) {
                     return iface;
                 }
             }
         }
-        return null;
+        return undefined;
     }
 
     /**
@@ -160,11 +163,11 @@ module.exports = class MarstekSocket {
         const iface = this.getInterface();
         if (iface) {
             const subnet = ip.subnet(iface.address, iface.netmask);
-            return subnet ? subnet.broadcastAddress : null;
+            return subnet ? subnet.broadcastAddress : undefined;
         } else {
             this.error("No external IPv4 interface found; broadcast address could not be determined");
         }
-        return null;
+        return undefined;
     }
 
     /**
@@ -173,14 +176,14 @@ module.exports = class MarstekSocket {
      */
     getLocalIPAddress() {
         const iface = this.getInterface();
-        return iface ? iface.address : null;
+        return iface ? iface.address : undefined;
     }
 
     /**
      * Broadcast a string message over the socket. Open socket when needed.
      * @param {string} message String message to transmit
      */
-    async broadcast(message) {
+    async broadcast(message: string) {
         await this.transmit(message);
     }
 
@@ -189,7 +192,7 @@ module.exports = class MarstekSocket {
      * @param {string} message String message to transmit
      * @param {string} address IP address to transmit to
      */
-    async send(message, address) {
+    async send(message: string, address: string) {
         // Check for address
         if (!address) throw new Error("[socket] No address given to transmit to");
         // Transmit
@@ -201,7 +204,7 @@ module.exports = class MarstekSocket {
      * @param {string} message String message to transmit
      * @param {string} [address] IP address to transmit to, leave empty to broadcast message
      */
-    async transmit(message, address) {
+    async transmit(message: string, address?: string) {
         // Try to connect, if not connected
         if (!this.connected) {
             try {
@@ -219,13 +222,13 @@ module.exports = class MarstekSocket {
         return new Promise((resolve, reject) => {
             try {
                 this.log("Transmit:", message);
-                const buffer = new Buffer.from(message);
-                this.socket.send(buffer, 0, buffer.length, this.port, address, (err, bytes) => {
+                const buffer = Buffer.from(message);
+                this.socket?.send(buffer, 0, buffer.length, this.port, address, (err, bytes) => {
                     if (err) {
                         this.error("Error transmitting message:", err, address);
                         reject(err);
                     } else {
-                        resolve();
+                        resolve(undefined);
                     }
                 });
             } catch (err) {
@@ -240,7 +243,7 @@ module.exports = class MarstekSocket {
      * Add a handler that needs to be called when messages are received
      * @param {Function} handler
      */
-    on(handler) {
+    on(handler: Function) {
         this.log("Handler added");
         if (!this.handlers.includes(handler)) {
             this.handlers.push(handler);  // won't add again
@@ -251,7 +254,7 @@ module.exports = class MarstekSocket {
      * Remove a handler that no longer needs to be called when messages are received
      * @param {Function} handler
      */
-    off(handler) {
+    off(handler: Function) {
         this.log("Handler removed");
         const index = this.handlers.indexOf(handler);
         if (index !== -1) {
@@ -264,12 +267,12 @@ module.exports = class MarstekSocket {
      * @param {any} json - json object with received message details
      * @param {dgram.RemoteInfo} remote - remote details of message sender
      */
-    async callback(json, remote) {
+    async callback(json: any, remote: dgram.RemoteInfo) {
         this.handlers.forEach(async (handler) => {
             // TODO: prevent non-existant device handler execution
             try {
                 if (typeof handler === 'function') {
-                    const result = await handler(json, remote);
+                    return await handler(json, remote);
                 }
             } catch (err) {
                 this.error("Handler callback error", err);
@@ -283,7 +286,7 @@ module.exports = class MarstekSocket {
     disconnect() {
         if (this.socket) {
             this.socket.close();
-            this.socket = null;
+            this.socket = undefined;
         }
         this.connected = false;
     }
