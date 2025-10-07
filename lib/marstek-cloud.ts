@@ -1,19 +1,29 @@
 ﻿'use strict';
 
-const { URL } = require('url');
-const https = require('https');
-const http = require('http');
+import { URL } from 'url'
+import https from 'https'
+import http from 'http'
 
 /**
  * @description Manages communication to the Marstek Cloud for authentication and device details retrieval.
  * @class
  */
-
-module.exports = class MarstekCloud {
+export default class MarstekCloud {
 
     // Singleton promises during requests to prevent async double calls
-    loginPromise = null;
-    devicePromise = null;
+    private loginPromise?: Promise<any> = undefined;
+    private devicePromise?: Promise<any> = undefined;
+
+    // Private properties
+    private username?: string = undefined;
+    private password?: string = undefined;
+    private baseUrl: string = 'https://eu.hamedata.com';
+    private logger: any = undefined;
+    private token?: string = undefined;
+    private devices?: Array<any> = undefined;
+    private lastDeviceStatus: any = undefined;
+    private debug: boolean = (process.env.DEBUG === '1');
+    private timestamp?: Date = undefined;
 
     /**
      * Creates a new MarstekSocket instance.
@@ -22,16 +32,19 @@ module.exports = class MarstekCloud {
      * @param {string} password MD5 enrypted password for the Marstek Cloud account
      * @param {object} [parent] The Homey parent that is creating this class (for logging)
      */
-    constructor(username, password, parent) {
+    constructor(username: string, password: string, parent: any) {
         if (!username || !password) throw new Error('Username and (encrypted) password are required');
         this.username = username;
         this.password = password;
-        this.baseUrl = 'https://eu.hamedata.com';
         this.logger = parent ?? console;
-        this.token = null;
-        this.devices = null;
-        this.lastDeviceStatus = null;           // last received device status is stored here for caching
-        this.debug = (process.env.DEBUG === '1');
+    }
+
+    /**
+     * Update the password in this instance, always use MD5 encoded string
+     * @param {string} newPassword MD5 encoded password string
+     */
+    setPassword(newPassword: string) {
+        this.password = newPassword;
     }
 
     /**
@@ -69,7 +82,7 @@ module.exports = class MarstekCloud {
         // singleton promise to catch multiple async logins
         this.loginPromise = (async () => {
             if (this.debug) this.logger.log("[cloud] Clearing stored token.");
-            this.token = null;
+            this.token = undefined;
 
             // Login is done by requesting devices using username and MD5 password
             try {
@@ -82,7 +95,6 @@ module.exports = class MarstekCloud {
                     this.token = response.token;
                 } else {
                     throw new Error("Login did not return a token");
-                    return null;
                 }
 
                 // Store the received devices
@@ -91,18 +103,16 @@ module.exports = class MarstekCloud {
                     this.devices = response.data;
                     return response;
                 } else {
-                    this.devices = null;
+                    this.devices = undefined;
                     throw new Error("Login did not return any devices.");
                 }
 
             } catch (err) {
-                this.logger.error(err.message || err);
+                this.logger.error((err as Error).message || err);
                 throw err;
             } finally {
-                this.loginPromise = null;
+                this.loginPromise = undefined;
             }
-
-            return null;
         })();
 
         return this.loginPromise;
@@ -122,9 +132,19 @@ module.exports = class MarstekCloud {
     async fetchDeviceStatus() {
 
         // make sure a single promise is active while logging in
-        if (this.devicePromise) {
-            if (this.debug) this.logger.log("[cloud] Device status request already being processed.");
+        if (this.devicePromise !== undefined) {
+            if (this.debug) this.logger.log("[cloud] Device status request already being processed.", this.devicePromise);
             return this.devicePromise;
+        }
+
+        // Check if last response is within cache (call outside promise due to concurrency)
+        if (this.lastDeviceStatus && this.timestamp) {
+            const now = new Date();
+            const diff = (now.getTime() - this.timestamp.getTime());
+            if (diff < 58000) {
+                if (this.debug) this.logger.log("[cloud] Using cached device status response");
+                return this.lastDeviceStatus;
+            }
         }
 
         // Singleton promise to prevent multiple calls at same time
@@ -134,12 +154,6 @@ module.exports = class MarstekCloud {
                 if (!this.token) {
                     if (this.debug) this.logger.log("[cloud] No token found, request a new token first");
                     await this.login();
-                }
-
-                // Check if last response is within cache
-                if (this.lastDeviceStatus && this.timestamp && ((new Date() - this.timestamp) < 59000)) {
-                    if (this.debug) this.logger.log("[cloud] Using cached device status response");
-                    return this.lastDeviceStatus;
                 }
 
                 // Request latest device details
@@ -166,15 +180,15 @@ module.exports = class MarstekCloud {
                 if (this.debug) this.logger.log("[cloud] Device status details received", JSON.stringify(response.data));
 
                 // Resolve to received response
-                return this.lastDeviceStatus;
+                return response.data;
 
             } catch (err) {
-                this.logger.error('[cloud] Failed to fetch device status: ', err.message ?? err);
+                this.logger.error('[cloud] Failed to fetch device status: ', (err as Error).message || err);
                 if (err) throw err;
             } finally {
-                this.devicePromise = null;
+                this.devicePromise = undefined;
             }
-            return null;
+            return undefined;
         })();
 
         return this.devicePromise;
@@ -217,14 +231,14 @@ module.exports = class MarstekCloud {
      * @param {string} [method] HTTP method (default to GET)
      * @returns {Promise<any>} resolved when request is completed and return the JSON data received as parsed object
      */
-    async request(path, method) {
+    async request(path: string, method: string = 'GET'): Promise<any> {
         if (!path) throw new Error('A path is required');
         const url = new URL(path, this.baseUrl);
         const httpModule = url.protocol === 'https:' ? https : http;
 
         return new Promise((resolve, reject) => {
             const request = {
-                method: method || "GET",
+                method: method,
                 protocol: url.protocol,
                 hostname: url.hostname,
                 port: url.port,
@@ -243,15 +257,15 @@ module.exports = class MarstekCloud {
                         // Empty response
                         if (!data) {
                             this.logger.error('[cloud] Empty response received');
-                            return resolve(null);
+                            return resolve(undefined);
                         }
                         // Finally parse and resolve
                         const parsed = JSON.parse(data);
                         resolve(parsed);
                         return parsed;
                     } catch (err) {
-                        this.logger.error("Exception during request: ", err.message || err);
-                        reject(err.message || err);
+                        this.logger.error("Exception during request: ", (err as Error).message || err);
+                        reject(err);
                     }
                 });
             });

@@ -1,9 +1,14 @@
 ﻿'use strict';
 
-const Homey = require('homey');
-const MarstekSocket = require('./lib/marstek-api');
+import Homey from 'homey';
 
-module.exports = class MarstekBatteryAPI extends Homey.App {
+// Use require for esModule class instances
+import MarstekSocket from './lib/marstek-api';
+
+export default class MarstekBatteryContoller extends Homey.App {
+
+    // instance of socket handler class
+    private socket?: MarstekSocket = undefined;
 
     /**
      * onInit is called when the app is initialized.
@@ -16,7 +21,7 @@ module.exports = class MarstekBatteryAPI extends Homey.App {
             this.log('MarstekBatteryAPI has been unloaded');
             if (this.socket) {
                 this.socket.destroy();
-                this.socket = null;
+                this.socket = undefined;
             }
         });
     }
@@ -29,7 +34,7 @@ module.exports = class MarstekBatteryAPI extends Homey.App {
         // Make sure the socket instance is cleaned and removed
         if (this.socket) {
             this.socket.destroy();
-            this.socket = null;
+            this.socket = undefined;
         }
     }
 
@@ -37,10 +42,13 @@ module.exports = class MarstekBatteryAPI extends Homey.App {
      * Retrieve an single instance of the Marstek Battery socket helper
      * @returns {MarstekSocket} the singleton instance of a MarstekSocket class
      */
-    getSocket() {
+    public getSocket() {
         // Create a socket instance, used for communication by all devices
         if (!this.socket) this.socket = new MarstekSocket(this);
-        return this.socket ?? null;
+        return this.socket ?? undefined;
     }
 
 };
+
+// Also use module.exports for Homey
+module.exports = MarstekBatteryContoller;

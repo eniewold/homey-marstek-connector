@@ -1,6 +1,9 @@
 ﻿'use strict';
 
-const Homey = require('homey');
+import Homey from 'homey'
+import dgram from 'dgram'               // For UDP binding and sending
+import MarstekBatteryContoller from '../../app'
+import MarstekVenusDriver from './driver'
 
 /**
  * Represents a Marstek Venus device connected locally via UDP.
@@ -8,13 +11,20 @@ const Homey = require('homey');
  * and exposes polling controls.
  * @extends Homey.Device
  */
-module.exports = class MarstekVenusDevice extends Homey.Device {
+export default class MarstekVenusDevice extends Homey.Device {
 
     // Handler bound to the socket listener so it can be registered/unregistered.
-    handler = this.onMessage.bind(this);
+    private handler = this.onMessage.bind(this);
 
     //Identifier for the interval that updates the last received timestamp.
-    interval = null;
+    private interval?: NodeJS.Timeout = undefined;
+
+    // Cast pointer to our app
+    private myApp: MarstekBatteryContoller = this.homey.app as MarstekBatteryContoller;
+    private myDriver: MarstekVenusDriver = this.driver as MarstekVenusDriver;
+
+    // Timestamp last received details
+    private timestamp?: Date = undefined;
 
     /**
      * Called by Homey when the device is initialized.
@@ -68,7 +78,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
      */
     async startListening() {
         if (this.getSetting("debug")) this.log("Start listening");
-        this.homey.app.getSocket().on(this.handler)
+        this.myApp.getSocket().on(this.handler)
     }
 
     /**
@@ -76,7 +86,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
      */
     stopListening() {
         if (this.getSetting("debug")) this.log("Stop listening");
-        this.homey.app.getSocket().off(this.handler);
+        this.myApp.getSocket().off(this.handler);
     }
 
     /**
@@ -86,14 +96,15 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
      */
     startPolling() {
         if (this.getSetting("debug")) this.log("Start polling");
-        this.driver.pollStart(this.getSetting("src"));
+        this.myDriver.pollStart(this.getSetting("src"));
         // Also start updating the last received message capability
         this.interval = this.homey.setInterval(async () => {
             if (this.timestamp) {
-                const diff = Date.now() - this.timestamp;
-                await this.setCapabilityValue('last_message_received', parseInt(diff / 1000));
+                const now = new Date();
+                const diff = (now.getTime() - this.timestamp.getTime());
+                await this.setCapabilityValue('last_message_received', Math.round(diff / 1000));
             }
-        }, 1000);
+        }, 5000);
     }
 
     /**
@@ -101,7 +112,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
      */
     stopPolling() {
         if (this.getSetting("debug")) this.log("Stop polling");
-        this.driver.pollStop(this.getSetting("src"));
+        this.myDriver.pollStop(this.getSetting("src"));
         if (this.interval) this.homey.clearInterval(this.interval);
     }
 
@@ -113,8 +124,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
      * @param {any} remote Metadata describing the remote sender (e.g. address).
      * @returns {Promise<void>} Resolves once the payload has been processed.
      */
-    timestamp = null;
-    async onMessage(json, remote) {
+    async onMessage(json: any, remote: dgram.RemoteInfo) {
         // Check if device is still present
         if (!this.getAvailable()) {
             this.error('Device is deleted or not available (yet)');
@@ -144,7 +154,7 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
                 const result = json.result;
 
                 // Remember our timestamp for last message received
-                this.timestamp = Date.now();
+                this.timestamp = new Date();
                 await this.setCapabilityValue('last_message_received', 0);       // number of seconds the last received message
 
                 // Main battery temperature (In degrees celcius)
@@ -208,3 +218,6 @@ module.exports = class MarstekVenusDevice extends Homey.Device {
     }
 
 };
+
+// Also use module.exports for Homey
+module.exports = MarstekVenusDevice;

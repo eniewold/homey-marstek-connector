@@ -1,15 +1,22 @@
 'use strict';
 
-const Homey = require('homey');
-const MarstekCloud = require('../../lib/marstek-cloud');
-const crypto = require('crypto');
+import Homey from 'homey'
+import crypto from 'crypto'
+
+// Use require for esModule class instances
+import MarstekCloud from '../../lib/marstek-cloud';
 
 /**
  * Driver for Marstek Venus devices connected via the Marstek cloud service.
  * Manages pairing, credential reuse and provides access to shared cloud clients.
  * @extends Homey.Driver
  */
-module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
+export default class MarstekVenusCloudDriver extends Homey.Driver {
+
+    // Private properties
+    private pairSessions: Map<any, any> = new Map();
+    private clients: Map<string, MarstekCloud> = new Map();
+    private debug: boolean = (process.env.DEBUG === '1');
 
     /**
      * Called when the driver is initialised.
@@ -18,9 +25,6 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
      */
     async onInit() {
         this.log('MarstekVenusCloudDriver has been initialized');
-        this._pairSessions = new Map();
-        this._clients = new Map();
-        this.debug = (process.env.DEBUG === '1');
     }
 
     /**
@@ -30,8 +34,8 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
      */
     async onUninit() {
         this.log('MarstekVenusCloudDriver has been uninitialized');
-        this._pairSessions.clear();
-        this._clients.clear();
+        this.pairSessions.clear();
+        this.clients.clear();
     }
 
     /**
@@ -40,8 +44,8 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
      * @param {Object} session The pairing session provided by Homey.
      * @returns {Promise<void>} Resolves once handlers have been registered.
      */
-    async onPair(session) {
-        this._pairSessions.set(session, {});
+    async onPair(session: Homey.Driver.PairSession) {
+        this.pairSessions.set(session, {});
 
         session.setHandler('login', async ({ username, password }) => {
             // Make sure to encode password immediately
@@ -57,17 +61,17 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
             const client = this.getClient(credentials);
             try {
                 if (this.debug) this.log("[cloud] Login during pairing; always request a new token");
-                await client.login();
+                await client?.login();
             } catch (err) {
-                this.error("[cloud] Login failed:", err.message || err);
+                this.error("[cloud] Login failed:", (err as Error).message || err);
                 return false;
             }
-            this._pairSessions.set(session, { credentials, client });
+            this.pairSessions.set(session, { credentials, client });
             return true;
         });
 
         session.setHandler('list_devices', async () => {
-            const state = this._pairSessions.get(session);
+            const state = this.pairSessions.get(session);
             if (!state || !state.client) throw new Error('Not authenticated');
             const devices = await state.client.fetchDevices();
             if (!devices || devices.length === 0) {
@@ -75,7 +79,7 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
             }
 
             // Map received devices into known format
-            return devices.map((device) => ({
+            return devices.map((device: any) => ({
                 name: device.name,
                 data: {
                     id: device.devid,
@@ -95,7 +99,7 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
         });
 
         session.setHandler('disconnect', async () => {
-            this._pairSessions.delete(session);
+            this.pairSessions.delete(session);
         });
     }
 
@@ -104,9 +108,14 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
      * @param {{ username: string, password: string }} credentials Cloud account credentials.
      * @returns {MarstekCloud|null} The cached client instance or a newly created one.
      */
-    getClient(credentials) {
+    getClient(credentials: { username?: string, password?: string }) {
+        // Check if username and password are given
+        if (!credentials.username || !credentials.password) {
+            throw new Error('Please enter both username and password');
+        }
+
         // Check if there already a client
-        const client = this._clients.get(credentials.username);
+        const client = this.clients.get(credentials.username);
         if (!client) {
             if (this.debug) this.log("[cloud] Client not found, create new instance with stored credentials.")
             const newClient = new MarstekCloud(
@@ -114,14 +123,14 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
                 credentials.password,
                 this                    // pass our Homey Driver object for logging method access
             );
-            this._clients.set(credentials.username, newClient);
+            this.clients.set(credentials.username, newClient);
             return newClient;
         } else {
             if (this.debug) this.log("[cloud] Using available instance of client.");
-            client.password = credentials.password;
+            client.setPassword(credentials.password);
             return client;
         }
-        return null;
+        return undefined;
     }
 
     /**
@@ -129,8 +138,11 @@ module.exports = class MarstekVenusCloudDriver extends Homey.Driver {
      * @param {string} password Plain-text password to encode.
      * @returns {string} The hashed password string.
      */
-    encode(password) {
+    encode(password: string) {
         return crypto.createHash('md5').update(password).digest('hex');
     }
 
 };
+
+// Also use module.exports for Homey
+module.exports = MarstekVenusCloudDriver;

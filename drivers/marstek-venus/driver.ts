@@ -1,13 +1,18 @@
 'use strict';
 
-const Homey = require('homey');
+import Homey from 'homey'
+import dgram from 'dgram'               // For UDP binding and sending
+import MarstekBatteryContoller from '../../app'
 
 /**
  * Driver responsible for managing Marstek Venus devices that communicate over UDP.
  * It provides device discovery, background polling, flow card actions and command handling.
  * @extends Homey.Driver
  */
-module.exports = class MarstekVenusDriver extends Homey.Driver {
+export default class MarstekVenusDriver extends Homey.Driver {
+
+    // Cast pointer to our app
+    myApp: MarstekBatteryContoller = this.homey.app as MarstekBatteryContoller;
 
     // Index of the message currently being broadcast.
     pollMessage = 0;
@@ -24,13 +29,13 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
     ];
 
     // Interval handle for the poll loop.
-    interval = null;
+    interval?: NodeJS.Timeout = undefined;
 
     // Message identifier counter used to keep requests unique.
     pollId = 9000;
 
     // Identifiers of devices currently participating in polling.
-    pollDevices = []
+    pollDevices: Array<Homey.Device> = []
 
     /**
      * Called when the driver is initialised.
@@ -48,7 +53,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      */
     async onUninit() {
         this.log('MarstekVenusDriver has been uninitialized');
-        await this.homey.app.getSocket().disconnect();
+        await this.myApp.getSocket().disconnect();
     }
 
     /**
@@ -66,7 +71,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the message has been broadcast.
      */
     async poll() {
-        const socket = this.homey.app.getSocket();
+        const socket = this.myApp.getSocket();
         if (socket) {
             try {
                 const pollMessage = this.pollMessages[this.pollMessage];
@@ -83,7 +88,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * Adds a device to the poll list and starts the polling interval if necessary.
      * @param {string} device - Unique identifier of the device to poll.
      */
-    pollStart(device) {
+    pollStart(device: Homey.Device) {
         this.pollDevices.push(device);
         if (!this.interval) {
             this.log("Started background polling");
@@ -96,14 +101,14 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * Removes a device from the poll list and stops the interval when no devices remain.
      * @param {string} device - Unique identifier of the device to stop polling for.
      */
-    pollStop(device) {
+    pollStop(device: Homey.Device) {
         // Remove the device from the polling devices
         const index = this.pollDevices.indexOf(device);
         if (index !== -1) this.pollDevices.splice(index, 1);
         // When no more devices are left; stop interval polling
         if (this.interval && this.pollDevices.length === 0) {
             this.homey.clearInterval(this.interval);
-            this.interval = null;
+            this.interval = undefined;
             this.log("Stopped background polling");
         }
     }
@@ -112,21 +117,49 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * Registers listeners for the flow action cards supplied by the driver.
      * @returns {Promise<void>} Resolves once the listeners are registered.
      */
-    async registerFlowListeners() {
+    async registerFlowListeners(): Promise<void> {
         // Inline function to register handlers
-        const register = (id, handler) => {
+        const register = (id: string, handler: Function) => {
             const card = this.homey.flow.getActionCard(id);
-            card.registerRunListener(async (args) => {
+            card.registerRunListener(async (args: any) => {
                 await handler(args);
                 return true;
             });
         };
 
-        // Make sure to register all flow handlers
-        register('marstek_auto_mode', async ({ device }) => this.setModeAuto(device));
-        register('marstek_ai_mode', async ({ device }) => this.setModeAI(device));
-        register('marstek_manual_mode', async ({ device, start_time, end_time, days, power, enable }) => this.setModeManual(device, start_time, end_time, days, power, enable));
-        register('marstek_passive_mode', async ({ device, power, seconds }) => this.setModePassive(device, power, seconds));
+        // Explicitly type the argument objects for each flow card
+        register('marstek_auto_mode', async ({ device }: { device: Homey.Device }) => this.setModeAuto(device));
+        register('marstek_ai_mode', async ({ device }: { device: Homey.Device }) => this.setModeAI(device));
+        register(
+            'marstek_manual_mode',
+            async ({
+                device,
+                start_time,
+                end_time,
+                days,
+                power,
+                enable
+            }: {
+                device: Homey.Device,
+                start_time: string,
+                end_time: string,
+                days: string[],
+                power: number,
+                enable: boolean
+            }) => this.setModeManual(device, start_time, end_time, days, power, enable)
+        );
+        register(
+            'marstek_passive_mode',
+            async ({
+                device,
+                power,
+                seconds
+            }: {
+                device: Homey.Device,
+                power: number | string,
+                seconds: number | string
+            }) => this.setModePassive(device, power, seconds)
+        );
     }
 
     /**
@@ -134,7 +167,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * @param {Homey.device} device - Target device instance.
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
-    async setModeAuto(device) {
+    async setModeAuto(device: Homey.Device) {
         const config = {
             mode: "Auto",
             auto_cfg: {
@@ -149,7 +182,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * @param {Homey.device} device - Target device instance.
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
-    async setModeAI(device) {
+    async setModeAI(device: Homey.Device) {
         const config = {
             mode: "AI",
             ai_cfg: {
@@ -189,9 +222,9 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * @param {boolean} enable Whether the manual schedule should be enabled.
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
-    async setModeManual(device, start_time, end_time, days, power, enable) {
+    async setModeManual(device: Homey.Device, start_time: string, end_time: string, days: string[], power: number, enable: boolean) {
         let bitArray = [..."00000000"];
-        days.forEach((day) => { bitArray[parseInt(day)] = "1" });
+        days.forEach((day: string) => { bitArray[parseInt(day)] = "1" });
         const bitString = bitArray.join("");
         let bitValue = parseInt(bitString, 2);
         const config = {
@@ -231,7 +264,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * @param {number|string} seconds Cooldown duration in seconds (can be provided as string from flow).
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
-    async setModePassive(device, power, seconds) {
+    async setModePassive(device: Homey.Device, power: number|string, seconds: number|string) {
         const numericPower = Number(power);
         const numericSeconds = Number(seconds);
 
@@ -261,7 +294,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the device confirms the configuration.
      * @throws {Error} When the device rejects the configuration or all retries fail.
      */
-    async setModeConfiguration(device, config) {
+    async setModeConfiguration(device: Homey.Device, config: object) {
         const maxRetries = 5;
         let attempt = 0;
         let lastError;
@@ -284,7 +317,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
                 lastError = err;
                 attempt++;
                 if (attempt < maxRetries) {
-                    this.log(`Retrying setModeConfiguration (attempt ${attempt + 1}/${maxRetries}) due to error:`, err.message);
+                    this.log(`Retrying setModeConfiguration (attempt ${attempt + 1}/${maxRetries}) due to error:`, (err as Error).message || err);
                 }
             }
         }
@@ -301,8 +334,8 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<any>} Resolves with the JSON payload returned by the device.
      * @throws {Error} When the socket or device address are missing, or the operation times out.
      */
-    async sendCommand(device, method, params = {}, timeout = 15000) {
-        const socket = this.homey.app.getSocket();
+    async sendCommand(device: Homey.Device, method: string, params = {}, timeout = 15000) {
+        const socket = this.myApp.getSocket();
         const address = device.getStoreValue("address");
         if (!socket) throw new Error('Socket connection is not available.');
         if (!address) throw new Error('Device IP address it not available. Re-pair device or wait for first response from battery.');
@@ -316,7 +349,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
         };
 
         return await new Promise((resolve, reject) => {
-            const handler = (json, remote) => {
+            const handler = (json: any, remote: dgram.RemoteInfo) => {
                 if (json.id === unique) {
                     cleanup();
                     if (json && json.result) {
@@ -340,7 +373,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
 
             socket.on(handler);
 
-            socket.send(JSON.stringify(payload), address).catch((err) => {
+            socket.send(JSON.stringify(payload), address).catch((err: Error) => {
                 cleanup();
                 reject(err);
             });
@@ -351,13 +384,13 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
      * Discovers Marstek Venus devices by broadcasting a detection message and collecting responses.
      * @returns {Promise<Array<{name: string, data: {id: string}, settings: object, store: object}>>} Resolves with the discovered devices.
      */
-    async broadcastDetect() {
-        let devices = [];
-        const socket = this.homey.app.getSocket();
+    async broadcastDetect(): Promise<Array<any>> {
+        let devices: Array<any> = [];
+        const socket = this.myApp.getSocket();
         return new Promise((resolve, reject) => {
 
             // Handler for messages received
-            const handler = (json, remote) => {
+            const handler = (json: any, remote: dgram.RemoteInfo) => {
                 // Always log received data during detection
                 this.log(`Received for ${json.src}:`, JSON.stringify(json));                
                 // Only further check messages that have the correct properties
@@ -398,7 +431,7 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
                     socket.off(handler);
                     resolve(devices);
                 }, 9000);
-            }).catch((reason) => {
+            }).catch((reason: Error) => {
                 this.error('Error broadcasting message:', reason);
                 socket.off(handler);
                 reject(reason);
@@ -407,3 +440,6 @@ module.exports = class MarstekVenusDriver extends Homey.Driver {
     }
 
 };
+
+// Also use module.exports for Homey
+module.exports = MarstekVenusDriver;

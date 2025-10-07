@@ -1,4 +1,7 @@
 ﻿{
+  "0.8.0": {
+    "en": "Code structure changes and github cleanup."
+  },
   "0.7.5": {
     "en": "Incorrect password for Marstek Cloud could not be corrected without removing app first. Technical errors on the Marstek Cloud service are not correctly caught."
   },
