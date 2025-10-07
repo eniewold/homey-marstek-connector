@@ -1,4 +1,7 @@
 ﻿{
+  "0.7.6": {
+    "en": "Cloud data stopped updating when initial response of Marstek Cloud service was slow, causing a concurrency problem."
+  },
   "0.7.5": {
     "en": "Incorrect password for Marstek Cloud could not be corrected without removing app first. Technical errors on the Marstek Cloud service are not correctly caught."
   },
