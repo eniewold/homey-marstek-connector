@@ -1,5 +1,3 @@
-'use strict';
-
 import Homey from 'homey'
 import crypto from 'crypto'
 

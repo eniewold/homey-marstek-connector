@@ -1,8 +1,6 @@
-'use strict';
-
 import Homey from 'homey'
 import dgram from 'dgram'               // For UDP binding and sending
-import MarstekBatteryContoller from '../../app'
+import MarstekSocket from '../../lib/marstek-api';
 
 /**
  * Driver responsible for managing Marstek Venus devices that communicate over UDP.
@@ -12,30 +10,27 @@ import MarstekBatteryContoller from '../../app'
 export default class MarstekVenusDriver extends Homey.Driver {
 
     // Cast pointer to our app
-    myApp: MarstekBatteryContoller = this.homey.app as MarstekBatteryContoller;
+    private socket?: MarstekSocket = undefined;
 
     // Index of the message currently being broadcast.
-    pollMessage = 0;
-
-    // Delay between poll broadcasts in milliseconds.
-    pollWaitTime = 15009;
+    private pollMessage: number = 0;
 
     // Rotating list of messages that should be broadcast to request device status.
-    pollMessages = [
+    private pollMessages = [
+        { method: "ES.GetStatus", params: { id: 0 } },
         { method: "ES.GetStatus", params: { id: 0 } },
         { method: "Bat.GetStatus", params: { id: 0 } },
-        { method: "ES.GetStatus", params: { id: 0 } },
         { method: "ES.GetStatus", params: { id: 0 } },
     ];
 
     // Interval handle for the poll loop.
-    interval?: NodeJS.Timeout = undefined;
+    private pollTimeout?: NodeJS.Timeout = undefined;
 
     // Message identifier counter used to keep requests unique.
-    pollId = 9000;
+    private pollId: number = Math.round(new Date().getTime() / 1000);
 
     // Identifiers of devices currently participating in polling.
-    pollDevices: Array<Homey.Device> = []
+    private pollDevices: Array<Homey.Device> = []
 
     /**
      * Called when the driver is initialised.
@@ -53,7 +48,11 @@ export default class MarstekVenusDriver extends Homey.Driver {
      */
     async onUninit() {
         this.log('MarstekVenusDriver has been uninitialized');
-        await this.myApp.getSocket().disconnect();
+        // Make sure to destroy the socket instance
+        if (this.socket) {
+            this.socket.destroy();
+            this.socket = undefined;
+        }
     }
 
     /**
@@ -67,11 +66,21 @@ export default class MarstekVenusDriver extends Homey.Driver {
     }
 
     /**
+     * Retrieve an single instance of the Marstek Battery socket helper
+     * @returns {MarstekSocket} the singleton instance of a MarstekSocket class
+     */
+    public getSocket() {
+        // Create a socket instance, used for communication by all devices
+        if (!this.socket) this.socket = new MarstekSocket(this);
+        return this.socket ?? undefined;
+    }
+
+    /**
      * Broadcasts a status request to the connected devices based on the rotating poll configuration.
      * @returns {Promise<void>} Resolves once the message has been broadcast.
      */
     async poll() {
-        const socket = this.myApp.getSocket();
+        const socket = this.getSocket();
         if (socket) {
             try {
                 const pollMessage = this.pollMessages[this.pollMessage];
@@ -90,9 +99,10 @@ export default class MarstekVenusDriver extends Homey.Driver {
      */
     pollStart(device: Homey.Device) {
         this.pollDevices.push(device);
-        if (!this.interval) {
-            this.log("Started background polling");
-            this.interval = this.homey.setInterval(async () => this.poll(), this.pollWaitTime);
+        if (!this.pollTimeout) {
+            const interval = this.getPollInterval();
+            this.log("Started background polling with interval", interval);
+            this.pollTimeout = this.homey.setInterval(async () => this.poll(), interval);
             this.poll()
         }
     }
@@ -106,11 +116,39 @@ export default class MarstekVenusDriver extends Homey.Driver {
         const index = this.pollDevices.indexOf(device);
         if (index !== -1) this.pollDevices.splice(index, 1);
         // When no more devices are left; stop interval polling
-        if (this.interval && this.pollDevices.length === 0) {
-            this.homey.clearInterval(this.interval);
-            this.interval = undefined;
+        if (this.pollTimeout && this.pollDevices.length === 0) {
+            this.homey.clearInterval(this.pollTimeout);
+            this.pollTimeout = undefined;
             this.log("Stopped background polling");
         }
+    }
+
+    /**
+     * Update the poll interval based on settings of all devices (only if polling is started)
+     * Called by devices when setting is changed
+     */
+    pollIntervalUpdate() {
+        if (this.pollTimeout) {
+            this.homey.clearInterval(this.pollTimeout);
+            const ms = this.getPollInterval();
+            this.pollTimeout = this.homey.setInterval(async () => this.poll(), ms);
+            this.log("Updated background polling with interval", ms);
+        }
+    }
+
+    /**
+     * Retrieve the minimum interval settings from the devices (in milliseconds)
+     * @returns
+     */
+    getPollInterval(): number {
+        const devices = this.getDevices();
+        let interval = 60; // default interval
+        devices.forEach((device) => {
+            // if settings is not found, default to 15 since devices used this before setting was introduced
+            const seconds = device.getSetting("interval") || 15;    
+            if (seconds < interval) interval = seconds;
+        })
+        return (interval * 1000) + Math.round(Math.random() * 100);
     }
 
     /**
@@ -330,12 +368,12 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @param {Homey.device} device Target device instance.
      * @param {string} method RPC method to invoke.
      * @param {object} [params={}] Parameters to include in the payload.
-     * @param {number} [timeout=15000] Time in milliseconds to wait for a response.
+     * @param {number} [timeout=10000] Time in milliseconds to wait for a response.
      * @returns {Promise<any>} Resolves with the JSON payload returned by the device.
      * @throws {Error} When the socket or device address are missing, or the operation times out.
      */
-    async sendCommand(device: Homey.Device, method: string, params = {}, timeout = 15000) {
-        const socket = this.myApp.getSocket();
+    async sendCommand(device: Homey.Device, method: string, params = {}, timeout = 10000) {
+        const socket = this.getSocket();
         const address = device.getStoreValue("address");
         if (!socket) throw new Error('Socket connection is not available.');
         if (!address) throw new Error('Device IP address it not available. Re-pair device or wait for first response from battery.');
@@ -386,7 +424,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
      */
     async broadcastDetect(): Promise<Array<any>> {
         let devices: Array<any> = [];
-        const socket = this.myApp.getSocket();
+        const socket = this.getSocket();
         return new Promise((resolve, reject) => {
 
             // Handler for messages received

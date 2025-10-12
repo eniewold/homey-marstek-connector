@@ -48,8 +48,10 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 ## Version History
 
-- 0.7.6 - Cloud data stopped updating when initial response of Marstek Cloud service was slow, causing a concurrency problem.
-- 0.7.5 - Incorrect password for Marstek Cloud could not be corrected without removing app first. Technical errors on the Marstek Cloud service are not correctly caught. **[current TEST release]**
+- 0.8.1 - Added settings to disable polling for data from local API, but flows sending battery commands are still possible, to alleviate communication issues when used together with CT002/CT003.
+- 0.8.0 - Code structure changes and github cleanup. Converted source to TypeScript only.
+- 0.7.6 - **[current LIVE release]** Cloud data stopped updating when initial response of Marstek Cloud service was slow, causing a concurrency problem.
+- 0.7.5 - Incorrect password for Marstek Cloud could not be corrected without removing app first. Technical errors on the Marstek Cloud service are not correctly caught.
 - 0.7.4 - Temperature reported by same firmware has different multiplier; sanity calculation added. Marstek Cloud login problems were not handled correctly.
 - 0.7.3 - Cloud login could fail for users with multiple devices. Added some translations.
 - 0.7.2 - Temperature for firmware 154 was reported incorrectly. Added retry meganism to the flow cards that set battery mode. Improved readability of some library classes.
@@ -59,7 +61,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 - 0.6.2 - Firmware setting was stored as incorrect settings type.
 - 0.6.1 - Firmware 154 seems to communicate values with a different multipliers. The app now detects the firmware and corrects this.
 - 0.6.0 - Auto re-connect implemented; retry port binding at every broadcast when listener is no longer available. Fixed errors on multiple devices trying to start connecting at the same time. Couple of other minor bugs in several places fixed.
-- 0.5.7 - **[current LIVE release]** Correctly implemented setting of Homey capabilities as async calls.
+- 0.5.7 - Correctly implemented setting of Homey capabilities as async calls.
 - 0.5.6 - Scope seems no longer available during close event handling, so logging close event is now hard-coded to console.
 - 0.5.5 - The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App.
 - 0.5.4 - Log structure changed to try to catch connectivity problems. Solved problem in clean-up function.

@@ -1,5 +1,3 @@
-'use strict';
-
 import Homey from 'homey'
 import type MarstekVenusCloudDriver from './driver'
 import type MarstekCloud from '../../lib/marstek-cloud'

@@ -1,5 +1,3 @@
-'use strict';
-
 import os from 'os'
 import ip from 'ip'; // For converting broadcast IP address
 import dgram from 'dgram'               // For UDP binding and sending

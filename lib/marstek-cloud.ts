@@ -1,6 +1,4 @@
-﻿'use strict';
-
-import { URL } from 'url'
+﻿import { URL } from 'url'
 import https from 'https'
 import http from 'http'
 

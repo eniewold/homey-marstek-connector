@@ -1,8 +1,5 @@
-﻿'use strict';
-
-import Homey from 'homey'
+﻿import Homey from 'homey'
 import dgram from 'dgram'               // For UDP binding and sending
-import MarstekBatteryContoller from '../../app'
 import MarstekVenusDriver from './driver'
 
 /**
@@ -17,10 +14,9 @@ export default class MarstekVenusDevice extends Homey.Device {
     private handler = this.onMessage.bind(this);
 
     //Identifier for the interval that updates the last received timestamp.
-    private interval?: NodeJS.Timeout = undefined;
+    private timeout?: NodeJS.Timeout = undefined;
 
     // Cast pointer to our app
-    private myApp: MarstekBatteryContoller = this.homey.app as MarstekBatteryContoller;
     private myDriver: MarstekVenusDriver = this.driver as MarstekVenusDriver;
 
     // Timestamp last received details
@@ -41,8 +37,12 @@ export default class MarstekVenusDevice extends Homey.Device {
         // Default capability values
         await this.resetCapabilities();
 
-        // Start polling at regular intervals
-        this.startPolling();
+        if (this.getSetting("poll") !== false) {
+            // Update the driver interval
+            this.myDriver.pollIntervalUpdate();
+            // Start polling at regular intervals
+            this.startPolling();
+        }
     }
 
     /**
@@ -78,7 +78,7 @@ export default class MarstekVenusDevice extends Homey.Device {
      */
     async startListening() {
         if (this.getSetting("debug")) this.log("Start listening");
-        this.myApp.getSocket().on(this.handler)
+        this.myDriver.getSocket().on(this.handler)
     }
 
     /**
@@ -86,7 +86,7 @@ export default class MarstekVenusDevice extends Homey.Device {
      */
     stopListening() {
         if (this.getSetting("debug")) this.log("Stop listening");
-        this.myApp.getSocket().off(this.handler);
+        this.myDriver.getSocket().off(this.handler);
     }
 
     /**
@@ -98,7 +98,7 @@ export default class MarstekVenusDevice extends Homey.Device {
         if (this.getSetting("debug")) this.log("Start polling");
         this.myDriver.pollStart(this.getSetting("src"));
         // Also start updating the last received message capability
-        this.interval = this.homey.setInterval(async () => {
+        this.timeout = this.homey.setInterval(async () => {
             if (this.timestamp) {
                 const now = new Date();
                 const diff = (now.getTime() - this.timestamp.getTime());
@@ -113,7 +113,7 @@ export default class MarstekVenusDevice extends Homey.Device {
     stopPolling() {
         if (this.getSetting("debug")) this.log("Stop polling");
         this.myDriver.pollStop(this.getSetting("src"));
-        if (this.interval) this.homey.clearInterval(this.interval);
+        if (this.timeout) this.homey.clearInterval(this.timeout);
     }
 
     /**
@@ -193,6 +193,28 @@ export default class MarstekVenusDevice extends Homey.Device {
             this.error('Error processing incoming message:', error);
             return;
         }
+    }
+
+    /**
+     * Called by Homey when settings are changed. Will make sure that polling is disabled according to setting.
+     * @param {any} event Homey populated structure with old and new sttings
+     */
+    async onSettings(event: any) {
+        if (event.changedKeys.includes("poll")) {
+            if (event.newSettings.poll !== false) {
+                this.startPolling();
+            } else {
+                this.stopPolling();
+                this.resetCapabilities();
+            }
+        }
+        // If interval is changed, schedule a poll interval update because settings is not yet changed
+        if (event.changedKeys.includes("interval")) {
+            this.homey.setTimeout(() => {
+                this.myDriver.pollIntervalUpdate();
+            }, 1000);
+        }
+
     }
 
     /**

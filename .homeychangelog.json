@@ -1,6 +1,9 @@
 ﻿{
+  "0.8.1": {
+    "en": "Added settings to disable polling for data from local API, but flows sending battery commands are still possible, to alleviate communication issues when used together with CT002/CT003."
+  },
   "0.8.0": {
-    "en": "Code structure changes and github cleanup."
+    "en": "Code structure changes and github cleanup. Converted source to TypeScript only."
   },
   "0.7.6": {
     "en": "Cloud data stopped updating when initial response of Marstek Cloud service was slow, causing a concurrency problem."

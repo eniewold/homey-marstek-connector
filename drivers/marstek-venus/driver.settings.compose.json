@@ -1,5 +1,35 @@
 [
   {
+    "type": "group",
+    "label": { "en": "Battery data retrieval (polling) settings" },
+    "children": [
+      {
+        "id": "poll",
+        "type": "checkbox",
+        "label": {
+          "en": "Enable (periodic retrieval)"
+        },
+        "hint": {
+          "en": "Turn this off if you only want to use command flows (Turn off for all batteries to reduce local API communication problems)."
+        },
+        "value": true
+      },
+      {
+        "id": "interval",
+        "type": "number",
+        "label": { "en": "Poll frequency (lowest)" },
+        "hint": {
+          "en": "Interval data is request from ALL batteries (lowest interval value is used, make sure to update settings of all batteries)"
+        },
+        "value": 60,
+        "min": 15,
+        "units": {
+          "en": "seconds"
+        }
+      }
+    ]
+  },
+  {
     "id": "debug",
     "type": "checkbox",
     "label": {
@@ -33,93 +63,66 @@
     "value": false
   },
   {
-    "id": "src",
-    "type": "label",
-    "label": {
-      "en": "Source label of UDP messages",
-      "nl": "Bronlabel van UDP-berichten",
-      "da": "Kildemærke for UDP-beskeder",
-      "de": "Quellkennzeichen von UDP-Nachrichten",
-      "es": "Etiqueta de origen de mensajes UDP",
-      "fr": "Étiquette source des messages UDP",
-      "it": "Etichetta sorgente dei messaggi UDP",
-      "no": "Kildeetikett for UDP-meldinger",
-      "sv": "Källmärkning av UDP-meddelanden",
-      "pl": "Etykieta źródłowa wiadomości UDP",
-      "ru": "Исходная метка UDP-сообщений",
-      "ko": "UDP 메시지의 소스 레이블"
-    },
-    "value": ""
-  },
-  {
-    "id": "port",
-    "type": "label",
-    "label": {
-      "en": "UDP Port number",
-      "nl": "UDP Poortnummer",
-      "da": "UDP-portnummer",
-      "de": "UDP-Portnummer",
-      "es": "Número de puerto UDP",
-      "fr": "Numéro de port UDP",
-      "it": "Numero di porta UDP",
-      "no": "UDP-portnummer",
-      "sv": "UDP-portnummer",
-      "pl": "Numer portu UDP",
-      "ru": "Номер UDP-порта",
-      "ko": "UDP 포트 번호"
-    },
-    "value": "30000",
-    "hint": {
-      "en": "This Homey App requires all batteries listed to port 30000",
-      "nl": "Deze Homey-app vereist dat alle batterijen worden vermeld op poort 30000",
-      "da": "Denne Homey App kræver, at alle batterier er angivet til port 30000",
-      "de": "Diese Homey-App erfordert, dass alle Batterien auf Port 30000 gelistet sind",
-      "es": "Esta aplicación Homey requiere que todas las baterías se enumeren en el puerto 30000",
-      "fr": "Cette application Homey nécessite que toutes les piles soient listées sur le port 30000",
-      "it": "Questa app Homey richiede che tutte le batterie siano elencate sulla porta 30000",
-      "no": "Denne Homey-appen krever at alle batterier er oppført til port 30000",
-      "sv": "Denna Homey-app kräver att alla batterier listas på port 30000",
-      "pl": "Ta aplikacja Homey wymaga, aby wszystkie baterie były wymienione na porcie 30000",
-      "ru": "Это приложение Homey требует, чтобы все батареи были указаны на порту 30000",
-      "ko": "이 Homey 앱은 모든 배터리가 포트 30000에 나열되어야 합니다."
-    }
-  },
-  {
-    "id": "model",
-    "type": "label",
-    "label": {
-      "en": "Model name",
-      "nl": "Modelnaam",
-      "da": "Modellavn",
-      "de": "Modellname",
-      "es": "Nombre del modelo",
-      "fr": "Nom du modèle",
-      "it": "Nome del modello",
-      "no": "Modellnavn",
-      "sv": "Modellnamn",
-      "pl": "Nazwa modelu",
-      "ru": "Наименование модели",
-      "ko": "모델명"
-    },
-    "value": "(model)"
-  },
-  {
-    "id": "firmware",
-    "type": "label",
-    "label": {
-      "en": "Firmware",
-      "nl": "Firmware",
-      "da": "Firmware",
-      "de": "Firmware",
-      "es": "Firmware",
-      "fr": "Firmware",
-      "it": "Firmware",
-      "no": "Firmware",
-      "sv": "Firmware",
-      "pl": "Oprogramowanie układowe",
-      "ru": "Прошивка",
-      "ko": "펌웨어"
-    },
-    "value": "(unknown)"
+    "type": "group",
+    "label": { "en": "Device details (read ony)" },
+    "children": [
+      {
+        "id": "src",
+        "type": "label",
+        "label": {
+          "en": "IP source (auto determined)"
+        },
+        "value": ""
+      },
+      {
+        "id": "port",
+        "type": "label",
+        "label": {
+          "en": "UDP Port number (fixed)"
+        },
+        "value": "30000",
+        "hint": {
+          "en": "This Homey App requires all batteries set to UDP port 30000"
+        }
+      },
+      {
+        "id": "model",
+        "type": "label",
+        "label": {
+          "en": "Model name",
+          "nl": "Modelnaam",
+          "da": "Modellavn",
+          "de": "Modellname",
+          "es": "Nombre del modelo",
+          "fr": "Nom du modèle",
+          "it": "Nome del modello",
+          "no": "Modellnavn",
+          "sv": "Modellnamn",
+          "pl": "Nazwa modelu",
+          "ru": "Наименование модели",
+          "ko": "모델명"
+        },
+        "value": "(model)"
+      },
+      {
+        "id": "firmware",
+        "type": "label",
+        "label": {
+          "en": "Firmware",
+          "nl": "Firmware",
+          "da": "Firmware",
+          "de": "Firmware",
+          "es": "Firmware",
+          "fr": "Firmware",
+          "it": "Firmware",
+          "no": "Firmware",
+          "sv": "Firmware",
+          "pl": "Oprogramowanie układowe",
+          "ru": "Прошивка",
+          "ko": "펌웨어"
+        },
+        "value": "(unknown)"
+      }
+    ]
   }
 ]
