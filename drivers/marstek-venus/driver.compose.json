@@ -94,19 +94,6 @@
     "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
   },
   "pair": [
-    {
-      "id": "list_devices",
-      "template": "list_devices",
-      "navigation": {
-        "next": "add_devices"
-      },
-      "options": {
-        "multiple": true
-      }
-    },
-    {
-      "id": "add_devices",
-      "template": "add_devices"
-    }
+    { "id": "custom_settings", "template": "custom" }
   ]
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="/homey.js" data-origin="settings"></script>
+  <style>
+    body { font-family: sans-serif; padding: 16px; }
+    label { display: block; margin-top: 12px; }
+    input { width: 100%; padding: 8px; margin-top: 4px; }
+    button { margin-top: 16px; padding: 10px 16px; }
+  </style>
+</head>
+<body>
+  <h1>Battery Setup</h1>
+  <label>Polling Interval (seconds)</label>
+  <input id="interval" type="number" min="5" value="60" />
+  <label>UDP Port</label>
+  <input id="port" type="number" value="48899" />
+  <button id="save">Continue</button>
+
+  <script>
+    document.getElementById('save').addEventListener('click', async () => {
+      const data = {
+        interval: parseInt(document.getElementById('interval').value, 10),
+        port: parseInt(document.getElementById('port').value, 10)
+      };
+      await Homey.emit('saveSettings', data);
+      Homey.done();
+    });
+  </script>
+</body>
+</html>

@@ -56,13 +56,25 @@ export default class MarstekVenusDriver extends Homey.Driver {
     }
 
     /**
-     * Handles the `list_devices` pairing view request by broadcasting discovery messages.
-     * @returns {Promise<Array<{name: string, data: {id: string}, settings: object, store: object}>>}
-     * Resolves with the list of devices available for pairing.
+     * Handles the custom pairing flow by persisting shared settings before device discovery begins.
+     * @param {Homey.Driver.Session} session Active pairing session for the driver.
+     * @returns {Promise<void>} Resolves once the pairing handlers are registered.
      */
-    async onPairListDevices() {
-        // Broadcast and detect marstek devices
-        return await this.broadcastDetect();
+    async onPair(session: Homey.Driver.Session): Promise<void> {
+        this.log('Custom pairing started');
+
+        session.setHandler('saveSettings', async (data: { interval?: number; port?: number }) => {
+            this.log('Received shared settings:', data);
+            if (typeof data?.interval === 'number' && !Number.isNaN(data.interval)) {
+                this.homey.settings.set('default_poll_interval', data.interval);
+            }
+            if (typeof data?.port === 'number' && !Number.isNaN(data.port)) {
+                this.homey.settings.set('default_udp_port', data.port);
+            }
+            return true;
+        });
+
+        session.setHandler('list_devices', async () => this.broadcastDetect());
     }
 
     /**
