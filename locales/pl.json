@@ -1,0 +1,8 @@
+{
+  "settings": {
+    "title": "Domyślne ustawienia baterii",
+    "subtitle": "Przed rozpoczęciem wykrywania, wprowadź domyślne ustawienia dla nowo odkrytych baterii:",
+    "pollInterval": "Domyślny interwał sprawdzania (sekundy)",
+    "pollEnabled": "Włącz sprawdzanie domyślnie"
+  }
+}

@@ -1,1 +1,8 @@
-{}
+{
+  "settings": {
+    "title": "Default Battery Settings",
+    "subtitle": "Before the discovery is started, please enter default settings for newly discovered batteries:",
+    "pollInterval": "Default polling interval (seconds)",
+    "pollEnabled": "Enable polling by default"
+  }
+}

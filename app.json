@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.niewold.marstek",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "compatibility": ">=12.5.0",
   "sdk": 3,
   "brandColor": "#555555",
@@ -9,10 +9,32 @@
     "local"
   ],
   "name": {
-    "en": "Marstek Battery Connector"
+    "en": "Marstek Battery Connector",
+    "nl": "Marstek Batterijconnector",
+    "da": "Marstek Batterikonnektor",
+    "de": "Marstek Batteriekonnektor",
+    "es": "Conector de Batería Marstek",
+    "fr": "Connecteur de Batterie Marstek",
+    "it": "Connettore di Batteria Marstek",
+    "no": "Marstek Batterikontakt",
+    "sv": "Marstek Batterikontakt",
+    "pl": "Złącze Baterii Marstek",
+    "ru": "Соединитель Аккумулятора Marstek",
+    "ko": "마르스텍 배터리 커넥터"
   },
   "description": {
-    "en": "Monitor, control and automate your Marstek home battery"
+    "en": "Monitor, control and automate your Marstek home battery",
+    "nl": "Monitoren, beheren en automatiseren van uw Marstek-thuisbatterij",
+    "da": "Overvåg, styr og automatiser din Marstek-hjemmebatteri",
+    "de": "Überwachen, steuern und automatisieren Sie Ihre Marstek-Heimbatterie",
+    "es": "Monitorea, controla y automatiza tu batería doméstica Marstek",
+    "fr": "Surveillez, contrôlez et automatisez votre batterie domestique Marstek",
+    "it": "Monitora, controlla e automatizza la tua batteria domestica Marstek",
+    "no": "Overvåk, kontroller og automatiser Marstek-hjemmebatteriet ditt",
+    "sv": "Övervaka, kontrollera och automatisera ditt Marstek-hem batteri",
+    "pl": "Monitoruj, kontroluj i automatyzuj swoją domową baterię Marstek",
+    "ru": "Мониторинг, управление и автоматизация домашней батареи Marstek",
+    "ko": "마르스텍 홈 배터리를 모니터링, 제어 및 자동화하세요"
   },
   "category": [
     "energy"
@@ -82,10 +104,32 @@
       {
         "id": "marstek_manual_mode",
         "title": {
-          "en": "Set battery mode to 'Manual'"
+          "en": "Set battery mode to 'Manual'",
+          "nl": "Stel batterijweiser in op 'Handmatig'",
+          "da": "Indstil batteritilstand til 'Manuel'",
+          "de": "Batteriemodus auf 'Manuell' einstellen",
+          "es": "Establecer el modo de batería en 'Manual'",
+          "fr": "Définir le mode de batterie sur 'Manuel'",
+          "it": "Imposta la modalità batteria su 'Manuale'",
+          "no": "Sett batterimodus til 'Manuell'",
+          "sv": "Ställ in batteriläge på 'Manuell'",
+          "pl": "Ustaw tryb baterii na 'Ręczny'",
+          "ru": "Установить режим батареи на 'Ручной'",
+          "ko": "'수동'으로 배터리 모드 설정"
         },
         "titleFormatted": {
-          "en": "Set battery mode to 'Manual' using from [[start_time]] to [[end_time]] on [[days]] with [[power]] Watt and enable [[enable]]"
+          "en": "Set battery mode to 'Manual' using from [[start_time]] to [[end_time]] on [[days]] with [[power]] Watt and enable [[enable]]",
+          "nl": "Stel batterijweiser in op 'Handmatig' van [[start_time]] tot [[end_time]] op [[days]] met [[power]] Watt en inschakelen [[enable]]",
+          "da": "Indstil batteritilstand til 'Manuel' fra [[start_time]] til [[end_time]] på [[days]] med [[power]] Watt og aktiver [[enable]]",
+          "de": "Batteriemodus auf 'Manuell' einstellen von [[start_time]] bis [[end_time]] an [[days]] mit [[power]] Watt und aktivieren [[enable]]",
+          "es": "Establecer el modo de batería en 'Manual' desde [[start_time]] hasta [[end_time]] en [[days]] con [[power]] Vatios y habilitar [[enable]]",
+          "fr": "Définir le mode de batterie sur 'Manuel' de [[start_time]] à [[end_time]] sur [[days]] avec [[power]] Watt et activer [[enable]]",
+          "it": "Imposta la modalità batteria su 'Manuale' da [[start_time]] a [[end_time]] su [[days]] con [[power]] Watt e abilita [[enable]]",
+          "no": "Sett batterimodus til 'Manuell' fra [[start_time]] til [[end_time]] på [[days]] med [[power]] Watt og aktiver [[enable]]",
+          "sv": "Ställ in batteriläge på 'Manuell' från [[start_time]] till [[end_time]] på [[days]] med [[power]] Watt och aktivera [[enable]]",
+          "pl": "Ustaw tryb baterii na 'Ręczny' od [[start_time]] do [[end_time]] na [[days]] z [[power]] Wattem i włącz [[enable]]",
+          "ru": "Установить режим батареи на 'Ручной' с [[start_time]] до [[end_time]] по [[days]] с [[power]] Ватт и включить [[enable]]",
+          "ko": "[[start_time]]에서 [[end_time]]까지 [[days]]에 [[power]] 와트로 '수동'으로 배터리 모드 설정 및 [[enable]]"
         },
         "args": [
           {
@@ -97,19 +141,52 @@
             "name": "start_time",
             "type": "time",
             "title": {
-              "en": "Start time"
+              "en": "Start time",
+              "nl": "Starttijd",
+              "da": "Starttid",
+              "de": "Startzeit",
+              "es": "Hora de inicio",
+              "fr": "Heure de début",
+              "it": "Ora di inizio",
+              "no": "Starttid",
+              "sv": "Starttid",
+              "pl": "Czas rozpoczęcia",
+              "ru": "Время начала",
+              "ko": "시작 시간"
             }
           },
           {
             "name": "end_time",
             "type": "time",
             "title": {
-              "en": "End time"
+              "en": "End time",
+              "nl": "Eindtijd",
+              "da": "Sluttid",
+              "de": "Endzeit",
+              "es": "Hora de fin",
+              "fr": "Heure de fin",
+              "it": "Ora di fine",
+              "no": "Sluttid",
+              "sv": "Sluttid",
+              "pl": "Czas zakończenia",
+              "ru": "Время окончания",
+              "ko": "종료 시간"
             }
           },
           {
             "title": {
-              "en": "Day(s)"
+              "en": "Day(s)",
+              "nl": "Dag(en)",
+              "da": "Dag(e)",
+              "de": "Tag(e)",
+              "es": "Día(s)",
+              "fr": "Jour(s)",
+              "it": "Giorno(i)",
+              "no": "Dag(er)",
+              "sv": "Dag(ar)",
+              "pl": "Dzień(i)",
+              "ru": "День(и)",
+              "ko": "요일"
             },
             "name": "days",
             "type": "multiselect",
@@ -118,43 +195,120 @@
               {
                 "id": "7",
                 "title": {
-                  "en": "Monday"
+                  "en": "Monday",
+                  "nl": "Maandag",
+                  "da": "Mandag",
+                  "de": "Montag",
+                  "es": "Lunes",
+                  "fr": "Lundi",
+                  "it": "Lunedì",
+                  "no": "Mandag",
+                  "sv": "Måndag",
+                  "pl": "Poniedziałek",
+                  "ru": "Понедельник",
+                  "ko": "월요일"
                 }
               },
               {
                 "id": "6",
                 "title": {
-                  "en": "Tuesday"
+                  "en": "Tuesday",
+                  "nl": "Dinsdag",
+                  "da": "Tirsdag",
+                  "de": "Dienstag",
+                  "es": "Martes",
+                  "fr": "Mardi",
+                  "it": "Martedì",
+                  "no": "Tirsdag",
+                  "sv": "Tisdag",
+                  "pl": "Wtorek",
+                  "ru": "Вторник",
+                  "ko": "화요일"
                 }
               },
               {
                 "id": "5",
                 "title": {
-                  "en": "Wednesday"
+                  "en": "Wednesday",
+                  "nl": "Woensdag",
+                  "da": "Onsdag",
+                  "de": "Mittwoch",
+                  "es": "Miércoles",
+                  "fr": "Mercredi",
+                  "it": "Mercoledì",
+                  "no": "Onsdag",
+                  "sv": "Onsdag",
+                  "pl": "Środa",
+                  "ru": "Среда",
+                  "ko": "수요일"
                 }
               },
               {
                 "id": "4",
                 "title": {
-                  "en": "Thursday"
+                  "en": "Thursday",
+                  "nl": "Donderdag",
+                  "da": "Torsdag",
+                  "de": "Donnerstag",
+                  "es": "Jueves",
+                  "fr": "Jeudi",
+                  "it": "Giovedì",
+                  "no": "Torsdag",
+                  "sv": "Torsdag",
+                  "pl": "Czwartek",
+                  "ru": "Четверг",
+                  "ko": "목요일"
                 }
               },
               {
                 "id": "3",
                 "title": {
-                  "en": "Friday"
+                  "en": "Friday",
+                  "nl": "Vrijdag",
+                  "da": "Fredag",
+                  "de": "Freitag",
+                  "es": "Viernes",
+                  "fr": "Vendredi",
+                  "it": "Venerdì",
+                  "no": "Fredag",
+                  "sv": "Fredag",
+                  "pl": "Piątek",
+                  "ru": "Пятница",
+                  "ko": "금요일"
                 }
               },
               {
                 "id": "2",
                 "title": {
-                  "en": "Saturday"
+                  "en": "Saturday",
+                  "nl": "Zaterdag",
+                  "da": "Lørdag",
+                  "de": "Samstag",
+                  "es": "Sábado",
+                  "fr": "Samedi",
+                  "it": "Sabato",
+                  "no": "Lørdag",
+                  "sv": "Lördag",
+                  "pl": "Sobota",
+                  "ru": "Суббота",
+                  "ko": "토요일"
                 }
               },
               {
                 "id": "1",
                 "title": {
-                  "en": "Sunday"
+                  "en": "Sunday",
+                  "nl": "Zondag",
+                  "da": "Søndag",
+                  "de": "Sonntag",
+                  "es": "Domingo",
+                  "fr": "Dimanche",
+                  "it": "Domenica",
+                  "no": "Søndag",
+                  "sv": "Söndag",
+                  "pl": "Niedziela",
+                  "ru": "Воскресенье",
+                  "ko": "일요일"
                 }
               }
             ]
@@ -163,7 +317,18 @@
             "name": "power",
             "type": "number",
             "title": {
-              "en": "Watt (negative = charge)"
+              "en": "Watt (negative = charge)",
+              "nl": "Watt (negatief = opladen)",
+              "da": "Watt (negativ = opladning)",
+              "de": "Watt (negativ = aufladen)",
+              "es": "Vatios (negativo = carga)",
+              "fr": "Watt (négatif = charge)",
+              "it": "Watt (negativo = carica)",
+              "no": "Watt (negativ = lading)",
+              "sv": "Watt (negativ = laddning)",
+              "pl": "Waty (ujemny = ładowanie)",
+              "ru": "Вт (отрицательный = зарядка)",
+              "ko": "와트 (음수 = 충전)"
             },
             "step": 1
           },
@@ -171,7 +336,18 @@
             "name": "enable",
             "type": "checkbox",
             "title": {
-              "en": "Enable schedule"
+              "en": "Enable schedule",
+              "nl": "Planning inschakelen",
+              "da": "Aktiver tidsplan",
+              "de": "Zeitplan aktivieren",
+              "es": "Habilitar horario",
+              "fr": "Activer le programme",
+              "it": "Abilita pianificazione",
+              "no": "Aktiver tidsplan",
+              "sv": "Aktivera schema",
+              "pl": "Włącz harmonogram",
+              "ru": "Включить расписание",
+              "ko": "일정 활성화"
             }
           }
         ]
@@ -353,6 +529,12 @@
       },
       "pair": [
         {
+          "id": "show_settings",
+          "navigation": {
+            "next": "list_devices"
+          }
+        },
+        {
           "id": "list_devices",
           "template": "list_devices",
           "navigation": {
@@ -372,17 +554,50 @@
         {
           "type": "group",
           "label": {
-            "en": "Battery data retrieval (polling) settings"
+            "en": "Battery data retrieval (polling) settings",
+            "nl": "Instellingen voor batterijgegevensopvraging (polling)",
+            "da": "Indstillinger for batteridatagenfinding (polling)",
+            "de": "Einstellungen zur Batterie-Datenabfrage (Polling)",
+            "es": "Configuración de recuperación de datos de batería (sondeo)",
+            "fr": "Paramètres de récupération des données de batterie (sondage)",
+            "it": "Impostazioni di recupero dati della batteria (polling)",
+            "no": "Innstillinger for batteridatainnhenting (polling)",
+            "sv": "Inställningar för batteridataåterhämtning (polling)",
+            "pl": "Ustawienia pobierania danych z baterii (sondowanie)",
+            "ru": "Настройки извлечения данных о батарее (опрос)",
+            "ko": "배터리 데이터 검색 (폴링) 설정"
           },
           "children": [
             {
               "id": "poll",
               "type": "checkbox",
               "label": {
-                "en": "Enable (periodic retrieval)"
+                "en": "Enable (periodic retrieval)",
+                "nl": "Inschakelen (periodieke opvraging)",
+                "da": "Aktiver (periodisk genfinding)",
+                "de": "Aktivieren (periodische Abfrage)",
+                "es": "Activar (recuperación periódica)",
+                "fr": "Activer (récupération périodique)",
+                "it": "Abilita (recupero periodico)",
+                "no": "Aktiver (periodisk innhenting)",
+                "sv": "Aktivera (periodisk hämtning)",
+                "pl": "Włącz (okresowe pobieranie)",
+                "ru": "Включить (периодическое извлечение)",
+                "ko": "활성화 (주기적 검색)"
               },
               "hint": {
-                "en": "Turn this off if you only want to use command flows (Turn off for all batteries to reduce local API communication problems)."
+                "en": "Turn this off if you only want to use command flows (Turn off for all batteries to reduce local API communication problems).",
+                "nl": "Zet dit uit als je alleen opdrachtstromen wilt gebruiken (zet uit voor alle batterijen om lokale API communicatieproblemen te verminderen).",
+                "da": "Sluk dette, hvis du kun vil bruge kommandostrømme (deaktiver for alle batterier for at reducere lokale API-kommunikationsproblemer).",
+                "de": "Deaktivieren Sie dies, wenn Sie nur Befehlsflüsse verwenden möchten (schalten Sie es für alle Batterien aus, um lokale API-Kommunikationsprobleme zu reduzieren).",
+                "es": "Desactiva esto si solo quieres usar flujos de comandos (Desactiva para todas las baterías para reducir los problemas de comunicación de la API local).",
+                "fr": "Désactivez ceci si vous souhaitez uniquement utiliser les flux de commandes (Désactivez pour toutes les batteries afin de réduire les problèmes de communication de l'API locale).",
+                "it": "Disattiva questa opzione se vuoi usare solo i flussi di comando (Disattiva per tutte le batterie per ridurre i problemi di comunicazione con le API locali).",
+                "no": "Slå dette av hvis du bare vil bruke kommandoflyt (Slå av for alle batterier for å redusere lokale API-kommunikasjonsproblemer).",
+                "sv": "Stäng av detta om du bara vill använda kommandoflöden (Stäng av för alla batterier för att minska lokala API-kommunikationsproblem).",
+                "pl": "Wyłącz to, jeśli chcesz korzystać tylko z przepływów poleceń (Wyłącz dla wszystkich baterii, aby zmniejszyć problemy z komunikacją lokalnego API).",
+                "ru": "Отключите это, если вы хотите использовать только потоки команд (отключите для всех батарей, чтобы уменьшить проблемы с локальной API-коммуникацией).",
+                "ko": "명령 플로우만 사용하려면 이를 끄십시오 (로컬 API 통신 문제를 줄이기 위해 모든 배터리에 대해 끄세요)."
               },
               "value": true
             },
@@ -390,15 +605,48 @@
               "id": "interval",
               "type": "number",
               "label": {
-                "en": "Poll frequency (lowest)"
+                "en": "Poll frequency (lowest)",
+                "nl": "Pollingsfrequentie (laagste)",
+                "da": "Pollingsfrekvens (lavest)",
+                "de": "Abfragehäufigkeit (niedrigste)",
+                "es": "Frecuencia de sondeo (más baja)",
+                "fr": "Fréquence de sondage (la plus basse)",
+                "it": "Frequenza di polling (più bassa)",
+                "no": "Avstemmingsfrekvens (lavest)",
+                "sv": "Pollfrekvens (lägst)",
+                "pl": "Częstotliwość ankiety (najniższa)",
+                "ru": "Частота опроса (минимальная)",
+                "ko": "폴링 빈도 (최저)"
               },
               "hint": {
-                "en": "Interval data is request from ALL batteries (lowest interval value is used, make sure to update settings of all batteries)"
+                "en": "Interval data is request from ALL batteries (lowest interval value is used, make sure to update settings of all batteries)",
+                "nl": "Intervalgegevens worden opgevraagd van ALLE batterijen (laagste intervalwaarde wordt gebruikt, zorg ervoor dat alle batterijinstellingen zijn bijgewerkt)",
+                "da": "Intervaldata anmodes fra ALLE batterier (laveste intervalværdi anvendes, sørg for at opdatere alle batteriers indstillinger)",
+                "de": "Intervall-Daten werden von ALLEN Batterien angefordert (niedrigster Intervallwert wird verwendet, stellen Sie sicher, dass die Einstellungen aller Batterien aktualisiert werden)",
+                "es": "Los datos de intervalo se solicitan de TODAS las baterías (se utiliza el valor de intervalo más bajo, asegúrese de actualizar la configuración de todas las baterías)",
+                "fr": "Les données d'intervalle sont demandées à TOUTES les batteries (la valeur d'intervalle la plus basse est utilisée, assurez-vous de mettre à jour les paramètres de toutes les batteries)",
+                "it": "I dati di intervallo vengono richiesti da TUTTE le batterie (si utilizza il valore di intervallo più basso, assicurarsi di aggiornare le impostazioni di tutte le batterie)",
+                "no": "Intervalldata forespørres fra ALLE batterier (laveste intervalverdi brukes, sørg for å oppdatere innstillingene for alle batterier)",
+                "sv": "Intervalldata begärs från ALLA batterier (lägsta intervallvärde används, se till att uppdatera inställningarna för alla batterier)",
+                "pl": "Dane interwałów są pobierane z WSZYSTKICH baterii (używana jest najniższa wartość interwału, upewnij się, że wszystkie baterie mają zaktualizowane ustawienia)",
+                "ru": "Интервальные данные запрашиваются от ВСЕХ батарей (используется минимальное значение интервала, убедитесь, что настройки всех батарей обновлены)",
+                "ko": "간격 데이터를 모든 배터리에서 요청합니다 (최저 간격 값을 사용하므로 모든 배터리의 설정을 업데이트하십시오)"
               },
               "value": 60,
               "min": 15,
               "units": {
-                "en": "seconds"
+                "en": "seconds",
+                "nl": "seconden",
+                "da": "sekunder",
+                "de": "Sekunden",
+                "es": "segundos",
+                "fr": "secondes",
+                "it": "secondi",
+                "no": "sekunder",
+                "sv": "sekunder",
+                "pl": "sekund",
+                "ru": "секунды",
+                "ko": "초"
               }
             }
           ]
@@ -439,14 +687,36 @@
         {
           "type": "group",
           "label": {
-            "en": "Device details (read ony)"
+            "en": "Device details (read ony)",
+            "nl": "Apparaatgegevens (alleen-lezen)",
+            "da": "Enhedsdetaljer (kun læsning)",
+            "de": "Gerätedetails (nur lesen)",
+            "es": "Detalles del dispositivo (solo lectura)",
+            "fr": "Détails de l'appareil (lecture seule)",
+            "it": "Dettagli del dispositivo (solo lettura)",
+            "no": "Enhetsdetaljer (kun lesing)",
+            "sv": "Enhetsdetaljer (endast läsning)",
+            "pl": "Szczegóły urządzenia (tylko do odczytu)",
+            "ru": "Детали устройства (только для чтения)",
+            "ko": "장치 세부정보 (읽기 전용)"
           },
           "children": [
             {
               "id": "src",
               "type": "label",
               "label": {
-                "en": "IP source (auto determined)"
+                "en": "IP source (auto determined)",
+                "nl": "IP-bron (automatisch bepaald)",
+                "da": "IP-kilde (auto bestemt)",
+                "de": "IP-Quelle (automatisch bestimmt)",
+                "es": "Fuente IP (determinada automáticamente)",
+                "fr": "Source IP (déterminée automatiquement)",
+                "it": "Fonte IP (determinata automaticamente)",
+                "no": "IP-kilde (auto bestemt)",
+                "sv": "IP-källa (autobestämd)",
+                "pl": "Źródło IP (automatycznie ustalone)",
+                "ru": "IP-источник (определяется автоматически)",
+                "ko": "IP 소스 (자동 결정)"
               },
               "value": ""
             },
@@ -454,11 +724,33 @@
               "id": "port",
               "type": "label",
               "label": {
-                "en": "UDP Port number (fixed)"
+                "en": "UDP Port number (fixed)",
+                "nl": "UDP-poortnummer (vast)",
+                "da": "UDP-portnummer (fast)",
+                "de": "UDP-Portnummer (fest)",
+                "es": "Número de puerto UDP (fijo)",
+                "fr": "Numéro de port UDP (fixe)",
+                "it": "Numero di porta UDP (fisso)",
+                "no": "UDP-portnummer (fast)",
+                "sv": "UDP-portnummer (fast)",
+                "pl": "Numer portu UDP (stały)",
+                "ru": "Номер UDP-порта (фиксированный)",
+                "ko": "UDP 포트 번호 (고정됨)"
               },
               "value": "30000",
               "hint": {
-                "en": "This Homey App requires all batteries set to UDP port 30000"
+                "en": "This Homey App requires all batteries set to UDP port 30000",
+                "nl": "Deze Homey-app vereist dat alle batterijen zijn ingesteld op UDP-poort 30000",
+                "da": "Denne Homey-app kræver, at alle batterier er indstillet til UDP-port 30000",
+                "de": "Diese Homey-App erfordert, dass alle Batterien auf den UDP-Port 30000 eingestellt sind",
+                "es": "Esta aplicación de Homey requiere que todas las baterías estén configuradas en el puerto UDP 30000",
+                "fr": "Cette application Homey nécessite que toutes les batteries soient réglées sur le port UDP 30000",
+                "it": "Questa app Homey richiede che tutte le batterie siano impostate sulla porta UDP 30000",
+                "no": "Denne Homey-appen krever at alle batterier er satt til UDP-port 30000",
+                "sv": "Denna Homey-app kräver att alla batterier är inställda på UDP-port 30000",
+                "pl": "Ta aplikacja Homey wymaga, aby wszystkie baterie były ustawione na port UDP 30000",
+                "ru": "Это приложение Homey требует, чтобы все батареи были настроены на UDP-порт 30000",
+                "ko": "이 Homey 앱은 모든 배터리를 UDP 포트 30000으로 설정해야 합니다"
               }
             },
             {
@@ -674,10 +966,32 @@
           "id": "debug",
           "type": "checkbox",
           "label": {
-            "en": "Enable more logging (for diagnostics reports)"
+            "en": "Enable more logging (for diagnostics reports)",
+            "nl": "Meer logboekregistratie inschakelen (voor diagnostische rapporten)",
+            "da": "Aktiver mere logning (til diagnostikrapporter)",
+            "de": "Mehr Protokollierung aktivieren (für Diagnosereports)",
+            "es": "Habilitar más registros (para informes de diagnóstico)",
+            "fr": "Activer plus de journalisation (pour les rapports de diagnostic)",
+            "it": "Abilita più registrazione (per rapporti diagnostici)",
+            "no": "Aktiver mer logging (for diagnostiske rapporter)",
+            "sv": "Aktivera mer loggning (för diagnostikrapporter)",
+            "pl": "Włącz więcej logowania (dla raportów diagnostycznych)",
+            "ru": "Включить больше журналирования (для диагностических отчетов)",
+            "ko": "더 많은 로깅 활성화 (진단 보고서용)"
           },
           "hint": {
-            "en": "Turn this on to log extra details for troubleshooting received values for this device."
+            "en": "Turn this on to log extra details for troubleshooting received values for this device.",
+            "nl": "Zet dit aan om extra details te loggen voor het oplossen van problemen met ontvangen waarden voor dit apparaat.",
+            "da": "Tænd for dette for at logge ekstra detaljer til fejlfinding af modtagne værdier for denne enhed.",
+            "de": "Aktivieren Sie dies, um zusätzliche Details zur Fehlerbehebung empfangener Werte für dieses Gerät zu protokollieren.",
+            "es": "Activa esto para registrar detalles adicionales para solucionar problemas de los valores recibidos para este dispositivo.",
+            "fr": "Activez ceci pour enregistrer des détails supplémentaires pour résoudre les problèmes des valeurs reçues pour cet appareil.",
+            "it": "Attiva questo per registrare dettagli extra per risolvere i problemi dei valori ricevuti per questo dispositivo.",
+            "no": "Slå på dette for å logge ekstra detaljer for feilsøking av mottatte verdier for denne enheten.",
+            "sv": "Slå på det här för att logga extra detaljer för felsökning av mottagna värden för den här enheten.",
+            "pl": "Włącz to, aby logować dodatkowe szczegóły do rozwiązywania problemów z odbieranymi wartościami dla tego urządzenia.",
+            "ru": "Включите это, чтобы журналировать дополнительные детали для устранения неполадок полученных значений для этого устройства.",
+            "ko": "이 장치에 대한 수신 값 문제 해결을 위해 추가 세부 정보를 기록하려면 이 기능을 켜십시오."
           },
           "value": false
         },
@@ -685,7 +999,18 @@
           "id": "username",
           "type": "label",
           "label": {
-            "en": "Account"
+            "en": "Account",
+            "nl": "Account",
+            "da": "Konto",
+            "de": "Konto",
+            "es": "Cuenta",
+            "fr": "Compte",
+            "it": "Account",
+            "no": "Konto",
+            "sv": "Konto",
+            "pl": "Konto",
+            "ru": "Аккаунт",
+            "ko": "계정"
           },
           "value": "(unknown)"
         }
@@ -790,10 +1115,32 @@
     "measure_power_pv": {
       "type": "number",
       "title": {
-        "en": "Solar power"
+        "en": "Solar power",
+        "nl": "Zonne-energie",
+        "da": "Solenergi",
+        "de": "Solarenergie",
+        "es": "Energía solar",
+        "fr": "Énergie solaire",
+        "it": "Energia solare",
+        "no": "Solenergi",
+        "sv": "Solenergi",
+        "pl": "Energia słoneczna",
+        "ru": "Солнечная энергия",
+        "ko": "태양광"
       },
       "units": {
-        "en": "W"
+        "en": "W",
+        "nl": "W",
+        "da": "W",
+        "de": "W",
+        "es": "W",
+        "fr": "W",
+        "it": "W",
+        "no": "W",
+        "sv": "W",
+        "pl": "W",
+        "ru": "Вт",
+        "ko": "W"
       },
       "getable": true,
       "setable": false,

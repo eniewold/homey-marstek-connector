@@ -1,0 +1,8 @@
+{
+  "settings": {
+    "title": "Configuración de Batería Predeterminada",
+    "subtitle": "Antes de comenzar el descubrimiento, ingrese la configuración predeterminada para las baterías recién descubiertas:",
+    "pollInterval": "Intervalo de sondeo predeterminado (segundos)",
+    "pollEnabled": "Habilitar el sondeo por defecto"
+  }
+}

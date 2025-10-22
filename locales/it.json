@@ -1,0 +1,8 @@
+{
+  "settings": {
+    "title": "Impostazioni predefinite della batteria",
+    "subtitle": "Prima di avviare la scoperta, inserisci le impostazioni predefinite per le nuove batterie scoperte:",
+    "pollInterval": "Intervallo di polling predefinito (secondi)",
+    "pollEnabled": "Abilita polling di default"
+  }
+}

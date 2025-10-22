@@ -131,8 +131,14 @@ export default class MarstekVenusDevice extends Homey.Device {
             return;
         }
         try {
+            // Check if src property exists
+            if (!json || !json.src) {
+                this.error('Received message without json or src property:', JSON.stringify(json), JSON.stringify(remote));
+                return;
+            }
+
             // Check if message is for this instance (only)
-            if (json.src !== this.getSetting("src")) return;
+            if (!json.src !== this.getSetting("src")) return;
 
             // Debug received details (if requested)
             if (this.getSetting("debug")) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(remote));

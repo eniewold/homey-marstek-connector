@@ -3,10 +3,32 @@
     "id": "debug",
     "type": "checkbox",
     "label": {
-      "en": "Enable more logging (for diagnostics reports)"
+      "en": "Enable more logging (for diagnostics reports)",
+      "nl": "Meer logboekregistratie inschakelen (voor diagnostische rapporten)",
+      "da": "Aktiver mere logning (til diagnostikrapporter)",
+      "de": "Mehr Protokollierung aktivieren (für Diagnosereports)",
+      "es": "Habilitar más registros (para informes de diagnóstico)",
+      "fr": "Activer plus de journalisation (pour les rapports de diagnostic)",
+      "it": "Abilita più registrazione (per rapporti diagnostici)",
+      "no": "Aktiver mer logging (for diagnostiske rapporter)",
+      "sv": "Aktivera mer loggning (för diagnostikrapporter)",
+      "pl": "Włącz więcej logowania (dla raportów diagnostycznych)",
+      "ru": "Включить больше журналирования (для диагностических отчетов)",
+      "ko": "더 많은 로깅 활성화 (진단 보고서용)"
     },
     "hint": {
-      "en": "Turn this on to log extra details for troubleshooting received values for this device."
+      "en": "Turn this on to log extra details for troubleshooting received values for this device.",
+      "nl": "Zet dit aan om extra details te loggen voor het oplossen van problemen met ontvangen waarden voor dit apparaat.",
+      "da": "Tænd for dette for at logge ekstra detaljer til fejlfinding af modtagne værdier for denne enhed.",
+      "de": "Aktivieren Sie dies, um zusätzliche Details zur Fehlerbehebung empfangener Werte für dieses Gerät zu protokollieren.",
+      "es": "Activa esto para registrar detalles adicionales para solucionar problemas de los valores recibidos para este dispositivo.",
+      "fr": "Activez ceci pour enregistrer des détails supplémentaires pour résoudre les problèmes des valeurs reçues pour cet appareil.",
+      "it": "Attiva questo per registrare dettagli extra per risolvere i problemi dei valori ricevuti per questo dispositivo.",
+      "no": "Slå på dette for å logge ekstra detaljer for feilsøking av mottatte verdier for denne enheten.",
+      "sv": "Slå på det här för att logga extra detaljer för felsökning av mottagna värden för den här enheten.",
+      "pl": "Włącz to, aby logować dodatkowe szczegóły do rozwiązywania problemów z odbieranymi wartościami dla tego urządzenia.",
+      "ru": "Включите это, чтобы журналировать дополнительные детали для устранения неполадок полученных значений для этого устройства.",
+      "ko": "이 장치에 대한 수신 값 문제 해결을 위해 추가 세부 정보를 기록하려면 이 기능을 켜십시오."
     },
     "value": false
   },
@@ -14,7 +36,18 @@
     "id": "username",
     "type": "label",
     "label": {
-      "en": "Account"
+      "en": "Account",
+      "nl": "Account",
+      "da": "Konto",
+      "de": "Konto",
+      "es": "Cuenta",
+      "fr": "Compte",
+      "it": "Account",
+      "no": "Konto",
+      "sv": "Konto",
+      "pl": "Konto",
+      "ru": "Аккаунт",
+      "ko": "계정"
     },
     "value": "(unknown)"
   }

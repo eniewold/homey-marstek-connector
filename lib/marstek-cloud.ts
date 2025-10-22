@@ -79,13 +79,13 @@ export default class MarstekCloud {
 
         // singleton promise to catch multiple async logins
         this.loginPromise = (async () => {
-            if (this.debug) this.logger.log("[cloud] Clearing stored token.");
             this.token = undefined;
 
             // Login is done by requesting devices using username and MD5 password
             try {
                 if (this.debug) this.logger.log("[cloud] Starting request");
-                const response = await this.request(`/app/Solar/v2_get_device.php?pwd=${this.password}&mailbox=${this.username}`);
+                const username = encodeURIComponent(this.username || ''); // escape for special characters like +
+                const response = await this.request(`/app/Solar/v2_get_device.php?pwd=${this.password}&mailbox=${username}`);
 
                 // Store received token
                 if (response && response.token) {

@@ -1,7 +1,5 @@
 ﻿import Homey from 'homey';
 
-// Use require for esModule class instances
-
 export default class MarstekBatteryContoller extends Homey.App {
     /**
      * onInit is called when the app is initialized.

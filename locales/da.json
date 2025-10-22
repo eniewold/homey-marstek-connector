@@ -1,0 +1,8 @@
+{
+  "settings": {
+    "title": "Standard batteriindstillinger",
+    "subtitle": "Inden søgningen startes, indtast venligst standardindstillingerne for nyopdagede batterier:",
+    "pollInterval": "Standard polling-interval (sekunder)",
+    "pollEnabled": "Aktivér polling som standard"
+  }
+}

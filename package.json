@@ -2,6 +2,7 @@
   "name": "com.niewold.marstek",
   "version": "1.0.0",
   "scripts": {
+    "dev": "homey app run --remote",
     "build": "tsc",
     "clean": "rmdir /s /q .homeybuild",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore ."

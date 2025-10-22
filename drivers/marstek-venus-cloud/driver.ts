@@ -14,7 +14,7 @@ export default class MarstekVenusCloudDriver extends Homey.Driver {
     // Private properties
     private pairSessions: Map<any, any> = new Map();
     private clients: Map<string, MarstekCloud> = new Map();
-    private debug: boolean = (process.env.DEBUG === '1');
+    private debug: boolean = (this.homey.manifest.id.endsWith('.test') || process.env.DEBUG);
 
     /**
      * Called when the driver is initialised.
@@ -22,7 +22,7 @@ export default class MarstekVenusCloudDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves when initialisation completes.
      */
     async onInit() {
-        this.log('MarstekVenusCloudDriver has been initialized');
+        if (this.debug) this.log('MarstekVenusCloudDriver has been initialized');
     }
 
     /**
@@ -31,7 +31,7 @@ export default class MarstekVenusCloudDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once cleanup completes.
      */
     async onUninit() {
-        this.log('MarstekVenusCloudDriver has been uninitialized');
+        if (this.debug) this.log('MarstekVenusCloudDriver has been uninitialized');
         this.pairSessions.clear();
         this.clients.clear();
     }

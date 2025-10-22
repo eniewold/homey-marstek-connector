@@ -9,6 +9,9 @@ import MarstekSocket from '../../lib/marstek-api';
  */
 export default class MarstekVenusDriver extends Homey.Driver {
 
+    // Add extra details during debugging
+    private debug: boolean = (this.homey.manifest.id.endsWith('.test') || process.env.DEBUG);
+
     // Cast pointer to our app
     private socket?: MarstekSocket = undefined;
 
@@ -27,7 +30,8 @@ export default class MarstekVenusDriver extends Homey.Driver {
     private pollTimeout?: NodeJS.Timeout = undefined;
 
     // Message identifier counter used to keep requests unique.
-    private pollId: number = Math.round(new Date().getTime() / 1000);
+    // Note that 
+    private pollId: number = Math.round(Math.random() * 10000);
 
     // Identifiers of devices currently participating in polling.
     private pollDevices: Array<Homey.Device> = []
@@ -38,7 +42,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once initialisation completes.
      */
     async onInit() {
-        this.log('MarstekVenusDriver has been initialized');
+        if (this.debug) this.log('MarstekVenusDriver has been initialized');
         await this.registerFlowListeners();
     }
 
@@ -47,7 +51,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves after cleaning up the shared socket connection.
      */
     async onUninit() {
-        this.log('MarstekVenusDriver has been uninitialized');
+        if (this.debug) this.log('MarstekVenusDriver has been uninitialized');
         // Make sure to destroy the socket instance
         if (this.socket) {
             this.socket.destroy();
@@ -56,13 +60,38 @@ export default class MarstekVenusDriver extends Homey.Driver {
     }
 
     /**
-     * Handles the `list_devices` pairing view request by broadcasting discovery messages.
-     * @returns {Promise<Array<{name: string, data: {id: string}, settings: object, store: object}>>}
-     * Resolves with the list of devices available for pairing.
+     * Handles the custom pairing flow by persisting shared settings before device discovery begins.
+     * @param {Homey.Driver.Session} session Active pairing session for the driver.
+     * @returns {Promise<void>} Resolves once the pairing handlers are registered.
      */
-    async onPairListDevices() {
-        // Broadcast and detect marstek devices
-        return await this.broadcastDetect();
+    async onPair(session: Homey.Driver.PairSession): Promise<void> {
+        // List devices template is handled using broadcast resolved device detection
+        session.setHandler('list_devices', async () => this.broadcastDetect());
+
+        // Received when a view has changed
+        session.setHandler("showView", async (viewId) => {
+            // Apply default values to settings form
+            if (viewId === "show_settings") {
+                const interval: number = this.homey.settings.get('default_poll_interval') || 60;
+                const enabled: boolean = this.homey.settings.get('default_poll_enabled') || false;
+                await session.emit("initPollSettings", { interval, enabled });
+            }
+        });
+
+        // Event is emitted from HTML form
+        session.setHandler("savePollInterval", async (interval: number) => {
+            if (this.debug) this.log("savePollInterval", interval);
+            if (typeof interval === 'number' && !Number.isNaN(interval)) {
+                this.homey.settings.set('default_poll_interval', interval);
+            }
+        });
+
+        // Event is emitted from HTML form
+        session.setHandler("savePollEnabled", async (enabled: boolean) => {
+            if (typeof enabled === 'boolean') {
+                this.homey.settings.set('default_poll_enabled', enabled);
+            }
+        });
     }
 
     /**
@@ -84,8 +113,14 @@ export default class MarstekVenusDriver extends Homey.Driver {
         if (socket) {
             try {
                 const pollMessage = this.pollMessages[this.pollMessage];
-                const message = { id: "Homey-" + String(this.pollId++), method: pollMessage.method, params: pollMessage.params };
-                await socket.broadcast(JSON.stringify(message));
+                const message = {
+                    id: this.getUniqueID(),
+                    method: pollMessage.method,
+                    params: pollMessage.params
+                };
+                const json = JSON.stringify(message);
+                if (this.debug) this.log("Ready to broadcast:", json);
+                await socket.broadcast(json);
             } catch (err) {
                 this.error('Error broadcasting:', err);
             }
@@ -101,7 +136,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
         this.pollDevices.push(device);
         if (!this.pollTimeout) {
             const interval = this.getPollInterval();
-            this.log("Started background polling with interval", interval);
+            if (this.debug) this.log("Started background polling with interval", interval);
             this.pollTimeout = this.homey.setInterval(async () => this.poll(), interval);
             this.poll()
         }
@@ -119,7 +154,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
         if (this.pollTimeout && this.pollDevices.length === 0) {
             this.homey.clearInterval(this.pollTimeout);
             this.pollTimeout = undefined;
-            this.log("Stopped background polling");
+            if (this.debug) this.log("Stopped background polling");
         }
     }
 
@@ -132,7 +167,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
             this.homey.clearInterval(this.pollTimeout);
             const ms = this.getPollInterval();
             this.pollTimeout = this.homey.setInterval(async () => this.poll(), ms);
-            this.log("Updated background polling with interval", ms);
+            if (this.debug) this.log("Updated background polling with interval", ms);
         }
     }
 
@@ -142,13 +177,26 @@ export default class MarstekVenusDriver extends Homey.Driver {
      */
     getPollInterval(): number {
         const devices = this.getDevices();
-        let interval = 60; // default interval
+        let interval: number = 60 * 60; // start at hour, find minimum
+        const defaultInterval: number = this.homey.settings.get('default_poll_interval') || interval; // default interval from app settings
         devices.forEach((device) => {
             // if settings is not found, default to 15 since devices used this before setting was introduced
-            const seconds = device.getSetting("interval") || 15;    
+            const seconds = device.getSetting("interval") || defaultInterval;
             if (seconds < interval) interval = seconds;
+            if (!interval || interval < 15) throw new Error("Unexpected interval value");
         })
         return (interval * 1000) + Math.round(Math.random() * 100);
+    }
+
+    /** Retrieve a new unique string for json messages 
+     * @returns {number} unique number
+     */
+    private getUniqueID(): number {
+        // Increment
+        this.pollId++;
+        // New random value around at 16bits
+        if (this.pollId >= 65535) this.pollId = Math.round(Math.random() * 10000);
+        return this.pollId;
     }
 
     /**
@@ -355,7 +403,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
                 lastError = err;
                 attempt++;
                 if (attempt < maxRetries) {
-                    this.log(`Retrying setModeConfiguration (attempt ${attempt + 1}/${maxRetries}) due to error:`, (err as Error).message || err);
+                    if (this.debug) this.log(`Retrying setModeConfiguration (attempt ${attempt + 1}/${maxRetries}) due to error:`, (err as Error).message || err);
                 }
             }
         }
@@ -379,9 +427,9 @@ export default class MarstekVenusDriver extends Homey.Driver {
         if (!address) throw new Error('Device IP address it not available. Re-pair device or wait for first response from battery.');
 
         // Create payload with unique id
-        const unique = "Homey-" + String(this.pollId++);
+        const unique: number = this.getUniqueID();
         const payload = {
-            id: unique,
+            id: unique,             // seems to be limited to 16bits integer
             method,
             params: params,
         };
@@ -430,7 +478,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
             // Handler for messages received
             const handler = (json: any, remote: dgram.RemoteInfo) => {
                 // Always log received data during detection
-                this.log(`Received for ${json.src}:`, JSON.stringify(json));                
+                if (this.debug) this.log(`Received for ${json.src}:`, JSON.stringify(json));                
                 // Only further check messages that have the correct properties
                 if (json && json.src && json.result && json.result.device) {
                     // Detect if device is alread in array
@@ -442,6 +490,8 @@ export default class MarstekVenusDriver extends Homey.Driver {
                                 id: unique,
                             },
                             settings: {
+                                poll: !!this.homey.settings.get('default_poll_enabled'),
+                                interval: this.homey.settings.get('default_poll_interval') || 60,
                                 src: unique,
                                 model: `${json.result.device} v${json.result.ver}`,
                                 firmware: String(json.result.ver)   // firmware number, make sure to cast to string due to label (read-only) configuration
@@ -457,7 +507,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
 
             // Message to detect batteries as documented in the API
             const message = '{"id":"Homey-Detect","method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
-            this.log("Detection broadcasting:", message);
+            if (this.debug) this.log("Detection broadcasting:", message);
             socket.broadcast(message).then(() => {
                 // Start broadcasting message
                 const interval = this.homey.setInterval(() => {

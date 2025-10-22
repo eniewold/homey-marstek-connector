@@ -1,6 +1,6 @@
 {
   "id": "com.niewold.marstek",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "compatibility": ">=12.5.0",
   "sdk": 3,
   "brandColor": "#555555",
@@ -8,10 +8,32 @@
     "local"
   ],
   "name": {
-    "en": "Marstek Battery Connector"
+    "en": "Marstek Battery Connector",
+    "nl": "Marstek Batterijconnector",
+    "da": "Marstek Batterikonnektor",
+    "de": "Marstek Batteriekonnektor",
+    "es": "Conector de Batería Marstek",
+    "fr": "Connecteur de Batterie Marstek",
+    "it": "Connettore di Batteria Marstek",
+    "no": "Marstek Batterikontakt",
+    "sv": "Marstek Batterikontakt",
+    "pl": "Złącze Baterii Marstek",
+    "ru": "Соединитель Аккумулятора Marstek",
+    "ko": "마르스텍 배터리 커넥터"
   },
   "description": {
-    "en": "Monitor, control and automate your Marstek home battery"
+    "en": "Monitor, control and automate your Marstek home battery",
+    "nl": "Monitoren, beheren en automatiseren van uw Marstek-thuisbatterij",
+    "da": "Overvåg, styr og automatiser din Marstek-hjemmebatteri",
+    "de": "Überwachen, steuern und automatisieren Sie Ihre Marstek-Heimbatterie",
+    "es": "Monitorea, controla y automatiza tu batería doméstica Marstek",
+    "fr": "Surveillez, contrôlez et automatisez votre batterie domestique Marstek",
+    "it": "Monitora, controlla e automatizza la tua batteria domestica Marstek",
+    "no": "Overvåk, kontroller og automatiser Marstek-hjemmebatteriet ditt",
+    "sv": "Övervaka, kontrollera och automatisera ditt Marstek-hem batteri",
+    "pl": "Monitoruj, kontroluj i automatyzuj swoją domową baterię Marstek",
+    "ru": "Мониторинг, управление и автоматизация домашней батареи Marstek",
+    "ko": "마르스텍 홈 배터리를 모니터링, 제어 및 자동화하세요"
   },
   "category": [
     "energy"

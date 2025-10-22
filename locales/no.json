@@ -1,0 +1,8 @@
+{
+  "settings": {
+    "title": "Standardinnstillinger for batteri",
+    "subtitle": "Før oppdagelsen starter, vennligst skriv inn standardinnstillinger for nyoppdagede batterier:",
+    "pollInterval": "Standard avlesningsintervall (sekunder)",
+    "pollEnabled": "Aktiver avlesning som standard"
+  }
+}

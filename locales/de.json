@@ -1,0 +1,8 @@
+{
+  "settings": {
+    "title": "Standard-Batterieeinstellungen",
+    "subtitle": "Bitte geben Sie die Standardeinstellungen für neu entdeckte Batterien ein, bevor die Erkennung gestartet wird:",
+    "pollInterval": "Standard-Abfrageintervall (Sekunden)",
+    "pollEnabled": "Abfrage standardmäßig aktivieren"
+  }
+}

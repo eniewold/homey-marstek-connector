@@ -1,0 +1,8 @@
+{
+  "settings": {
+    "title": "Standaard Batterijinstellingen",
+    "subtitle": "Voordat de ontdekking wordt gestart, voer de standaardinstellingen voor nieuw ontdekte batterijen in:",
+    "pollInterval": "Standaard peilingsinterval (seconden)",
+    "pollEnabled": "Peiling standaard inschakelen"
+  }
+}

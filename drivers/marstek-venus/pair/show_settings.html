@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <header class="homey-header">
+        <p class="homey-title" data-i18n="settings.title">
+            <!-- This will be filled with the translated string with key 'settings.subtitle'. -->
+        </p>
+        <p class="homey-subtitle" data-i18n="settings.subtitle">
+            <!-- This will be filled with the translated string with key 'settings.subtitle'. -->
+        </p>
+    </header>
+
+    <form class="homey-form">
+        <div class="homey-form-group">
+            <!-- polling interval -->
+            <fieldset class="homey-form-fieldset">
+                <label class="homey-form-label" for="pollInterval" data-i18n="settings.pollInterval"></label>
+                <input class="homey-form-input" id="pollInterval" type="number" value="60" min="15" />
+            </fieldset>
+            <!-- Enable/disable periodic polling -->
+            <fieldset class="homey-form-checkbox-set">
+                <label class="homey-form-checkbox">
+                    <input class="homey-form-checkbox-input" type="checkbox" id="pollEnabled" checked />
+                    <span class="homey-form-checkbox-checkmark"></span>
+                    <span class="homey-form-checkbox-text" data-i18n="settings.pollEnabled"></span>
+                </label>
+            </fieldset>
+        </div>
+    </form>
+
+    <script>
+        const elemInterval = document.getElementById('pollInterval');
+        const elemEnabled = document.getElementById('pollEnabled');
+
+        // Received with current/default values after view is shown
+        Homey.on("initPollSettings", function (msg) {
+            elemInterval.value = msg.interval;
+            elemEnabled.checked = !!msg.enabled;
+        });
+
+        // Change setting immediately on any change
+        elemInterval.addEventListener('change', async (event) => {
+            const frequency = parseInt(elemInterval.value, 10);
+            await Homey.emit('savePollInterval', frequency);
+        });
+        elemEnabled.addEventListener('change', async (event) => {
+            const enabled = !!elemEnabled.checked;
+            await Homey.emit('savePollEnabled', enabled);
+        });
+    </script>
+</body>
+</html>
