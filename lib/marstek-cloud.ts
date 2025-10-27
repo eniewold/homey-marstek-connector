@@ -2,6 +2,9 @@
 import https from 'https'
 import http from 'http'
 
+// Load homey config
+import { config } from './config';
+
 /**
  * @description Manages communication to the Marstek Cloud for authentication and device details retrieval.
  * @class
@@ -20,7 +23,7 @@ export default class MarstekCloud {
     private token?: string = undefined;
     private devices?: Array<any> = undefined;
     private lastDeviceStatus: any = undefined;
-    private debug: boolean = (process.env.DEBUG === '1');
+    private debug: boolean = config.isTestVersion;
     private timestamp?: Date = undefined;
 
     /**

@@ -14,7 +14,7 @@ export default class MarstekVenusCloudDriver extends Homey.Driver {
     // Private properties
     private pairSessions: Map<any, any> = new Map();
     private clients: Map<string, MarstekCloud> = new Map();
-    private debug: boolean = (this.homey.manifest.id.endsWith('.test') || process.env.DEBUG);
+    private debug: boolean = (this.homey.manifest.version.endsWith('.0') === false || !!process.env.DEBUG);
 
     /**
      * Called when the driver is initialised.

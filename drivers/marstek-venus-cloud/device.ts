@@ -2,6 +2,9 @@ import Homey from 'homey'
 import type MarstekVenusCloudDriver from './driver'
 import type MarstekCloud from '../../lib/marstek-cloud'
 
+// Import our loaded config
+import { config } from '../../lib/config';
+
 /**
  * Represents a Marstek Venus device connected via the Marstek cloud APIs.
  * Handles authentication, capability updates and periodic polling of cloud status.
@@ -30,7 +33,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once initialisation completes.
      */
     async onInit() {
-        if (this.getSetting('debug')) this.log('MarstekVenusCloudDevice has been initialized');
+        if (this.debug) this.log('MarstekVenusCloudDevice has been initialized');
         await this._loadConfiguration();
         await this._initialiseClient();
         await this._updateCapabilitiesWithNull();
@@ -43,7 +46,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once logging completes.
      */
     async onAdded() {
-        if (this.getSetting('debug')) this.log('MarstekVenusCloudDevice has been added');
+        if (this.debug) this.log('MarstekVenusCloudDevice has been added');
     }
 
     /**
@@ -53,7 +56,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      */
     async onDeleted() {
         this._stopPolling();
-        if (this.getSetting('debug')) this.log('MarstekVenusCloudDevice has been deleted');
+        if (this.debug) this.log('MarstekVenusCloudDevice has been deleted');
     }
 
     /**
@@ -63,7 +66,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      */
     async onUninit() {
         this._stopPolling();
-        if (this.getSetting('debug')) this.log('MarstekVenusCloudDevice has been uninitialized');
+        if (this.debug) this.log('MarstekVenusCloudDevice has been uninitialized');
     }
 
     /**
@@ -121,7 +124,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
     _startPolling() {
         // Start retrieving details from cloud service
         if (this.pollInterval) return;
-        if (this.getSetting('debug')) this.log('[cloud] polling started');
+        if (this.debug) this.log('[cloud] polling started');
 
         // Poll every 60 seconds
         this.pollInterval = this.homey.setInterval(() => this._poll(), 60000);
@@ -145,7 +148,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      */
     _stopPolling() {
         if (this.pollInterval) {
-            if (this.getSetting('debug')) this.log('[cloud] polling stopped');
+            if (this.debug) this.log('[cloud] polling stopped');
             this.homey.clearInterval(this.pollInterval);
             this.pollInterval = undefined;
         }
@@ -186,11 +189,11 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
             this.error("[cloud] Payload not found or no data in payload", status);
             return;
         };
-        if (this.getSetting('debug')) this.log('[cloud] Device payload to proces', JSON.stringify(status));
+        if (this.debug) this.log('[cloud] Device payload to proces', JSON.stringify(status));
 
         // Log report time
         this.timestamp = new Date(status.report_time * 1000);
-        if (this.getSetting('debug')) this.log('[cloud] Last cloud update:', new Date(status.report_time * 1000));
+        if (this.debug) this.log('[cloud] Last cloud update:', new Date(status.report_time * 1000));
 
         // State of Charge (%)
         if (!isNaN(status.soc)) await this.setCapabilityValue('measure_battery', status.soc);
@@ -199,6 +202,11 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
         await this.setCapabilityValue('measure_power', status.charge - status.discharge);
         await this.setCapabilityValue('measure_power.charge', status.charge);
         await this.setCapabilityValue('measure_power.discharge', status.discharge);
+    }
+
+    /** Retrieve our current debug setting, based on actual setting and version */
+    get debug(): boolean {
+        return (this.getSetting("debug") === true) || config.isTestVersion;
     }
 
 };

@@ -2,6 +2,9 @@
 import dgram from 'dgram'               // For UDP binding and sending
 import MarstekVenusDriver from './driver'
 
+// Import our loaded config
+import { config } from '../../lib/config';
+
 /**
  * Represents a Marstek Venus device connected locally via UDP.
  * The device listens for broadcast messages, keeps capabilities in sync,
@@ -29,7 +32,7 @@ export default class MarstekVenusDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once startup work completes.
      */
     async onInit() {
-        if (this.getSetting("debug")) this.log('MarstekVenusDevice has been initialized');
+        if (this.debug) this.log('MarstekVenusDevice has been initialized');
 
         // Start listening on UDP server on driver
         await this.startListening();
@@ -77,7 +80,7 @@ export default class MarstekVenusDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves when the listener has been registered.
      */
     async startListening() {
-        if (this.getSetting("debug")) this.log("Start listening");
+        if (this.debug) this.log("Start listening");
         this.myDriver.getSocket().on(this.handler)
     }
 
@@ -85,7 +88,7 @@ export default class MarstekVenusDevice extends Homey.Device {
      * Removes the UDP message listener for this device from the shared socket.
      */
     stopListening() {
-        if (this.getSetting("debug")) this.log("Stop listening");
+        if (this.debug) this.log("Stop listening");
         this.myDriver.getSocket().off(this.handler);
     }
 
@@ -95,7 +98,7 @@ export default class MarstekVenusDevice extends Homey.Device {
      * `last_message_received` capability updated.
      */
     startPolling() {
-        if (this.getSetting("debug")) this.log("Start polling");
+        if (this.debug) this.log("Start polling");
         this.myDriver.pollStart(this.getSetting("src"));
         // Also start updating the last received message capability
         this.timeout = this.homey.setInterval(async () => {
@@ -111,7 +114,7 @@ export default class MarstekVenusDevice extends Homey.Device {
      * Stops the periodic polling routine and clears the update interval.
      */
     stopPolling() {
-        if (this.getSetting("debug")) this.log("Stop polling");
+        if (this.debug) this.log("Stop polling");
         this.myDriver.pollStop(this.getSetting("src"));
         if (this.timeout) this.homey.clearInterval(this.timeout);
     }
@@ -125,6 +128,7 @@ export default class MarstekVenusDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once the payload has been processed.
      */
     async onMessage(json: any, remote: dgram.RemoteInfo) {
+
         // Check if device is still present
         if (!this.getAvailable()) {
             this.error('Device is deleted or not available (yet)');
@@ -138,10 +142,10 @@ export default class MarstekVenusDevice extends Homey.Device {
             }
 
             // Check if message is for this instance (only)
-            if (!json.src !== this.getSetting("src")) return;
+            if (json.src !== this.getSetting("src")) return;
 
             // Debug received details (if requested)
-            if (this.getSetting("debug")) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(remote));
+            if (this.debug) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(remote));
 
             // Update remote IP address of device (can change due to DHCP leases)
             if (remote.address) this.setStoreValue("address", remote.address);
@@ -231,7 +235,7 @@ export default class MarstekVenusDevice extends Homey.Device {
     async onDeleted() {
         this.stopPolling();
         this.stopListening();
-        if (this.getSetting("debug")) this.log('MarstekVenusDevice has been deleted');
+        if (this.debug) this.log('MarstekVenusDevice has been deleted');
     }
 
     /**
@@ -242,7 +246,14 @@ export default class MarstekVenusDevice extends Homey.Device {
     async onUninit() {
         this.stopPolling();
         this.stopListening();
-        if (this.getSetting("debug")) this.log('MarstekVenusDevice has been uninitialized');
+        if (this.debug) this.log('MarstekVenusDevice has been uninitialized');
+    }
+
+    /** Retrieve our current debug setting, based on actual setting and version 
+     * @returns {boolean} True when debug logging is enabled (through settings or test version)
+     */
+    get debug(): boolean {
+        return (this.getSetting("debug") === true) || config.isTestVersion;
     }
 
 };

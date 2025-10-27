@@ -2,6 +2,9 @@ import os from 'os'
 import ip from 'ip'; // For converting broadcast IP address
 import dgram from 'dgram'               // For UDP binding and sending
 
+// Load homey config
+import { config } from './config';
+
 /**
  * @description Manages UDP socket communication specific for Marstek Venus home batteries
  * @class
@@ -14,7 +17,6 @@ export default class MarstekSocket {
     private connected: boolean = false;
     private socket?: dgram.Socket;
     private handlers: Array<Function> = [];
-    private debug: boolean = (process.env.DEBUG === '1');
 
     /**
      * Creates a new MarstekSocket instance.
@@ -35,7 +37,7 @@ export default class MarstekSocket {
      */
     log(...args: any[]) {
         if (this.parent) {
-            if (this.debug) this.parent.log('[socket]', ...args);
+            if (config.isTestVersion) this.parent.log('[socket]', ...args);
         } else {
             console.log('[socket]', ...args);
         }
@@ -93,13 +95,14 @@ export default class MarstekSocket {
                 // Bind to our IP address(es)
                 this.socket.bind({
                     port: this.port,    // Although variable, this is set to 30000
-                    address: undefined,      // make sure to bind to all local addresses    
+                    address: undefined, // make sure to bind to all local addresses
                     exclusive: true     // exclusive usage, we are the only one listening on this port
                 }, () => {
                     this.log('Socket bound to port', this.port);
                     // Make sure to receive all broadcasted messages (catch in case of binding problems)
                     try {
-                        this.socket?.setBroadcast(true);
+                        if (!this.socket) throw new Error("Socket not available after binding");
+                        this.socket.setBroadcast(true);
                         // Signal that the binding is completed
                         this.connected = true;
                     } catch (err) {
@@ -219,7 +222,7 @@ export default class MarstekSocket {
         // Send using promise
         return new Promise((resolve, reject) => {
             try {
-                this.log("Transmit:", message);
+                this.log("Transmit:", message, address);
                 const buffer = Buffer.from(message);
                 this.socket?.send(buffer, 0, buffer.length, this.port, address, (err, bytes) => {
                     if (err) {

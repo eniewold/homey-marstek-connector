@@ -10,7 +10,7 @@ import MarstekSocket from '../../lib/marstek-api';
 export default class MarstekVenusDriver extends Homey.Driver {
 
     // Add extra details during debugging
-    private debug: boolean = (this.homey.manifest.id.endsWith('.test') || process.env.DEBUG);
+    private debug: boolean = (this.homey.manifest.version.endsWith('.0') === false || !!process.env.DEBUG);
 
     // Cast pointer to our app
     private socket?: MarstekSocket = undefined;
