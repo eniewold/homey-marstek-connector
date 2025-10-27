@@ -1,4 +1,7 @@
 ﻿{
+  "0.8.4": {
+    "en": "Polling interval could not always be determined when upgrading the Homey app from previous versions, added a fallback interval value."
+  },
   "0.8.3": {
     "en": "Bug removed that caused no data to be processed from the local API. Debug flag is now always set for TEST versions fo the app."
   },

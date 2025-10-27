@@ -179,11 +179,17 @@ export default class MarstekVenusDriver extends Homey.Driver {
         const devices = this.getDevices();
         let interval: number = 60 * 60; // start at hour, find minimum
         const defaultInterval: number = this.homey.settings.get('default_poll_interval') || interval; // default interval from app settings
+        if (this.debug) this.log("Calculating poll interval from devices, default", defaultInterval, interval);
         devices.forEach((device) => {
             // if settings is not found, default to 15 since devices used this before setting was introduced
-            const seconds = device.getSetting("interval") || defaultInterval;
-            if (seconds < interval) interval = seconds;
-            if (!interval || interval < 15) throw new Error("Unexpected interval value");
+            const seconds = device.getSetting("interval");
+            if (this.debug) this.log("Adjusting to interval device setting", seconds);
+            if (seconds && seconds < interval) interval = seconds;
+            if (this.debug) this.log("Interval set to", interval);
+            if (!interval || interval < 15) {
+                interval = 600;
+                if (this.debug) this.error("Interval could not be determined, fallback to 10 minutes");
+            }
         })
         return (interval * 1000) + Math.round(Math.random() * 100);
     }

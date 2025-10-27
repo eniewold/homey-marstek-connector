@@ -48,10 +48,12 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 ## VERSION HISTORY
 
+- 0.8.4 - Polling interval could not always be determined when upgrading the Homey app from previous versions, added a fallback interval value.
+- 0.8.3 - Bug removed that caused no data to be processed from the local API. Debug flag is now always set for TEST versions fo the app.
 - 0.8.2 - Default settings can be given during pairing of local API devices. Added escaping of strings during cloud login. Unique id for messages limited to 16bits integer.
-- 0.8.1 - Added settings to disable polling for data from local API, but flows sending battery commands are still possible, to alleviate communication issues when used together with CT002/CT003.
+- 0.8.1 - **[current LIVE release]** Added settings to disable polling for data from local API, but flows sending battery commands are still possible, to alleviate communication issues when used together with CT002/CT003.
 - 0.8.0 - Code structure changes and github cleanup. Converted source to TypeScript only.
-- 0.7.6 - **[current LIVE release]** Cloud data stopped updating when initial response of Marstek Cloud service was slow, causing a concurrency problem.
+- 0.7.6 - Cloud data stopped updating when initial response of Marstek Cloud service was slow, causing a concurrency problem.
 - 0.7.5 - Incorrect password for Marstek Cloud could not be corrected without removing app first. Technical errors on the Marstek Cloud service are not correctly caught.
 - 0.7.4 - Temperature reported by same firmware has different multiplier; sanity calculation added. Marstek Cloud login problems were not handled correctly.
 - 0.7.3 - Cloud login could fail for users with multiple devices. Added some translations.
