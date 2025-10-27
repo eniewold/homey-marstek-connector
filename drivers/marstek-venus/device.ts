@@ -32,7 +32,10 @@ export default class MarstekVenusDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once startup work completes.
      */
     async onInit() {
-        if (this.debug) this.log('MarstekVenusDevice has been initialized');
+        if (this.debug) {
+            this.log('MarstekVenusDevice has been initialized');
+            this.log("Device settings", JSON.stringify(this.getSettings()));
+        }
 
         // Start listening on UDP server on driver
         await this.startListening();

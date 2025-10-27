@@ -29,6 +29,9 @@ export default class MarstekSocket {
 
         // Remember our Homey parent object
         this.parent = parent;
+
+        // Log debugging enabled
+        if (config.isTestVersion) this.log("Log has been enabled for debug purposes", config.version);
     }
 
     /**

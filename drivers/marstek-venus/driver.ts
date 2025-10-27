@@ -2,6 +2,9 @@ import Homey from 'homey'
 import dgram from 'dgram'               // For UDP binding and sending
 import MarstekSocket from '../../lib/marstek-api';
 
+// Import our loaded config
+import { config } from '../../lib/config';
+
 /**
  * Driver responsible for managing Marstek Venus devices that communicate over UDP.
  * It provides device discovery, background polling, flow card actions and command handling.
@@ -10,7 +13,7 @@ import MarstekSocket from '../../lib/marstek-api';
 export default class MarstekVenusDriver extends Homey.Driver {
 
     // Add extra details during debugging
-    private debug: boolean = (this.homey.manifest.version.endsWith('.0') === false || !!process.env.DEBUG);
+    private debug: boolean = config.isTestVersion;
 
     // Cast pointer to our app
     private socket?: MarstekSocket = undefined;
@@ -484,7 +487,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
             // Handler for messages received
             const handler = (json: any, remote: dgram.RemoteInfo) => {
                 // Always log received data during detection
-                if (this.debug) this.log(`Received for ${json.src}:`, JSON.stringify(json));                
+                if (this.debug) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(remote));                
                 // Only further check messages that have the correct properties
                 if (json && json.src && json.result && json.result.device) {
                     // Detect if device is alread in array

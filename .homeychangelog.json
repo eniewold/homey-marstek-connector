@@ -1,4 +1,7 @@
 ﻿{
+  "0.8.5": {
+    "en": "Additional debugging logs added for improving Marstek Venus compatibility, only for TEST version of this app."
+  },
   "0.8.4": {
     "en": "Polling interval could not always be determined when upgrading the Homey app from previous versions, added a fallback interval value."
   },
