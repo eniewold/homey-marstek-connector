@@ -145,7 +145,10 @@ export default class MarstekVenusDevice extends Homey.Device {
             }
 
             // Check if message is for this instance (only)
-            if (json.src !== this.getSetting("src")) return;
+            if (json.src !== this.getSetting("src")) {
+                if (this.debug) this.log("Source mismatch (expected >1 devices)", this.getSetting("src"), JSON.stringify(remote), JSON.stringify(json))
+                return;
+            }
 
             // Debug received details (if requested)
             if (this.debug) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(remote));

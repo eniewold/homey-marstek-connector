@@ -1,4 +1,7 @@
 ﻿{
+  "0.8.6": {
+    "en": "Debugging added when message details source does not match configured source(s)."
+  },
   "0.8.5": {
     "en": "Additional debugging logs added for improving Marstek Venus compatibility, only for TEST version of this app."
   },
