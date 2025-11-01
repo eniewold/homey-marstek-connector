@@ -1,6 +1,8 @@
-﻿import { URL } from 'url'
-import https from 'https'
-import http from 'http'
+import { URL } from 'url';
+import https from 'https';
+import http from 'http';
+
+import Homey from 'homey';
 
 // Load homey config
 import { config } from './config';
@@ -12,17 +14,17 @@ import { config } from './config';
 export default class MarstekCloud {
 
     // Singleton promises during requests to prevent async double calls
-    private loginPromise?: Promise<any> = undefined;
-    private devicePromise?: Promise<any> = undefined;
+    private loginPromise?: Promise<object> = undefined;
+    private devicePromise?: Promise<object[]> = undefined;
 
     // Private properties
     private username?: string = undefined;
     private password?: string = undefined;
     private baseUrl: string = 'https://eu.hamedata.com';
-    private logger: any = undefined;
+    private logger: Console | Homey.Driver;
     private token?: string = undefined;
-    private devices?: Array<any> = undefined;
-    private lastDeviceStatus: any = undefined;
+    private devices?: object[] = undefined;
+    private lastDeviceStatus?: object[] = undefined;
     private debug: boolean = config.isTestVersion;
     private timestamp?: Date = undefined;
 
@@ -33,7 +35,7 @@ export default class MarstekCloud {
      * @param {string} password MD5 enrypted password for the Marstek Cloud account
      * @param {object} [parent] The Homey parent that is creating this class (for logging)
      */
-    constructor(username: string, password: string, parent: any) {
+    constructor(username: string, password: string, parent: Homey.Driver) {
         if (!username || !password) throw new Error('Username and (encrypted) password are required');
         this.username = username;
         this.password = password;
@@ -72,11 +74,11 @@ export default class MarstekCloud {
      */
 
     async login() {
-        if (this.debug) this.logger.log("[cloud] Login request (for new token)");
+        if (this.debug) this.logger.log('[cloud] Login request (for new token)');
 
         // make sure a single promise is active while logging in
         if (this.loginPromise) {
-            if (this.debug) this.logger.log("[cloud] Login already being processed.");
+            if (this.debug) this.logger.log('[cloud] Login already being processed.');
             return this.loginPromise;
         }
 
@@ -86,26 +88,26 @@ export default class MarstekCloud {
 
             // Login is done by requesting devices using username and MD5 password
             try {
-                if (this.debug) this.logger.log("[cloud] Starting request");
+                if (this.debug) this.logger.log('[cloud] Starting request');
                 const username = encodeURIComponent(this.username || ''); // escape for special characters like +
                 const response = await this.request(`/app/Solar/v2_get_device.php?pwd=${this.password}&mailbox=${username}`);
 
                 // Store received token
                 if (response && response.token) {
-                    if (this.debug) this.logger.log("[cloud] New token received:", response.token);
+                    if (this.debug) this.logger.log('[cloud] New token received:', response.token);
                     this.token = response.token;
                 } else {
-                    throw new Error("Login did not return a token");
+                    throw new Error('Login did not return a token');
                 }
 
                 // Store the received devices
                 if (response.data) {
-                    if (this.debug) this.logger.log("[cloud] New list of devices received:", JSON.stringify(response.data));
+                    if (this.debug) this.logger.log('[cloud] New list of devices received:', JSON.stringify(response.data));
                     this.devices = response.data;
                     return response;
                 } else {
                     this.devices = undefined;
-                    throw new Error("Login did not return any devices.");
+                    throw new Error('Login did not return any devices.');
                 }
 
             } catch (err) {
@@ -134,7 +136,7 @@ export default class MarstekCloud {
 
         // make sure a single promise is active while logging in
         if (this.devicePromise !== undefined) {
-            if (this.debug) this.logger.log("[cloud] Device status request already being processed.", this.devicePromise);
+            if (this.debug) this.logger.log('[cloud] Device status request already being processed.', this.devicePromise);
             return this.devicePromise;
         }
 
@@ -143,7 +145,7 @@ export default class MarstekCloud {
             const now = new Date();
             const diff = (now.getTime() - this.timestamp.getTime());
             if (diff < 58000) {
-                if (this.debug) this.logger.log("[cloud] Using cached device status response");
+                if (this.debug) this.logger.log('[cloud] Using cached device status response');
                 return this.lastDeviceStatus;
             }
         }
@@ -153,17 +155,17 @@ export default class MarstekCloud {
             try {
                 // Make sure a token is available
                 if (!this.token) {
-                    if (this.debug) this.logger.log("[cloud] No token found, request a new token first");
+                    if (this.debug) this.logger.log('[cloud] No token found, request a new token first');
                     await this.login();
                 }
 
                 // Request latest device details
-                if (this.debug) this.logger.log("[cloud] Main request of device list status.");
+                if (this.debug) this.logger.log('[cloud] Main request of device list status.');
                 let response = await this.requestDeviceList();
 
                 // If response indicated token problems; make sure to login again
-                if (response && response.code === "8") {
-                    if (this.debug) this.logger.log("[cloud] Token is (no longer) valid, refreshing token and retry device list call");
+                if (response && response.code === '8') {
+                    if (this.debug) this.logger.log('[cloud] Token is (no longer) valid, refreshing token and retry device list call');
                     await this.login();
                     // Request latest device details (again)
                     response = await this.requestDeviceList();
@@ -172,13 +174,13 @@ export default class MarstekCloud {
                 // Detect is device status is received
                 if (!response || !response.data) {
                     this.logger.error('[cloud] Incorrect response was received', response);
-                    throw new Error("[cloud] Incorrect response was received");
+                    throw new Error('[cloud] Incorrect response was received');
                 }
 
-                // Record the last successful received response 
+                // Record the last successful received response
                 this.timestamp = new Date();
                 this.lastDeviceStatus = response.data;
-                if (this.debug) this.logger.log("[cloud] Device status details received", JSON.stringify(response.data));
+                if (this.debug) this.logger.log('[cloud] Device status details received', JSON.stringify(response.data));
 
                 // Resolve to received response
                 return response.data;
@@ -197,7 +199,7 @@ export default class MarstekCloud {
 
     /**
      * Helper function to retrieve device list from the Marstek cloud
-     * @returns {Promise<any>} 
+     * @returns {Promise<any>}
      * Use GET on URL: https://eu.hamedata.com/ems/api/v1/getDeviceList?token=<TOKEN>
      *  {
           "timeZone": "Europe/Amsterdam",
@@ -248,7 +250,9 @@ export default class MarstekCloud {
             }
             const req = httpModule.request(request, (res) => {
                 let data = '';
-                res.on('data', chunk => { data += chunk; });
+                res.on('data', chunk => {
+                    data += chunk;
+                });
                 res.on('end', () => {
                     try {
                         // Incorrect http status received
@@ -265,7 +269,7 @@ export default class MarstekCloud {
                         resolve(parsed);
                         return parsed;
                     } catch (err) {
-                        this.logger.error("Exception during request: ", (err as Error).message || err);
+                        this.logger.error('Exception during request: ', (err as Error).message || err);
                         reject(err);
                     }
                 });

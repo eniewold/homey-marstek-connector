@@ -1,4 +1,7 @@
 ﻿{
+  "0.8.7": {
+    "en": "The 'ES.GetStatus' messages are no longer using UDP broadcast but now directly target the IP address of the device, sending out one request per device."
+  },
   "0.8.6": {
     "en": "Debugging added when message details source does not match configured source(s)."
   },

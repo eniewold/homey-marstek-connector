@@ -1,6 +1,8 @@
-import os from 'os'
-import ip from 'ip'; // For converting broadcast IP address
-import dgram from 'dgram'               // For UDP binding and sending
+import os from 'os';
+import ip from 'ip';            // For converting broadcast IP address
+import dgram from 'dgram';      // For UDP binding and sending
+
+import Homey from 'homey';
 
 // Load homey config
 import { config } from './config';
@@ -12,7 +14,7 @@ import { config } from './config';
 export default class MarstekSocket {
 
     // Private properties
-    private parent: any = undefined;
+    private parent?: Homey.Driver = undefined;
     private port: number = 30000;
     private connected: boolean = false;
     private socket?: dgram.Socket;
@@ -23,7 +25,7 @@ export default class MarstekSocket {
      * @constructor
      * @param {object} parent - the Homey parent that is creating this class (for logging)
      */
-    constructor(parent: any) {
+    constructor(parent: Homey.Driver) {
         // Check if required parameters are passed
         if (!parent) throw new Error("[socket] Parent parameter required");
 
@@ -268,10 +270,10 @@ export default class MarstekSocket {
 
     /**
      * Execute all callback functions of all registered handlers (onMessage event)
-     * @param {any} json - json object with received message details
+     * @param {any} object - json object with received message details
      * @param {dgram.RemoteInfo} remote - remote details of message sender
      */
-    async callback(json: any, remote: dgram.RemoteInfo) {
+    async callback(json: object, remote: dgram.RemoteInfo) {
         this.handlers.forEach(async (handler) => {
             // TODO: prevent non-existant device handler execution
             try {

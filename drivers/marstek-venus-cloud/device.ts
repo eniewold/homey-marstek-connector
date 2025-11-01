@@ -1,6 +1,6 @@
-import Homey from 'homey'
-import type MarstekVenusCloudDriver from './driver'
-import type MarstekCloud from '../../lib/marstek-cloud'
+import Homey from 'homey';
+import type MarstekVenusCloudDriver from './driver';
+import type MarstekCloud from '../../lib/marstek-cloud';
 
 // Import our loaded config
 import { config } from '../../lib/config';
@@ -77,7 +77,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
     async _loadConfiguration() {
         // Load credentials from store
         this.username = await this.getStoreValue('username');
-        this.password = await this.getStoreValue('password');  
+        this.password = await this.getStoreValue('password');
         this.devid = await this.getStoreValue('devid');
 
         if (!this.username || !this.password || !this.devid) {
@@ -165,7 +165,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
             const payload = await this.client?.fetchDeviceStatus();
 
             // Filter correct device
-            const status = payload.find((device: any) => device.devid === this.devid);
+            const status = payload?.find((device: any) => device.devid === this.devid);
             if (status) {
                 await this._handleStatusPayload(status);
                 if (!this.getAvailable()) await this.setAvailable();

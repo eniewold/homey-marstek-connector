@@ -1,4 +1,4 @@
-﻿import Homey from 'homey'
+import Homey from 'homey'
 import dgram from 'dgram'               // For UDP binding and sending
 import MarstekVenusDriver from './driver'
 

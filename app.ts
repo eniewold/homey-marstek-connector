@@ -1,4 +1,4 @@
-﻿import Homey from 'homey';
+import Homey from 'homey';
 
 import { config } from './lib/config';
 
@@ -19,7 +19,7 @@ export default class MarstekBatteryContoller extends Homey.App {
     async onUninit() {
         this.log('MarstekBatteryAPI has been uninitialized');
     }
-};
+}
 
 // Also use module.exports for Homey
 module.exports = MarstekBatteryContoller;

@@ -1,5 +1,5 @@
-import Homey from 'homey'
-import crypto from 'crypto'
+import Homey from 'homey';
+import crypto from 'crypto';
 
 // Use require for esModule class instances
 import MarstekCloud from '../../lib/marstek-cloud';
