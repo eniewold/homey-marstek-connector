@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.niewold.marstek",
-  "version": "0.8.7",
+  "version": "0.8.8",
   "compatibility": ">=12.5.0",
   "sdk": 3,
   "brandColor": "#555555",
@@ -648,6 +648,17 @@
                 "ru": "секунды",
                 "ko": "초"
               }
+            },
+            {
+              "id": "broadcast",
+              "type": "checkbox",
+              "label": {
+                "en": "Use UDP broadcast"
+              },
+              "hint": {
+                "en": "When checked (default) requests are transmitted through UDP broadcast. If unchecked, this device will received direct UDP communication. Broadcast is recommended, as using this setting uniformly across all devices."
+              },
+              "value": true
             }
           ]
         },

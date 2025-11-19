@@ -96,6 +96,17 @@
           "ru": "секунды",
           "ko": "초"
         }
+      },
+      {
+        "id": "broadcast",
+        "type": "checkbox",
+        "label": {
+          "en": "Use UDP broadcast"
+        },
+        "hint": {
+          "en": "When checked (default) requests are transmitted through UDP broadcast. If unchecked, this device will received direct UDP communication. Broadcast is recommended, as using this setting uniformly across all devices."
+        },
+        "value": true
       }
     ]
   },

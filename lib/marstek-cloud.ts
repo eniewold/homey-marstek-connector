@@ -247,7 +247,7 @@ export default class MarstekCloud {
                 port: url.port,
                 path: `${url.pathname}${url.search}`,
                 headers: { Accept: 'application/json' },
-            }
+            };
             const req = httpModule.request(request, (res) => {
                 let data = '';
                 res.on('data', chunk => {

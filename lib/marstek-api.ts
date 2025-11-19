@@ -27,13 +27,13 @@ export default class MarstekSocket {
      */
     constructor(parent: Homey.Driver) {
         // Check if required parameters are passed
-        if (!parent) throw new Error("[socket] Parent parameter required");
+        if (!parent) throw new Error('[api] Parent parameter required');
 
         // Remember our Homey parent object
         this.parent = parent;
 
         // Log debugging enabled
-        if (config.isTestVersion) this.log("Log has been enabled for debug purposes", config.version);
+        if (config.isTestVersion) this.log('Log has been enabled for debug purposes', config.version);
     }
 
     /**
@@ -42,9 +42,9 @@ export default class MarstekSocket {
      */
     log(...args: any[]) {
         if (this.parent) {
-            if (config.isTestVersion) this.parent.log('[socket]', ...args);
+            if (config.isTestVersion) this.parent.log('[api]', ...args);
         } else {
-            console.log('[socket]', ...args);
+            console.log('[api]', ...args);
         }
     }
 
@@ -54,9 +54,9 @@ export default class MarstekSocket {
      */
     error(...args: any[]) {
         if (this.parent) {
-            this.parent.error('[socket]', ...args);
+            this.parent.error('[api]', ...args);
         } else {
-            console.error('[socket]', ...args);
+            console.error('[api]', ...args);
         }
     }
 
@@ -91,9 +91,13 @@ export default class MarstekSocket {
                     // ignore messages from our own broadcast
                     if (remote.address !== this.getLocalIPAddress()) {
                         this.log('Message received from', remote.address);
-                        const json = JSON.parse(message.toString());
-                        this.log('Message parsed', JSON.stringify(json));
-                        await this.callback(json, remote);
+                        try {
+                            const json = JSON.parse(message.toString());
+                            this.log('Message parsed', JSON.stringify(json));
+                            await this.callback(json, remote);
+                        } catch (err) {
+                            this.error('Problem encountered processing received message data (with parsing or callback)', message ? message.toString() : "", (err as Error).message || err);
+                        }
                     }
                 });
 
@@ -101,19 +105,19 @@ export default class MarstekSocket {
                 this.socket.bind({
                     port: this.port,    // Although variable, this is set to 30000
                     address: undefined, // make sure to bind to all local addresses
-                    exclusive: true     // exclusive usage, we are the only one listening on this port
+                    exclusive: true,    // exclusive usage, we are the only one listening on this port
                 }, () => {
                     this.log('Socket bound to port', this.port);
                     // Make sure to receive all broadcasted messages (catch in case of binding problems)
                     try {
-                        if (!this.socket) throw new Error("Socket not available after binding");
+                        if (!this.socket) throw new Error('Socket not available after binding');
                         this.socket.setBroadcast(true);
                         // Signal that the binding is completed
                         this.connected = true;
                     } catch (err) {
                         this.error('Could not set the broadcast flag:', (err as Error).message || err);
                         this.disconnect();
-                        reject(err)
+                        reject(err);
                         return;
                     }
                     // Finally resolve our promise
@@ -121,15 +125,15 @@ export default class MarstekSocket {
                 });
 
                 // Handle error events
-                this.socket.on("error", (err) => {
-                    this.error("onError", err);
+                this.socket.on('error', (err) => {
+                    this.error('onError', err);
                     this.disconnect();
                     this.connected = false;
                 });
 
                 // Handle close events
                 this.socket.on('close', () => {
-                    this.error("onClose");
+                    this.error('onClose');
                     this.connected = false;
                 });
 
@@ -137,7 +141,6 @@ export default class MarstekSocket {
                 this.error('Error binding socket:', (err as Error).message || err);
                 this.disconnect();
                 reject(err);
-                return;
             }
 
         });
@@ -171,7 +174,7 @@ export default class MarstekSocket {
             const subnet = ip.subnet(iface.address, iface.netmask);
             return subnet ? subnet.broadcastAddress : undefined;
         } else {
-            this.error("No external IPv4 interface found; broadcast address could not be determined");
+            this.error('No external IPv4 interface found; broadcast address could not be determined');
         }
         return undefined;
     }
@@ -200,7 +203,7 @@ export default class MarstekSocket {
      */
     async send(message: string, address: string) {
         // Check for address
-        if (!address) throw new Error("[socket] No address given to transmit to");
+        if (!address) throw new Error('[api] No address given to transmit to');
         // Transmit
         await this.transmit(message, address);
     }
@@ -216,22 +219,25 @@ export default class MarstekSocket {
             try {
                 await this.connect();
             } catch (err) {
-                this.error("Can't transmit, not connected");
+                this.error('Can\'t transmit, not connected');
                 return;
             }
         }
 
         // Set address to broadcast when not given
-        if (!address) address = this.getBroadcastAddress();
+        if (!address) {
+            address = this.getBroadcastAddress();
+            this.log('No target address given, using broadcast address', address);
+        }
 
         // Send using promise
-        return new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
             try {
-                this.log("Transmit:", message, address);
+                this.log('Transmit:', message, address);
                 const buffer = Buffer.from(message);
                 this.socket?.send(buffer, 0, buffer.length, this.port, address, (err, bytes) => {
                     if (err) {
-                        this.error("Error transmitting message:", err, address);
+                        this.error('Error transmitting message:', err, address);
                         reject(err);
                     } else {
                         resolve(undefined);
@@ -250,7 +256,7 @@ export default class MarstekSocket {
      * @param {Function} handler
      */
     on(handler: Function) {
-        this.log("Handler added");
+        this.log('Handler added');
         if (!this.handlers.includes(handler)) {
             this.handlers.push(handler);  // won't add again
         }
@@ -261,7 +267,7 @@ export default class MarstekSocket {
      * @param {Function} handler
      */
     off(handler: Function) {
-        this.log("Handler removed");
+        this.log('Handler removed');
         const index = this.handlers.indexOf(handler);
         if (index !== -1) {
             this.handlers.splice(index, 1);
@@ -274,16 +280,19 @@ export default class MarstekSocket {
      * @param {dgram.RemoteInfo} remote - remote details of message sender
      */
     async callback(json: object, remote: dgram.RemoteInfo) {
-        this.handlers.forEach(async (handler) => {
-            // TODO: prevent non-existant device handler execution
+        // Fire all callbacks in parallel
+        const tasks = this.handlers.map(async (handler) => {
             try {
                 if (typeof handler === 'function') {
-                    return await handler(json, remote);
+                    await handler(json, remote);
                 }
             } catch (err) {
-                this.error("Handler callback error", err);
+                this.error('Handler callback error', err);
             }
         });
+
+        // Wait for all to complete
+        await Promise.all(tasks);
     }
 
     /**

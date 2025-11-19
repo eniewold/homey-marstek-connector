@@ -49,7 +49,7 @@ export default class MarstekVenusCloudDriver extends Homey.Driver {
             // Make sure to encode password immediately
             const credentials = {
                 username: username?.trim(),
-                password: this.encode(password)
+                password: this.encode(password),
             };
             if (!credentials.username || !credentials.password) {
                 throw new Error('Please enter both username and password');
@@ -58,10 +58,10 @@ export default class MarstekVenusCloudDriver extends Homey.Driver {
             // Create a cloud client instance and store details into session (for other discovered devices)
             const client = this.getClient(credentials);
             try {
-                if (this.debug) this.log("[cloud] Login during pairing; always request a new token");
+                if (this.debug) this.log('[cloud] Login during pairing; always request a new token');
                 await client?.login();
             } catch (err) {
-                this.error("[cloud] Login failed:", (err as Error).message || err);
+                this.error('[cloud] Login failed:', (err as Error).message || err);
                 return false;
             }
             this.pairSessions.set(session, { credentials, client });
@@ -115,20 +115,19 @@ export default class MarstekVenusCloudDriver extends Homey.Driver {
         // Check if there already a client
         const client = this.clients.get(credentials.username);
         if (!client) {
-            if (this.debug) this.log("[cloud] Client not found, create new instance with stored credentials.")
+            if (this.debug) this.log('[cloud] Client not found, create new instance with stored credentials.');
             const newClient = new MarstekCloud(
                 credentials.username,
                 credentials.password,
-                this                    // pass our Homey Driver object for logging method access
+                this,                    // pass our Homey Driver object for logging method access
             );
             this.clients.set(credentials.username, newClient);
             return newClient;
         } else {
-            if (this.debug) this.log("[cloud] Using available instance of client.");
+            if (this.debug) this.log('[cloud] Using available instance of client.');
             client.setPassword(credentials.password);
             return client;
         }
-        return undefined;
     }
 
     /**

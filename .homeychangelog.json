@@ -1,4 +1,7 @@
 ﻿{
+  "0.8.8": {
+    "en": "UDP broadcast or sending individual UDP packages to individual batteries is now configurable (defaults to broadcast)."
+  },
   "0.8.7": {
     "en": "The 'ES.GetStatus' messages are no longer using UDP broadcast but now directly target the IP address of the device, sending out one request per device."
   },

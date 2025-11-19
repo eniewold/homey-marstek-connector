@@ -34,10 +34,10 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      */
     async onInit() {
         if (this.debug) this.log('MarstekVenusCloudDevice has been initialized');
-        await this._loadConfiguration();
-        await this._initialiseClient();
-        await this._updateCapabilitiesWithNull();
-        this._startPolling();
+        await this.loadConfiguration();
+        await this.initialiseClient();
+        await this.updateCapabilitiesWithNull();
+        await this.startPolling();
     }
 
     /**
@@ -55,7 +55,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once cleanup completes.
      */
     async onDeleted() {
-        this._stopPolling();
+        this.stopPolling();
         if (this.debug) this.log('MarstekVenusCloudDevice has been deleted');
     }
 
@@ -65,7 +65,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once cleanup completes.
      */
     async onUninit() {
-        this._stopPolling();
+        this.stopPolling();
         if (this.debug) this.log('MarstekVenusCloudDevice has been uninitialized');
     }
 
@@ -74,7 +74,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once configuration values are retrieved.
      * @throws {Error} When required credentials are missing.
      */
-    async _loadConfiguration() {
+    private async loadConfiguration() {
         // Load credentials from store
         this.username = await this.getStoreValue('username');
         this.password = await this.getStoreValue('password');
@@ -90,19 +90,18 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once the client is authenticated.
      * @throws {Error} When authentication fails.
      */
-    async _initialiseClient() {
+    private async initialiseClient() {
         // Retrieve client related to the current credentials
         this.client = this.myDriver.getClient(
             {
                 username: this.username,
-                password: this.password
+                password: this.password,
             }
         );
 
         if (!this.client) {
             this.error('[cloud] No client available for these credentials');
             await this.setUnavailable('Unable to authenticate with Marstek cloud');
-            return;
         }
     }
 
@@ -110,7 +109,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      * Resets the relevant device capabilities to `null` until fresh data is received.
      * @returns {Promise<void>} Resolves once capability values are cleared.
      */
-    async _updateCapabilitiesWithNull() {
+    private async updateCapabilitiesWithNull() {
         await this.setCapabilityValue('measure_battery', null);
         await this.setCapabilityValue('measure_power', null);
         await this.setCapabilityValue('measure_power.charge', null);
@@ -121,16 +120,16 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
     /**
      * Starts the polling cycle that retrieves cloud data and updates the last message capability.
      */
-    _startPolling() {
+    private async startPolling() {
         // Start retrieving details from cloud service
         if (this.pollInterval) return;
         if (this.debug) this.log('[cloud] polling started');
 
         // Poll every 60 seconds
-        this.pollInterval = this.homey.setInterval(() => this._poll(), 60000);
+        this.pollInterval = this.homey.setInterval(() => this.poll(), 60000);
 
         // Initial poll
-        this._poll();
+        await this.poll();
 
         // Also start updating the last received message capability
         this.lastInterval = this.homey.setInterval(async () => {
@@ -146,7 +145,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
     /**
      * Stops the polling cycle and clears both the poll and last-message intervals.
      */
-    _stopPolling() {
+    private stopPolling() {
         if (this.pollInterval) {
             if (this.debug) this.log('[cloud] polling stopped');
             this.homey.clearInterval(this.pollInterval);
@@ -159,7 +158,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      * Executes a single poll by requesting device status from the cloud API and updating capabilities.
      * @returns {Promise<void>} Resolves when the capability updates complete.
      */
-    async _poll() {
+    private async poll() {
         try {
             // retrieve data of all devices
             const payload = await this.client?.fetchDeviceStatus();
@@ -167,11 +166,11 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
             // Filter correct device
             const status = payload?.find((device: any) => device.devid === this.devid);
             if (status) {
-                await this._handleStatusPayload(status);
+                await this.handleStatusPayload(status);
                 if (!this.getAvailable()) await this.setAvailable();
             } else {
                 this.error('[cloud] Device details not found in payload for device', this.devid);
-                this._updateCapabilitiesWithNull();
+                await this.updateCapabilitiesWithNull();
             }
         } catch (err) {
             this.error('[cloud] Error fetching Marstek cloud data:', (err as Error).message || err);
@@ -184,7 +183,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      * @param {any} status - Raw status payload returned by the cloud API.
      * @returns {Promise<void>} Resolves once the capability values have been updated.
      */
-    async _handleStatusPayload(status: any) {
+    private async handleStatusPayload(status: any) {
         if (!status) {
             this.error("[cloud] Payload not found or no data in payload", status);
             return;
@@ -206,7 +205,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
 
     /** Retrieve our current debug setting, based on actual setting and version */
     get debug(): boolean {
-        return (this.getSetting("debug") === true) || config.isTestVersion;
+        return (this.getSetting('debug') === true) || config.isTestVersion;
     }
 
 };

@@ -1,6 +1,6 @@
-import Homey from 'homey'
-import dgram from 'dgram'               // For UDP binding and sending
-import MarstekVenusDriver from './driver'
+import Homey from 'homey';
+import dgram from 'dgram'; // For UDP binding and sending
+import MarstekVenusDriver from './driver';
 
 // Import our loaded config
 import { config } from '../../lib/config';
@@ -34,7 +34,7 @@ export default class MarstekVenusDevice extends Homey.Device {
     async onInit() {
         if (this.debug) {
             this.log('MarstekVenusDevice has been initialized');
-            this.log("Device settings", JSON.stringify(this.getSettings()));
+            this.log('Device settings', JSON.stringify(this.getSettings()));
         }
 
         // Start listening on UDP server on driver
@@ -43,7 +43,7 @@ export default class MarstekVenusDevice extends Homey.Device {
         // Default capability values
         await this.resetCapabilities();
 
-        if (this.getSetting("poll") !== false) {
+        if (this.getSetting('poll') !== false) {
             // Update the driver interval
             this.myDriver.pollIntervalUpdate();
             // Start polling at regular intervals
@@ -70,7 +70,7 @@ export default class MarstekVenusDevice extends Homey.Device {
             'measure_power_ongrid',        // Current power usage of on-grid port (in W)
             'measure_power_offgrid',       // Current power usage of off-grid port (in W)
             'measure_power_pv',            // Current power usage of off-grid port (in W)
-            'last_message_received'        // number of seconds the last received message
+            'last_message_received',       // number of seconds the last received message
         ];
         for (const cap of capabilities) {
             if (!this.hasCapability(cap)) await this.addCapability(cap);
@@ -83,15 +83,15 @@ export default class MarstekVenusDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves when the listener has been registered.
      */
     async startListening() {
-        if (this.debug) this.log("Start listening");
-        this.myDriver.getSocket().on(this.handler)
+        if (this.debug) this.log('Start listening');
+        this.myDriver.getSocket().on(this.handler);
     }
 
     /**
      * Removes the UDP message listener for this device from the shared socket.
      */
     stopListening() {
-        if (this.debug) this.log("Stop listening");
+        if (this.debug) this.log('Stop listening');
         this.myDriver.getSocket().off(this.handler);
     }
 
@@ -101,8 +101,8 @@ export default class MarstekVenusDevice extends Homey.Device {
      * `last_message_received` capability updated.
      */
     startPolling() {
-        if (this.debug) this.log("Start polling");
-        this.myDriver.pollStart(this.getSetting("src"));
+        if (this.debug) this.log('Start polling');
+        this.myDriver.pollStart(this.getSetting('src'));
         // Also start updating the last received message capability
         this.timeout = this.homey.setInterval(async () => {
             if (this.timestamp) {
@@ -117,8 +117,8 @@ export default class MarstekVenusDevice extends Homey.Device {
      * Stops the periodic polling routine and clears the update interval.
      */
     stopPolling() {
-        if (this.debug) this.log("Stop polling");
-        this.myDriver.pollStop(this.getSetting("src"));
+        if (this.debug) this.log('Stop polling');
+        this.myDriver.pollStop(this.getSetting('src'));
         if (this.timeout) this.homey.clearInterval(this.timeout);
     }
 
@@ -139,14 +139,18 @@ export default class MarstekVenusDevice extends Homey.Device {
         }
         try {
             // Check if src property exists
-            if (!json || !json.src) {
-                this.error('Received message without json or src property:', JSON.stringify(json), JSON.stringify(remote));
+            if (!json) {
+                this.error('Received message without json', JSON.stringify(remote));
+                return;
+            }
+            if (!json.src) {
+                this.error('Received message without src property', JSON.stringify(json), JSON.stringify(remote));
                 return;
             }
 
             // Check if message is for this instance (only)
-            if (json.src !== this.getSetting("src")) {
-                if (this.debug) this.log("Source mismatch (expected >1 devices)", this.getSetting("src"), JSON.stringify(remote), JSON.stringify(json))
+            if (json.src !== this.getSetting('src')) {
+                if (this.debug) this.log('Source mismatch (expected >1 devices)', this.getSetting('src'), JSON.stringify(remote), JSON.stringify(json))
                 return;
             }
 
@@ -154,14 +158,14 @@ export default class MarstekVenusDevice extends Homey.Device {
             if (this.debug) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(remote));
 
             // Update remote IP address of device (can change due to DHCP leases)
-            if (remote.address) this.setStoreValue("address", remote.address);
+            if (remote.address) this.setStoreValue('address', remote.address);
 
             // Try to retrieve the firmware version from the settings (including deprecated method)
             let firmware = 0;
-            if (this.getSetting("firmware")) {
-                firmware = Number(this.getSetting("firmware"));
+            if (this.getSetting('firmware')) {
+                firmware = Number(this.getSetting('firmware'));
             } else {
-                const model = this.getSetting("model");
+                const model = this.getSetting('model');
                 if (model) firmware = Number(model.split(' v')[1]);
             }
 
@@ -189,7 +193,7 @@ export default class MarstekVenusDevice extends Homey.Device {
                 // Battery power and charging state
                 if (!isNaN(result.bat_power)) {
                     // Charge state (Possible values: "idle", "charging", "discharging")
-                    await this.setCapabilityValue('battery_charging_state', (result.bat_power > 0) ? "charging" : (result.bat_power < 0) ? "discharging" : "idle");
+                    await this.setCapabilityValue('battery_charging_state', (result.bat_power > 0) ? 'charging' : (result.bat_power < 0) ? 'discharging' : 'idle');
                     await this.setCapabilityValue('measure_power', result.bat_power / ((firmware >= 154) ? 1.0 : 10.0));
                 }
 
@@ -216,7 +220,7 @@ export default class MarstekVenusDevice extends Homey.Device {
      * @param {any} event Homey populated structure with old and new sttings
      */
     async onSettings(event: any) {
-        if (event.changedKeys.includes("poll")) {
+        if (event.changedKeys.includes('poll')) {
             if (event.newSettings.poll !== false) {
                 this.startPolling();
             } else {
@@ -225,7 +229,7 @@ export default class MarstekVenusDevice extends Homey.Device {
             }
         }
         // If interval is changed, schedule a poll interval update because settings is not yet changed
-        if (event.changedKeys.includes("interval")) {
+        if (event.changedKeys.includes('interval')) {
             this.homey.setTimeout(() => {
                 this.myDriver.pollIntervalUpdate();
             }, 1000);
@@ -259,7 +263,7 @@ export default class MarstekVenusDevice extends Homey.Device {
      * @returns {boolean} True when debug logging is enabled (through settings or test version)
      */
     get debug(): boolean {
-        return (this.getSetting("debug") === true) || config.isTestVersion;
+        return (this.getSetting('debug') === true) || config.isTestVersion;
     }
 
 };
