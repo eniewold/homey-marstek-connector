@@ -190,7 +190,15 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @param {string} device - Unique identifier of the device to poll.
      */
     pollStart(device: string) {
-        this.pollDevices.push(device);
+        if (!device) {
+            this.error('pollStart called without a device identifier');
+            return;
+        }
+
+        if (!this.pollDevices.includes(device)) {
+            this.pollDevices.push(device);
+        }
+
         if (!this.pollTimeout) {
             const interval = this.getPollInterval();
             if (this.debug) this.log('Started background polling with interval', interval);
@@ -207,8 +215,9 @@ export default class MarstekVenusDriver extends Homey.Driver {
      */
     pollStop(device: string) {
         // Remove the device from the polling devices
-        const index = this.pollDevices.indexOf(device);
-        if (index !== -1) this.pollDevices.splice(index, 1);
+        if (device) {
+            this.pollDevices = this.pollDevices.filter((id) => id !== device);
+        }
         // When no more devices are left; stop interval polling
         if (this.pollTimeout && this.pollDevices.length === 0) {
             this.homey.clearInterval(this.pollTimeout);
@@ -225,7 +234,9 @@ export default class MarstekVenusDriver extends Homey.Driver {
         if (this.pollTimeout) {
             this.homey.clearInterval(this.pollTimeout);
             const ms = this.getPollInterval();
-            this.pollTimeout = this.homey.setInterval(async () => this.poll(), ms);
+            this.pollTimeout = this.homey.setInterval(() => {
+                this.poll().catch(err => { this.error('Error during polling', err) });
+            }, ms);
             if (this.debug) this.log('Updated background polling with interval', ms);
         }
     }
@@ -236,8 +247,8 @@ export default class MarstekVenusDriver extends Homey.Driver {
      */
     getPollInterval(): number {
         const devices = this.getDevices();
-        let interval: number = 60 * 60; // start at hour, find minimum
-        const defaultInterval: number = this.homey.settings.get('default_poll_interval') || interval; // default interval from app settings
+        const defaultInterval: number = this.homey.settings.get('default_poll_interval') || (60 * 60); // default interval from app settings
+        let interval: number = defaultInterval; // start with configured default, find minimum across devices
         if (this.debug) this.log('Calculating poll interval from devices, default', defaultInterval, interval);
         devices.forEach((device) => {
             // if settings is not found, default to 15 since devices used this before setting was introduced
@@ -510,7 +521,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
                 reject(new Error('Timed out waiting for device response'));
             }, timeout);
 
-             const cleanup = () => {
+            const cleanup = () => {
                 socket.off(handler);
                 this.homey.clearTimeout(timer);
             };
