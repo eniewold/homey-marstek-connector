@@ -64,6 +64,7 @@ export default class MarstekVenusDevice extends Homey.Device {
             'measure_power',               // Power usage/delivery (In Watts)
             'measure_temperature',         // Main battery temperature (In degrees celcius)
             'measure_battery',             // State of Charge in %
+            'measure_rssi',                // WiFi signal strength (In dBm)
             'meter_power.imported',        // Total power imported (in kWh)
             'meter_power.exported',        // Total power exported (in kWh)
             'meter_power.load',            // Total power exported (in kWh)
@@ -206,6 +207,17 @@ export default class MarstekVenusDevice extends Homey.Device {
                 if (!isNaN(result.ongrid_power)) await this.setCapabilityValue('measure_power_ongrid', result.ongrid_power * -1);
                 if (!isNaN(result.offgrid_power)) await this.setCapabilityValue('measure_power_offgrid', result.offgrid_power * -1);
                 if (!isNaN(result.pv_power)) await this.setCapabilityValue('measure_power_pv', result.pv_power * -1);
+
+                // WIFI status
+                if (!isNaN(result.rssi)) {
+                    if (this.debug) this.log('Setting RSSI capability:', result.rssi);
+                    await this.setCapabilityValue('measure_rssi', result.rssi);
+                }
+                if (result.ssid) await this.setSettings({ wifi_ssid: result.ssid });
+                if (result.sta_ip) await this.setSettings({ wifi_ip: result.sta_ip });
+                if (result.sta_gate) await this.setSettings({ wifi_gateway: result.sta_gate });
+                if (result.sta_mask) await this.setSettings({ wifi_subnet: result.sta_mask });
+                if (result.sta_dns) await this.setSettings({ wifi_dns: result.sta_dns });
             }
 
         }

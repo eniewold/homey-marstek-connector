@@ -1,5 +1,5 @@
-import Homey from 'homey';
-import dgram from 'dgram';               // For UDP binding and sending
+import * as Homey from 'homey';
+import * as dgram from 'dgram';               // For UDP binding and sending
 import MarstekSocket from '../../lib/marstek-api';
 
 // Import our loaded config
@@ -7,7 +7,7 @@ import { config } from '../../lib/config';
 
 // Interface definition for battery messages
 interface MessagePayload {
-    method: 'ES.GetStatus' | 'Bat.GetStatus';
+    method: 'ES.GetStatus' | 'Bat.GetStatus' | 'Wifi.GetStatus';
     params: { id: number };
 }
 interface PollRequest {
@@ -39,6 +39,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
         { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
         { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
         { payload: { method: 'Bat.GetStatus', params: { id: 0 } }, broadcast: true },
+        { payload: { method: 'Wifi.GetStatus', params: { id: 0 } }, broadcast: false },
         { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
     ];
 
@@ -51,6 +52,10 @@ export default class MarstekVenusDriver extends Homey.Driver {
     // Identifiers of devices currently participating in polling.
     private pollDevices: Array<string> = [];
 
+    // Device address and port for direct discovery during pairing.
+    private deviceAddress?: string = undefined;
+    private devicePort?: number = undefined;
+
     /**
      * Called when the driver is initialised.
      * Sets up flow listeners and logs driver startup.
@@ -58,6 +63,13 @@ export default class MarstekVenusDriver extends Homey.Driver {
      */
     async onInit() {
         if (this.debug) this.log('MarstekVenusDriver has been initialized');
+        // Log Homey environment details for debugging
+        this.log('Homey environment details:', {
+            version: this.homey.manifest.version,
+            debug: this.debug,
+            platform: process.platform,
+            nodeVersion: process.version
+        });
         await this.registerFlowListeners();
     }
 
@@ -81,15 +93,33 @@ export default class MarstekVenusDriver extends Homey.Driver {
      */
     async onPair(session: Homey.Driver.PairSession): Promise<void> {
         // List devices template is handled using broadcast resolved device detection
-        session.setHandler('list_devices', async () => this.broadcastDetect());
+        session.setHandler('list_devices', async () => this.broadcastDetect(this.deviceAddress, this.devicePort));
 
         // Received when a view has changed
-        session.setHandler('showView', async (viewId) => {
+        session.setHandler('showView', async (viewId: string) => {
             // Apply default values to settings form
             if (viewId === 'show_settings') {
                 const interval: number = this.homey.settings.get('default_poll_interval') || 60;
                 const enabled: boolean = this.homey.settings.get('default_poll_enabled') || false;
                 await session.emit('initPollSettings', { interval, enabled });
+            }
+        });
+
+        // Event is emitted from HTML form
+        session.setHandler('saveDeviceAddress', async (address: string) => {
+            if (this.debug) this.log('saveDeviceAddress', address);
+            if (typeof address === 'string') {
+                this.deviceAddress = address || undefined;
+            }
+        });
+
+        // Event is emitted from HTML form
+        session.setHandler('saveDevicePort', async (port: number) => {
+            if (this.debug) this.log('saveDevicePort', port);
+            if (typeof port === 'number' && !Number.isNaN(port) && port > 0 && port <= 65535) {
+                this.devicePort = port;
+            } else {
+                this.devicePort = undefined;
             }
         });
 
@@ -537,9 +567,12 @@ export default class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Discovers Marstek Venus devices by broadcasting a detection message and collecting responses.
+     * If an address is provided, sends directly to that address instead of broadcasting.
+     * @param {string} [address] Optional IP address to send detection message to.
+     * @param {number} [port] Optional port to send detection message to (defaults to 30000).
      * @returns {Promise<Array<{name: string, data: {id: string}, settings: object, store: object}>>} Resolves with the discovered devices.
      */
-    async broadcastDetect(): Promise<Array<any>> {
+    async broadcastDetect(address?: string, port?: number): Promise<Array<any>> {
         const devices: Array<any> = [];
         const socket = this.getSocket();
         return new Promise((resolve, reject) => {
@@ -576,20 +609,26 @@ export default class MarstekVenusDriver extends Homey.Driver {
 
             // Message to detect batteries as documented in the API
             const message = '{"id":"Homey-Detect","method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
-            if (this.debug) this.log('Detection broadcasting:', message);
-            socket.broadcast(message).then(() => {
-                // Start broadcasting message
-                const interval = this.homey.setInterval(async () => {
-                    await socket.broadcast(message);
-                }, 2000);
-                // Stop broadcasting after 9 seconds (Homey waits 10 seconds before timeout)
+            const sendMessage = async () => {
+                if (address) {
+                    if (this.debug) this.log('Detection sending to', address + ':' + (port || 30000), ':', message);
+                    await socket.send(message, address, port);
+                } else {
+                    if (this.debug) this.log('Detection broadcasting:', message);
+                    await socket.broadcast(message, port);
+                }
+            };
+            sendMessage().then(() => {
+                // Start sending/broadcasting message
+                const interval = this.homey.setInterval(sendMessage, 2000);
+                // Stop after 9 seconds (Homey waits 10 seconds before timeout)
                 this.homey.setTimeout(() => {
                     this.homey.clearInterval(interval);
                     socket.off(handler);
                     resolve(devices);
                 }, 9000);
             }).catch((reason: Error) => {
-                this.error('Error broadcasting message:', reason);
+                this.error('Error sending/broadcasting message:', reason);
                 socket.off(handler);
                 reject(reason);
             });

@@ -249,6 +249,120 @@
           "ko": "펌웨어"
         },
         "value": "(unknown)"
+      },
+      {
+        "id": "wifi_ssid",
+        "type": "label",
+        "label": {
+          "en": "WiFi SSID",
+          "nl": "WiFi SSID",
+          "da": "WiFi SSID",
+          "de": "WiFi SSID",
+          "es": "SSID WiFi",
+          "fr": "SSID WiFi",
+          "it": "SSID WiFi",
+          "no": "WiFi SSID",
+          "sv": "WiFi SSID",
+          "pl": "SSID WiFi",
+          "ru": "WiFi SSID",
+          "ko": "WiFi SSID"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "wifi_rssi",
+        "type": "label",
+        "label": {
+          "en": "WiFi Signal Strength",
+          "nl": "WiFi Signaalsterkte",
+          "da": "WiFi Signalstyrke",
+          "de": "WiFi Signalstärke",
+          "es": "Fuerza de la señal WiFi",
+          "fr": "Force du signal WiFi",
+          "it": "Forza del segnale WiFi",
+          "no": "WiFi Signalstyrke",
+          "sv": "WiFi Signalstyrka",
+          "pl": "Siła sygnału WiFi",
+          "ru": "Сила сигнала WiFi",
+          "ko": "WiFi 신호 강도"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "wifi_ip",
+        "type": "label",
+        "label": {
+          "en": "WiFi IP Address",
+          "nl": "WiFi IP-adres",
+          "da": "WiFi IP-adresse",
+          "de": "WiFi IP-Adresse",
+          "es": "Dirección IP WiFi",
+          "fr": "Adresse IP WiFi",
+          "it": "Indirizzo IP WiFi",
+          "no": "WiFi IP-adresse",
+          "sv": "WiFi IP-adress",
+          "pl": "Adres IP WiFi",
+          "ru": "IP-адрес WiFi",
+          "ko": "WiFi IP 주소"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "wifi_gateway",
+        "type": "label",
+        "label": {
+          "en": "WiFi Gateway",
+          "nl": "WiFi Gateway",
+          "da": "WiFi Gateway",
+          "de": "WiFi Gateway",
+          "es": "Puerta de enlace WiFi",
+          "fr": "Passerelle WiFi",
+          "it": "Gateway WiFi",
+          "no": "WiFi Gateway",
+          "sv": "WiFi Gateway",
+          "pl": "Brama WiFi",
+          "ru": "Шлюз WiFi",
+          "ko": "WiFi 게이트웨이"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "wifi_subnet",
+        "type": "label",
+        "label": {
+          "en": "WiFi Subnet Mask",
+          "nl": "WiFi Subnetmasker",
+          "da": "WiFi Subnetmaske",
+          "de": "WiFi Subnetzmaske",
+          "es": "Máscara de subred WiFi",
+          "fr": "Masque de sous-réseau WiFi",
+          "it": "Maschera di sottorete WiFi",
+          "no": "WiFi Subnettmaske",
+          "sv": "WiFi Subnätmask",
+          "pl": "Maska podsieci WiFi",
+          "ru": "Маска подсети WiFi",
+          "ko": "WiFi 서브넷 마스크"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "wifi_dns",
+        "type": "label",
+        "label": {
+          "en": "WiFi DNS",
+          "nl": "WiFi DNS",
+          "da": "WiFi DNS",
+          "de": "WiFi DNS",
+          "es": "DNS WiFi",
+          "fr": "DNS WiFi",
+          "it": "DNS WiFi",
+          "no": "WiFi DNS",
+          "sv": "WiFi DNS",
+          "pl": "DNS WiFi",
+          "ru": "DNS WiFi",
+          "ko": "WiFi DNS"
+        },
+        "value": "(unknown)"
       }
     ]
   }
