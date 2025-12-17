@@ -35,18 +35,18 @@
     {
       "id": "auto",
       "title": {
-        "en": "Auto",
-        "nl": "Auto",
-        "da": "Auto",
-        "de": "Auto",
-        "es": "Auto",
-        "fr": "Auto",
-        "it": "Auto",
-        "no": "Auto",
-        "sv": "Auto",
-        "pl": "Auto",
-        "ru": "Авто",
-        "ko": "자동"
+        "en": "Self-Consumption",
+        "nl": "Zelfverbruik",
+        "da": "Selvforbrug",
+        "de": "Eigenverbrauch",
+        "es": "Autoconsumo",
+        "fr": "Autoconsommation",
+        "it": "Autoconsumo",
+        "no": "Selvforbruk",
+        "sv": "Självförbrukning",
+        "pl": "Samowystarczalność",
+        "ru": "Самопотребление",
+        "ko": "자가 소비"
       }
     },
     {

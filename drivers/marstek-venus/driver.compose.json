@@ -28,7 +28,12 @@
     "measure_temperature",
     "measure_battery",
     "last_message_received",
-    "measure_rssi"
+    "measure_rssi",
+    "measure_power.a",
+    "measure_power.b",
+    "measure_power.c",
+    "measure_power.total",
+    "measure_ct_state"
   ],
   "energy": {
     "homeBattery": true,

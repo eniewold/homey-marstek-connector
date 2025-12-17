@@ -7,7 +7,7 @@ import { config } from '../../lib/config';
 
 // Interface definition for battery messages
 interface MessagePayload {
-    method: 'ES.GetStatus' | 'ES.GetMode' | 'Bat.GetStatus' | 'Wifi.GetStatus';
+    method: 'ES.GetStatus' | 'ES.GetMode' | 'EM.GetStatus' | 'Bat.GetStatus' | 'Wifi.GetStatus';
     params: { id: number };
 }
 interface PollRequest {
@@ -41,6 +41,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
         { payload: { method: 'Bat.GetStatus', params: { id: 0 } }, broadcast: true },
         { payload: { method: 'Wifi.GetStatus', params: { id: 0 } }, broadcast: false },
         { payload: { method: 'ES.GetMode', params: { id: 0 } }, broadcast: false },
+        { payload: { method: 'EM.GetStatus', params: { id: 0 } }, broadcast: false },
     ];
 
     // Interval handle for the poll loop.
@@ -406,14 +407,14 @@ export default class MarstekVenusDriver extends Homey.Driver {
     async setModeManual(device: Homey.Device, start_time: string, end_time: string, days: string[], power: number, enable: boolean) {
         const bitArray = [...'00000000'];
         days.forEach((day: string) => {
-            bitArray[parseInt(day)] = '1';
+            bitArray[7 - parseInt(day)] = '1';
         });
         const bitString = bitArray.join('');
         const bitValue = parseInt(bitString, 2);
         const config = {
             mode: 'Manual',
             manual_cfg: {
-                time_num: 9,
+                time_num: 0,
                 start_time,
                 end_time,
                 week_set: bitValue,
@@ -466,6 +467,19 @@ export default class MarstekVenusDriver extends Homey.Driver {
             },
         };
 
+        await this.setModeConfiguration(device, config);
+    }
+
+    /**
+     * Disables any active manual mode schedule.
+     * @param {Homey.device} device - Target device instance.
+     * @returns {Promise<void>} Resolves once the command succeeds.
+     */
+    async setModeManualDisable(device: Homey.Device) {
+        const config = {
+            mode: 'Manual',
+            manual_cfg: {},
+        };
         await this.setModeConfiguration(device, config);
     }
 

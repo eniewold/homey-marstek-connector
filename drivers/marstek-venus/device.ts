@@ -43,6 +43,12 @@ export default class MarstekVenusDevice extends Homey.Device {
         // Default capability values
         await this.resetCapabilities();
 
+        // Register capability listeners
+        await this.registerCapabilityListener('battery_mode', this.onCapabilityBatteryMode.bind(this));
+
+        // Send initial requests to populate data immediately
+        await this.sendInitialRequests();
+
         if (this.getSetting('poll') !== false) {
             // Update the driver interval
             this.myDriver.pollIntervalUpdate();
@@ -74,6 +80,11 @@ export default class MarstekVenusDevice extends Homey.Device {
             'measure_power_offgrid',       // Current power usage of off-grid port (in W)
             'measure_power_pv',            // Current power usage of off-grid port (in W)
             'last_message_received',       // number of seconds the last received message
+            'measure_power.a',             // Phase A power (in W)
+            'measure_power.b',             // Phase B power (in W)
+            'measure_power.c',             // Phase C power (in W)
+            'measure_power.total',         // Total power (in W)
+            'measure_ct_state',            // CT status (0: not connected, 1: connected)
         ];
         for (const cap of capabilities) {
             if (!this.hasCapability(cap)) await this.addCapability(cap);
@@ -225,8 +236,18 @@ export default class MarstekVenusDevice extends Homey.Device {
                 if (result.mode) {
                     const mode = result.mode.toLowerCase();
                     await this.setCapabilityValue('battery_current_mode', mode);
-                    await this.setCapabilityValue('battery_mode', mode);
+                    // Only set battery_mode if it's a setable mode
+                    if (['ai', 'auto', 'force_charge', 'force_discharge'].includes(mode)) {
+                        await this.setCapabilityValue('battery_mode', mode);
+                    }
                 }
+
+                // EM status
+                if (result.ct_state !== undefined) await this.setCapabilityValue('measure_ct_state', result.ct_state.toString());
+                if (!isNaN(result.a_power)) await this.setCapabilityValue('measure_power.a', result.a_power);
+                if (!isNaN(result.b_power)) await this.setCapabilityValue('measure_power.b', result.b_power);
+                if (!isNaN(result.c_power)) await this.setCapabilityValue('measure_power.c', result.c_power);
+                if (!isNaN(result.total_power)) await this.setCapabilityValue('measure_power.total', result.total_power);
             }
 
         }
@@ -295,28 +316,51 @@ export default class MarstekVenusDevice extends Homey.Device {
     }
 
     /**
+     * Send initial requests to populate data immediately after device addition.
+     */
+    async sendInitialRequests() {
+        const socket = this.myDriver.getSocket();
+        if (!socket) return;
+
+        const messages = [
+            '{"id":1,"method":"ES.GetStatus","params":{"id":0}}',
+            '{"id":2,"method":"ES.GetMode","params":{"id":0}}',
+            '{"id":3,"method":"EM.GetStatus","params":{"id":0}}'
+        ];
+
+        for (const msg of messages) {
+            try {
+                await socket.broadcast(msg);
+                await new Promise(resolve => setTimeout(resolve, 500)); // delay between requests
+            } catch (err) {
+                this.error('Error sending initial request', err);
+            }
+        }
+    }
+
+    /**
      * Handle battery_mode capability changes.
      * @param {string} value The new mode value
      */
-    async onCapabilityBattery_mode(value: string) {
+    async onCapabilityBatteryMode(value: string) {
         if (this.debug) this.log('Setting battery mode to', value);
         switch (value) {
             case 'ai':
+                await this.myDriver.setModeManualDisable(this);
                 await this.myDriver.setModeAI(this);
                 break;
             case 'auto':
+                await this.myDriver.setModeManualDisable(this);
                 await this.myDriver.setModeAuto(this);
                 break;
             case 'force_charge':
-                await this.myDriver.setModeManual(this, "00:01", "23:59", ["0", "1", "2", "3", "4", "5", "6"], 2500, true);
+                const chargePower = this.getSetting('force_charge_power') || 2500;
+                await this.myDriver.setModeManual(this, "00:01", "23:59", ["0", "1", "2", "3", "4", "5", "6"], -chargePower, true);
                 break;
             case 'force_discharge':
-                await this.myDriver.setModeManual(this, "00:01", "23:59", ["0", "1", "2", "3", "4", "5", "6"], -800, true);
+                const dischargePower = this.getSetting('force_discharge_power') || 800;
+                await this.myDriver.setModeManual(this, "00:01", "23:59", ["0", "1", "2", "3", "4", "5", "6"], dischargePower, true);
                 break;
-            case 'manual':
-                throw new Error('Manual mode requires additional parameters. Use the "Set battery mode to Manual" flow card.');
-            case 'passive':
-                throw new Error('Passive mode requires additional parameters. Use the "Set battery Passive mode" flow card.');
             default:
                 throw new Error(`Unknown mode: ${value}`);
         }

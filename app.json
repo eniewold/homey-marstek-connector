@@ -462,7 +462,12 @@
         "measure_temperature",
         "measure_battery",
         "last_message_received",
-        "measure_rssi"
+        "measure_rssi",
+        "measure_power.a",
+        "measure_power.b",
+        "measure_power.c",
+        "measure_power.total",
+        "measure_ct_state"
       ],
       "energy": {
         "homeBattery": true,
@@ -977,6 +982,93 @@
               "value": "(unknown)"
             }
           ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Force Charge/Discharge Settings",
+            "nl": "Forceer Laden/Ontladen Instellingen",
+            "da": "Tving Opladning/Afladning Indstillinger",
+            "de": "Einstellungen für erzwungenes Laden/Entladen",
+            "es": "Configuración de Carga/Descarga Forzada",
+            "fr": "Paramètres de Charge/Décharge Forcée",
+            "it": "Impostazioni Carica/Scarica Forzata",
+            "no": "Tving Ladning/Utladning Innstillinger",
+            "sv": "Tving Laddning/Utladdning Inställningar",
+            "pl": "Ustawienia Wymuszania Ładowania/Rozładowania",
+            "ru": "Настройки Принудительной Зарядки/Разрядки",
+            "ko": "강제 충전/방전 설정"
+          },
+          "children": [
+            {
+              "id": "force_charge_power",
+              "type": "number",
+              "label": {
+                "en": "Force Charge Power (W)",
+                "nl": "Forceer Laadvermogen (W)",
+                "da": "Tving Opladningseffekt (W)",
+                "de": "Erzwungene Ladeleistung (W)",
+                "es": "Potencia de Carga Forzada (W)",
+                "fr": "Puissance de Charge Forcée (W)",
+                "it": "Potenza Carica Forzata (W)",
+                "no": "Tving Ladningseffekt (W)",
+                "sv": "Tving Laddningseffekt (W)",
+                "pl": "Moc Wymuszania Ładowania (W)",
+                "ru": "Мощность Принудительной Зарядки (Вт)",
+                "ko": "강제 충전 전력 (W)"
+              },
+              "value": 2500,
+              "min": 0,
+              "units": {
+                "en": "W",
+                "nl": "W",
+                "da": "W",
+                "de": "W",
+                "es": "W",
+                "fr": "W",
+                "it": "W",
+                "no": "W",
+                "sv": "W",
+                "pl": "W",
+                "ru": "Вт",
+                "ko": "W"
+              }
+            },
+            {
+              "id": "force_discharge_power",
+              "type": "number",
+              "label": {
+                "en": "Force Discharge Power (W)",
+                "nl": "Forceer Ontlaadvermogen (W)",
+                "da": "Tving Afladningseffekt (W)",
+                "de": "Erzwungene Entladeleistung (W)",
+                "es": "Potencia de Descarga Forzada (W)",
+                "fr": "Puissance de Décharge Forcée (W)",
+                "it": "Potenza Scarica Forzata (W)",
+                "no": "Tving Utladningseffekt (W)",
+                "sv": "Tving Utladdningseffekt (W)",
+                "pl": "Moc Wymuszania Rozładowania (W)",
+                "ru": "Мощность Принудительной Разрядки (Вт)",
+                "ko": "강제 방전 전력 (W)"
+              },
+              "value": 800,
+              "min": 0,
+              "units": {
+                "en": "W",
+                "nl": "W",
+                "da": "W",
+                "de": "W",
+                "es": "W",
+                "fr": "W",
+                "it": "W",
+                "no": "W",
+                "sv": "W",
+                "pl": "W",
+                "ru": "Вт",
+                "ko": "W"
+              }
+            }
+          ]
         }
       ]
     },
@@ -1240,18 +1332,18 @@
         {
           "id": "auto",
           "title": {
-            "en": "Auto",
-            "nl": "Auto",
-            "da": "Auto",
-            "de": "Auto",
-            "es": "Auto",
-            "fr": "Auto",
-            "it": "Auto",
-            "no": "Auto",
-            "sv": "Auto",
-            "pl": "Auto",
-            "ru": "Авто",
-            "ko": "자동"
+            "en": "Self-Consumption",
+            "nl": "Zelfverbruik",
+            "da": "Selvforbrug",
+            "de": "Eigenverbrauch",
+            "es": "Autoconsumo",
+            "fr": "Autoconsommation",
+            "it": "Autoconsumo",
+            "no": "Selvforbruk",
+            "sv": "Självförbrukning",
+            "pl": "Samowystarczalność",
+            "ru": "Самопотребление",
+            "ko": "자가 소비"
           }
         },
         {
@@ -1330,18 +1422,18 @@
         {
           "id": "auto",
           "title": {
-            "en": "Auto",
-            "nl": "Auto",
-            "da": "Auto",
-            "de": "Auto",
-            "es": "Auto",
-            "fr": "Auto",
-            "it": "Auto",
-            "no": "Auto",
-            "sv": "Auto",
-            "pl": "Auto",
-            "ru": "Авто",
-            "ko": "자동"
+            "en": "Self-Consumption",
+            "nl": "Zelfverbruik",
+            "da": "Selvforbrug",
+            "de": "Eigenverbrauch",
+            "es": "Autoconsumo",
+            "fr": "Autoconsommation",
+            "it": "Autoconsumo",
+            "no": "Selvforbruk",
+            "sv": "Självförbrukning",
+            "pl": "Samowystarczalność",
+            "ru": "Самопотребление",
+            "ko": "자가 소비"
           }
         },
         {
@@ -1377,40 +1469,6 @@
             "ru": "Принудительная Разрядка",
             "ko": "강제 방전"
           }
-        },
-        {
-          "id": "manual",
-          "title": {
-            "en": "Manual (use flow)",
-            "nl": "Handmatig (gebruik flow)",
-            "da": "Manuel (brug flow)",
-            "de": "Manuell (Flow verwenden)",
-            "es": "Manual (usar flujo)",
-            "fr": "Manuel (utiliser le flux)",
-            "it": "Manuale (usa flusso)",
-            "no": "Manuell (bruk flow)",
-            "sv": "Manuell (använd flöde)",
-            "pl": "Ręczny (użyj przepływu)",
-            "ru": "Ручной (использовать поток)",
-            "ko": "수동 (플로우 사용)"
-          }
-        },
-        {
-          "id": "passive",
-          "title": {
-            "en": "Passive (use flow)",
-            "nl": "Passief (gebruik flow)",
-            "da": "Passiv (brug flow)",
-            "de": "Passiv (Flow verwenden)",
-            "es": "Pasivo (usar flujo)",
-            "fr": "Passif (utiliser le flux)",
-            "it": "Passivo (usa flusso)",
-            "no": "Passiv (bruk flow)",
-            "sv": "Passiv (använd flöde)",
-            "pl": "Pasywny (użyj przepływu)",
-            "ru": "Пассивный (использовать поток)",
-            "ko": "수동 (플로우 사용)"
-          }
         }
       ],
       "getable": true,
@@ -1438,6 +1496,167 @@
       "uiComponent": "sensor",
       "insights": false,
       "icon": "/assets/clock-outline-badged.svg"
+    },
+    "measure_ct_state": {
+      "type": "enum",
+      "title": {
+        "en": "CT State",
+        "nl": "CT Status",
+        "da": "CT Status",
+        "de": "CT Status",
+        "es": "Estado CT",
+        "fr": "État CT",
+        "it": "Stato CT",
+        "no": "CT Status",
+        "sv": "CT Status",
+        "pl": "Stan CT",
+        "ru": "Состояние CT",
+        "ko": "CT 상태"
+      },
+      "values": [
+        {
+          "id": "0",
+          "title": {
+            "en": "Not Connected",
+            "nl": "Niet Verbonden",
+            "da": "Ikke Tilsluttet",
+            "de": "Nicht Verbunden",
+            "es": "No Conectado",
+            "fr": "Non Connecté",
+            "it": "Non Connesso",
+            "no": "Ikke Tilkoblet",
+            "sv": "Inte Ansluten",
+            "pl": "Nie Podłączony",
+            "ru": "Не Подключено",
+            "ko": "연결되지 않음"
+          }
+        },
+        {
+          "id": "1",
+          "title": {
+            "en": "Connected",
+            "nl": "Verbonden",
+            "da": "Tilsluttet",
+            "de": "Verbunden",
+            "es": "Conectado",
+            "fr": "Connecté",
+            "it": "Connesso",
+            "no": "Tilkoblet",
+            "sv": "Ansluten",
+            "pl": "Podłączony",
+            "ru": "Подключено",
+            "ko": "연결됨"
+          }
+        }
+      ],
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "measure_power_a": {
+      "type": "number",
+      "title": {
+        "en": "Phase A Power",
+        "nl": "Fase A Vermogen",
+        "da": "Fase A Effekt",
+        "de": "Phase A Leistung",
+        "es": "Potencia Fase A",
+        "fr": "Puissance Phase A",
+        "it": "Potenza Fase A",
+        "no": "Fase A Effekt",
+        "sv": "Fas A Effekt",
+        "pl": "Moc Fazy A",
+        "ru": "Мощность Фазы A",
+        "ko": "A상 전력"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "da": "W",
+        "de": "W",
+        "es": "W",
+        "fr": "W",
+        "it": "W",
+        "no": "W",
+        "sv": "W",
+        "pl": "W",
+        "ru": "Вт",
+        "ko": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "decimals": 1
+    },
+    "measure_power_b": {
+      "type": "number",
+      "title": {
+        "en": "Phase B Power",
+        "nl": "Fase B Vermogen",
+        "da": "Fase B Effekt",
+        "de": "Phase B Leistung",
+        "es": "Potencia Fase B",
+        "fr": "Puissance Phase B",
+        "it": "Potenza Fase B",
+        "no": "Fase B Effekt",
+        "sv": "Fas B Effekt",
+        "pl": "Moc Fazy B",
+        "ru": "Мощность Фазы B",
+        "ko": "B상 전력"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "da": "W",
+        "de": "W",
+        "es": "W",
+        "fr": "W",
+        "it": "W",
+        "no": "W",
+        "sv": "W",
+        "pl": "W",
+        "ru": "Вт",
+        "ko": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "decimals": 1
+    },
+    "measure_power_c": {
+      "type": "number",
+      "title": {
+        "en": "Phase C Power",
+        "nl": "Fase C Vermogen",
+        "da": "Fase C Effekt",
+        "de": "Phase C Leistung",
+        "es": "Potencia Fase C",
+        "fr": "Puissance Phase C",
+        "it": "Potenza Fase C",
+        "no": "Fase C Effekt",
+        "sv": "Fas C Effekt",
+        "pl": "Moc Fazy C",
+        "ru": "Мощность Фазы C",
+        "ko": "C상 전력"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "da": "W",
+        "de": "W",
+        "es": "W",
+        "fr": "W",
+        "it": "W",
+        "no": "W",
+        "sv": "W",
+        "pl": "W",
+        "ru": "Вт",
+        "ko": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "decimals": 1
     },
     "measure_power_offgrid": {
       "type": "number",
@@ -1546,6 +1765,41 @@
       "decimals": 2,
       "uiComponent": "sensor",
       "icon": "/assets/sun.svg"
+    },
+    "measure_power_total": {
+      "type": "number",
+      "title": {
+        "en": "Total Power",
+        "nl": "Totaal Vermogen",
+        "da": "Total Effekt",
+        "de": "Gesamtleistung",
+        "es": "Potencia Total",
+        "fr": "Puissance Totale",
+        "it": "Potenza Totale",
+        "no": "Total Effekt",
+        "sv": "Total Effekt",
+        "pl": "Całkowita Moc",
+        "ru": "Общая Мощность",
+        "ko": "총 전력"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "da": "W",
+        "de": "W",
+        "es": "W",
+        "fr": "W",
+        "it": "W",
+        "no": "W",
+        "sv": "W",
+        "pl": "W",
+        "ru": "Вт",
+        "ko": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "decimals": 1
     },
     "measure_rssi": {
       "type": "number",

@@ -35,18 +35,18 @@
     {
       "id": "auto",
       "title": {
-        "en": "Auto",
-        "nl": "Auto",
-        "da": "Auto",
-        "de": "Auto",
-        "es": "Auto",
-        "fr": "Auto",
-        "it": "Auto",
-        "no": "Auto",
-        "sv": "Auto",
-        "pl": "Auto",
-        "ru": "Авто",
-        "ko": "자동"
+        "en": "Self-Consumption",
+        "nl": "Zelfverbruik",
+        "da": "Selvforbrug",
+        "de": "Eigenverbrauch",
+        "es": "Autoconsumo",
+        "fr": "Autoconsommation",
+        "it": "Autoconsumo",
+        "no": "Selvforbruk",
+        "sv": "Självförbrukning",
+        "pl": "Samowystarczalność",
+        "ru": "Самопотребление",
+        "ko": "자가 소비"
       }
     },
     {
@@ -81,40 +81,6 @@
         "pl": "Wymuś Rozładowanie",
         "ru": "Принудительная Разрядка",
         "ko": "강제 방전"
-      }
-    },
-    {
-      "id": "manual",
-      "title": {
-        "en": "Manual (use flow)",
-        "nl": "Handmatig (gebruik flow)",
-        "da": "Manuel (brug flow)",
-        "de": "Manuell (Flow verwenden)",
-        "es": "Manual (usar flujo)",
-        "fr": "Manuel (utiliser le flux)",
-        "it": "Manuale (usa flusso)",
-        "no": "Manuell (bruk flow)",
-        "sv": "Manuell (använd flöde)",
-        "pl": "Ręczny (użyj przepływu)",
-        "ru": "Ручной (использовать поток)",
-        "ko": "수동 (플로우 사용)"
-      }
-    },
-    {
-      "id": "passive",
-      "title": {
-        "en": "Passive (use flow)",
-        "nl": "Passief (gebruik flow)",
-        "da": "Passiv (brug flow)",
-        "de": "Passiv (Flow verwenden)",
-        "es": "Pasivo (usar flujo)",
-        "fr": "Passif (utiliser le flux)",
-        "it": "Passivo (usa flusso)",
-        "no": "Passiv (bruk flow)",
-        "sv": "Passiv (använd flöde)",
-        "pl": "Pasywny (użyj przepływu)",
-        "ru": "Пассивный (использовать поток)",
-        "ko": "수동 (플로우 사용)"
       }
     }
   ],
