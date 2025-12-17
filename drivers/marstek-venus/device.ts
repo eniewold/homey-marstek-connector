@@ -60,6 +60,8 @@ export default class MarstekVenusDevice extends Homey.Device {
     async resetCapabilities() {
         const capabilities = [
             'battery_charging_state',      // Charte state (Possible values: "idle", "charging", "discharging")
+            'battery_current_mode',        // Current battery mode (read-only)
+            'battery_mode',                // Battery mode (Possible values: "ai", "auto", "force_charge", "force_discharge")
             'meter_power',                 // Power remaining (In kWh)
             'measure_power',               // Power usage/delivery (In Watts)
             'measure_temperature',         // Main battery temperature (In degrees celcius)
@@ -218,6 +220,13 @@ export default class MarstekVenusDevice extends Homey.Device {
                 if (result.sta_gate) await this.setSettings({ wifi_gateway: result.sta_gate });
                 if (result.sta_mask) await this.setSettings({ wifi_subnet: result.sta_mask });
                 if (result.sta_dns) await this.setSettings({ wifi_dns: result.sta_dns });
+
+                // Current battery mode
+                if (result.mode) {
+                    const mode = result.mode.toLowerCase();
+                    await this.setCapabilityValue('battery_current_mode', mode);
+                    await this.setCapabilityValue('battery_mode', mode);
+                }
             }
 
         }
@@ -271,7 +280,49 @@ export default class MarstekVenusDevice extends Homey.Device {
         if (this.debug) this.log('MarstekVenusDevice has been uninitialized');
     }
 
-    /** Retrieve our current debug setting, based on actual setting and version 
+    /**
+     * Send a command to the battery device.
+     * @param {object} command JSON command to send
+     */
+    async sendCommand(command: object) {
+        const address = this.getStoreValue('address');
+        if (!address) {
+            this.error('No address stored for device');
+            return;
+        }
+        const message = JSON.stringify(command);
+        await this.myDriver.getSocket().send(message, address);
+    }
+
+    /**
+     * Handle battery_mode capability changes.
+     * @param {string} value The new mode value
+     */
+    async onCapabilityBattery_mode(value: string) {
+        if (this.debug) this.log('Setting battery mode to', value);
+        switch (value) {
+            case 'ai':
+                await this.myDriver.setModeAI(this);
+                break;
+            case 'auto':
+                await this.myDriver.setModeAuto(this);
+                break;
+            case 'force_charge':
+                await this.myDriver.setModeManual(this, "00:01", "23:59", ["0", "1", "2", "3", "4", "5", "6"], 2500, true);
+                break;
+            case 'force_discharge':
+                await this.myDriver.setModeManual(this, "00:01", "23:59", ["0", "1", "2", "3", "4", "5", "6"], -800, true);
+                break;
+            case 'manual':
+                throw new Error('Manual mode requires additional parameters. Use the "Set battery mode to Manual" flow card.');
+            case 'passive':
+                throw new Error('Passive mode requires additional parameters. Use the "Set battery Passive mode" flow card.');
+            default:
+                throw new Error(`Unknown mode: ${value}`);
+        }
+    }
+
+    /** Retrieve our current debug setting, based on actual setting and version
      * @returns {boolean} True when debug logging is enabled (through settings or test version)
      */
     get debug(): boolean {

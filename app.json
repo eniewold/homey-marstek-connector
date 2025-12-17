@@ -450,6 +450,8 @@
       "class": "battery",
       "capabilities": [
         "battery_charging_state",
+        "battery_current_mode",
+        "battery_mode",
         "meter_power",
         "meter_power.imported",
         "meter_power.exported",
@@ -515,6 +517,63 @@
             "ru": "Потреблено (или вне сети)",
             "ko": "로드(또는 오프 그리드) 소모됨"
           }
+        },
+        "measure_temperature": {
+          "uiComponent": "sensor",
+          "decimals": 1,
+          "min": -20,
+          "max": 60,
+          "chartType": "line"
+        }
+      },
+      "capabilityGroups": {
+        "battery_group": {
+          "name": {
+            "en": "Battery",
+            "nl": "Batterij",
+            "da": "Batteri",
+            "de": "Batterie",
+            "es": "Batería",
+            "fr": "Batterie",
+            "it": "Batteria",
+            "no": "Batteri",
+            "sv": "Batteri",
+            "pl": "Bateria",
+            "ru": "Батарея",
+            "ko": "배터리"
+          },
+          "capabilities": [
+            "battery_charging_state",
+            "measure_battery",
+            "measure_temperature"
+          ]
+        },
+        "statistics_group": {
+          "name": {
+            "en": "Statistics",
+            "nl": "Statistieken",
+            "da": "Statistikker",
+            "de": "Statistiken",
+            "es": "Estadísticas",
+            "fr": "Statistiques",
+            "it": "Statistiche",
+            "no": "Statistikk",
+            "sv": "Statistik",
+            "pl": "Statystyki",
+            "ru": "Статистика",
+            "ko": "통계"
+          },
+          "capabilities": [
+            "meter_power",
+            "meter_power.imported",
+            "meter_power.exported",
+            "meter_power.load",
+            "measure_power",
+            "measure_power_ongrid",
+            "measure_power_offgrid",
+            "last_message_received",
+            "measure_rssi"
+          ]
         }
       },
       "platforms": [
@@ -1144,6 +1203,220 @@
     }
   ],
   "capabilities": {
+    "battery_current_mode": {
+      "type": "enum",
+      "title": {
+        "en": "Current Battery Mode",
+        "nl": "Huidige Batterijmodus",
+        "da": "Nuværende Batteritilstand",
+        "de": "Aktueller Batteriemodus",
+        "es": "Modo de Batería Actual",
+        "fr": "Mode de Batterie Actuel",
+        "it": "Modalità Batteria Corrente",
+        "no": "Gjeldende Batterimodus",
+        "sv": "Aktuell Batteriläge",
+        "pl": "Bieżący Tryb Baterii",
+        "ru": "Текущий Режим Батареи",
+        "ko": "현재 배터리 모드"
+      },
+      "values": [
+        {
+          "id": "ai",
+          "title": {
+            "en": "AI",
+            "nl": "AI",
+            "da": "AI",
+            "de": "AI",
+            "es": "IA",
+            "fr": "IA",
+            "it": "AI",
+            "no": "AI",
+            "sv": "AI",
+            "pl": "AI",
+            "ru": "ИИ",
+            "ko": "AI"
+          }
+        },
+        {
+          "id": "auto",
+          "title": {
+            "en": "Auto",
+            "nl": "Auto",
+            "da": "Auto",
+            "de": "Auto",
+            "es": "Auto",
+            "fr": "Auto",
+            "it": "Auto",
+            "no": "Auto",
+            "sv": "Auto",
+            "pl": "Auto",
+            "ru": "Авто",
+            "ko": "자동"
+          }
+        },
+        {
+          "id": "manual",
+          "title": {
+            "en": "Manual",
+            "nl": "Handmatig",
+            "da": "Manuel",
+            "de": "Manuell",
+            "es": "Manual",
+            "fr": "Manuel",
+            "it": "Manuale",
+            "no": "Manuell",
+            "sv": "Manuell",
+            "pl": "Ręczny",
+            "ru": "Ручной",
+            "ko": "수동"
+          }
+        },
+        {
+          "id": "passive",
+          "title": {
+            "en": "Passive",
+            "nl": "Passief",
+            "da": "Passiv",
+            "de": "Passiv",
+            "es": "Pasivo",
+            "fr": "Passif",
+            "it": "Passivo",
+            "no": "Passiv",
+            "sv": "Passiv",
+            "pl": "Pasywny",
+            "ru": "Пассивный",
+            "ko": "수동"
+          }
+        }
+      ],
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "battery_mode": {
+      "type": "enum",
+      "title": {
+        "en": "Battery Mode",
+        "nl": "Batterijmodus",
+        "da": "Batteritilstand",
+        "de": "Batteriemodus",
+        "es": "Modo de batería",
+        "fr": "Mode de batterie",
+        "it": "Modalità batteria",
+        "no": "Batterimodus",
+        "sv": "Batteriläge",
+        "pl": "Tryb baterii",
+        "ru": "Режим батареи",
+        "ko": "배터리 모드"
+      },
+      "values": [
+        {
+          "id": "ai",
+          "title": {
+            "en": "AI",
+            "nl": "AI",
+            "da": "AI",
+            "de": "AI",
+            "es": "IA",
+            "fr": "IA",
+            "it": "AI",
+            "no": "AI",
+            "sv": "AI",
+            "pl": "AI",
+            "ru": "ИИ",
+            "ko": "AI"
+          }
+        },
+        {
+          "id": "auto",
+          "title": {
+            "en": "Auto",
+            "nl": "Auto",
+            "da": "Auto",
+            "de": "Auto",
+            "es": "Auto",
+            "fr": "Auto",
+            "it": "Auto",
+            "no": "Auto",
+            "sv": "Auto",
+            "pl": "Auto",
+            "ru": "Авто",
+            "ko": "자동"
+          }
+        },
+        {
+          "id": "force_charge",
+          "title": {
+            "en": "Force Charge",
+            "nl": "Forceer Laden",
+            "da": "Tving Opladning",
+            "de": "Laden Erzwingen",
+            "es": "Forzar Carga",
+            "fr": "Forcer Charge",
+            "it": "Forza Carica",
+            "no": "Tving Ladning",
+            "sv": "Tving Laddning",
+            "pl": "Wymuś Ładowanie",
+            "ru": "Принудительная Зарядка",
+            "ko": "강제 충전"
+          }
+        },
+        {
+          "id": "force_discharge",
+          "title": {
+            "en": "Force Discharge",
+            "nl": "Forceer Ontladen",
+            "da": "Tving Afladning",
+            "de": "Entladen Erzwingen",
+            "es": "Forzar Descarga",
+            "fr": "Forcer Décharge",
+            "it": "Forza Scarica",
+            "no": "Tving Utladning",
+            "sv": "Tving Utladdning",
+            "pl": "Wymuś Rozładowanie",
+            "ru": "Принудительная Разрядка",
+            "ko": "강제 방전"
+          }
+        },
+        {
+          "id": "manual",
+          "title": {
+            "en": "Manual (use flow)",
+            "nl": "Handmatig (gebruik flow)",
+            "da": "Manuel (brug flow)",
+            "de": "Manuell (Flow verwenden)",
+            "es": "Manual (usar flujo)",
+            "fr": "Manuel (utiliser le flux)",
+            "it": "Manuale (usa flusso)",
+            "no": "Manuell (bruk flow)",
+            "sv": "Manuell (använd flöde)",
+            "pl": "Ręczny (użyj przepływu)",
+            "ru": "Ручной (использовать поток)",
+            "ko": "수동 (플로우 사용)"
+          }
+        },
+        {
+          "id": "passive",
+          "title": {
+            "en": "Passive (use flow)",
+            "nl": "Passief (gebruik flow)",
+            "da": "Passiv (brug flow)",
+            "de": "Passiv (Flow verwenden)",
+            "es": "Pasivo (usar flujo)",
+            "fr": "Passif (utiliser le flux)",
+            "it": "Passivo (usa flusso)",
+            "no": "Passiv (bruk flow)",
+            "sv": "Passiv (använd flöde)",
+            "pl": "Pasywny (użyj przepływu)",
+            "ru": "Пассивный (использовать поток)",
+            "ko": "수동 (플로우 사용)"
+          }
+        }
+      ],
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker"
+    },
     "last_message_received": {
       "type": "number",
       "title": {

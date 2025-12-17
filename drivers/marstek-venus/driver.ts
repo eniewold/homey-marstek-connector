@@ -7,7 +7,7 @@ import { config } from '../../lib/config';
 
 // Interface definition for battery messages
 interface MessagePayload {
-    method: 'ES.GetStatus' | 'Bat.GetStatus' | 'Wifi.GetStatus';
+    method: 'ES.GetStatus' | 'ES.GetMode' | 'Bat.GetStatus' | 'Wifi.GetStatus';
     params: { id: number };
 }
 interface PollRequest {
@@ -40,7 +40,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
         { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
         { payload: { method: 'Bat.GetStatus', params: { id: 0 } }, broadcast: true },
         { payload: { method: 'Wifi.GetStatus', params: { id: 0 } }, broadcast: false },
-        { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
+        { payload: { method: 'ES.GetMode', params: { id: 0 } }, broadcast: false },
     ];
 
     // Interval handle for the poll loop.

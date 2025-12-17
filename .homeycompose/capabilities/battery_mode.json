@@ -1,0 +1,124 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Battery Mode",
+    "nl": "Batterijmodus",
+    "da": "Batteritilstand",
+    "de": "Batteriemodus",
+    "es": "Modo de batería",
+    "fr": "Mode de batterie",
+    "it": "Modalità batteria",
+    "no": "Batterimodus",
+    "sv": "Batteriläge",
+    "pl": "Tryb baterii",
+    "ru": "Режим батареи",
+    "ko": "배터리 모드"
+  },
+  "values": [
+    {
+      "id": "ai",
+      "title": {
+        "en": "AI",
+        "nl": "AI",
+        "da": "AI",
+        "de": "AI",
+        "es": "IA",
+        "fr": "IA",
+        "it": "AI",
+        "no": "AI",
+        "sv": "AI",
+        "pl": "AI",
+        "ru": "ИИ",
+        "ko": "AI"
+      }
+    },
+    {
+      "id": "auto",
+      "title": {
+        "en": "Auto",
+        "nl": "Auto",
+        "da": "Auto",
+        "de": "Auto",
+        "es": "Auto",
+        "fr": "Auto",
+        "it": "Auto",
+        "no": "Auto",
+        "sv": "Auto",
+        "pl": "Auto",
+        "ru": "Авто",
+        "ko": "자동"
+      }
+    },
+    {
+      "id": "force_charge",
+      "title": {
+        "en": "Force Charge",
+        "nl": "Forceer Laden",
+        "da": "Tving Opladning",
+        "de": "Laden Erzwingen",
+        "es": "Forzar Carga",
+        "fr": "Forcer Charge",
+        "it": "Forza Carica",
+        "no": "Tving Ladning",
+        "sv": "Tving Laddning",
+        "pl": "Wymuś Ładowanie",
+        "ru": "Принудительная Зарядка",
+        "ko": "강제 충전"
+      }
+    },
+    {
+      "id": "force_discharge",
+      "title": {
+        "en": "Force Discharge",
+        "nl": "Forceer Ontladen",
+        "da": "Tving Afladning",
+        "de": "Entladen Erzwingen",
+        "es": "Forzar Descarga",
+        "fr": "Forcer Décharge",
+        "it": "Forza Scarica",
+        "no": "Tving Utladning",
+        "sv": "Tving Utladdning",
+        "pl": "Wymuś Rozładowanie",
+        "ru": "Принудительная Разрядка",
+        "ko": "강제 방전"
+      }
+    },
+    {
+      "id": "manual",
+      "title": {
+        "en": "Manual (use flow)",
+        "nl": "Handmatig (gebruik flow)",
+        "da": "Manuel (brug flow)",
+        "de": "Manuell (Flow verwenden)",
+        "es": "Manual (usar flujo)",
+        "fr": "Manuel (utiliser le flux)",
+        "it": "Manuale (usa flusso)",
+        "no": "Manuell (bruk flow)",
+        "sv": "Manuell (använd flöde)",
+        "pl": "Ręczny (użyj przepływu)",
+        "ru": "Ручной (использовать поток)",
+        "ko": "수동 (플로우 사용)"
+      }
+    },
+    {
+      "id": "passive",
+      "title": {
+        "en": "Passive (use flow)",
+        "nl": "Passief (gebruik flow)",
+        "da": "Passiv (brug flow)",
+        "de": "Passiv (Flow verwenden)",
+        "es": "Pasivo (usar flujo)",
+        "fr": "Passif (utiliser le flux)",
+        "it": "Passivo (usa flusso)",
+        "no": "Passiv (bruk flow)",
+        "sv": "Passiv (använd flöde)",
+        "pl": "Pasywny (użyj przepływu)",
+        "ru": "Пассивный (использовать поток)",
+        "ko": "수동 (플로우 사용)"
+      }
+    }
+  ],
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker"
+}

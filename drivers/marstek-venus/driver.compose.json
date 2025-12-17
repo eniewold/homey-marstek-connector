@@ -16,6 +16,8 @@
   "class": "battery",
   "capabilities": [
     "battery_charging_state",
+    "battery_current_mode",
+    "battery_mode",
     "meter_power",
     "meter_power.imported",
     "meter_power.exported",
@@ -81,6 +83,63 @@
         "ru": "Потреблено (или вне сети)",
         "ko": "로드(또는 오프 그리드) 소모됨"
       }
+    },
+    "measure_temperature": {
+      "uiComponent": "sensor",
+      "decimals": 1,
+      "min": -20,
+      "max": 60,
+      "chartType": "line"
+    }
+  },
+  "capabilityGroups": {
+    "battery_group": {
+      "name": {
+        "en": "Battery",
+        "nl": "Batterij",
+        "da": "Batteri",
+        "de": "Batterie",
+        "es": "Batería",
+        "fr": "Batterie",
+        "it": "Batteria",
+        "no": "Batteri",
+        "sv": "Batteri",
+        "pl": "Bateria",
+        "ru": "Батарея",
+        "ko": "배터리"
+      },
+      "capabilities": [
+        "battery_charging_state",
+        "measure_battery",
+        "measure_temperature"
+      ]
+    },
+    "statistics_group": {
+      "name": {
+        "en": "Statistics",
+        "nl": "Statistieken",
+        "da": "Statistikker",
+        "de": "Statistiken",
+        "es": "Estadísticas",
+        "fr": "Statistiques",
+        "it": "Statistiche",
+        "no": "Statistikk",
+        "sv": "Statistik",
+        "pl": "Statystyki",
+        "ru": "Статистика",
+        "ko": "통계"
+      },
+      "capabilities": [
+        "meter_power",
+        "meter_power.imported",
+        "meter_power.exported",
+        "meter_power.load",
+        "measure_power",
+        "measure_power_ongrid",
+        "measure_power_offgrid",
+        "last_message_received",
+        "measure_rssi"
+      ]
     }
   },
   "platforms": [
