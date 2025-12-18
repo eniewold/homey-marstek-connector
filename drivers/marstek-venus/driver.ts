@@ -342,6 +342,20 @@ export default class MarstekVenusDriver extends Homey.Driver {
                 seconds: number | string,
             }) => this.setModePassive(device, power, seconds),
         );
+        register(
+            'marstek_manual_mode_text',
+            async ({
+                device,
+                start_time,
+                power,
+                enable,
+            }: {
+                device: Homey.Device,
+                start_time: string,
+                power: number,
+                enable: boolean,
+            }) => this.setModeManualText(device, start_time, power, enable),
+        );
     }
 
     /**
@@ -471,6 +485,28 @@ export default class MarstekVenusDriver extends Homey.Driver {
     }
 
     /**
+     * Configures the device for manual mode using text inputs.
+     * @param {Homey.device} device Target device instance.
+     * @param {string} start_time Start time (HH:MM) as text.
+     * @param {number} power Target power setting for manual mode.
+     * @param {boolean} enable Whether the manual schedule should be enabled.
+     * @returns {Promise<void>} Resolves once the command succeeds.
+     */
+    async setModeManualText(device: Homey.Device, start_time: string, power: number, enable: boolean) {
+        // Calculate end_time as start_time + 2 hours
+        const [hours, minutes] = start_time.split(':').map(Number);
+        let endHours = hours + 2;
+        let endMinutes = minutes;
+        if (endHours >= 24) {
+            endHours -= 24;
+        }
+        const end_time = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+        // Days are always all days
+        const dayArray = ['0', '1', '2', '3', '4', '5', '6'];
+        await this.setModeManual(device, start_time, end_time, dayArray, power, enable);
+    }
+
+    /**
      * Disables any active manual mode schedule.
      * @param {Homey.device} device - Target device instance.
      * @returns {Promise<void>} Resolves once the command succeeds.
@@ -478,7 +514,14 @@ export default class MarstekVenusDriver extends Homey.Driver {
     async setModeManualDisable(device: Homey.Device) {
         const config = {
             mode: 'Manual',
-            manual_cfg: {},
+            manual_cfg: {
+                time_num: 0,
+                start_time: "00:01",
+                end_time: "23:59",
+                week_set: 127,
+                power: 0,
+                enable: 0,
+            },
         };
         await this.setModeConfiguration(device, config);
     }
