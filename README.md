@@ -23,7 +23,7 @@ You can control the battery mode directly from the device page (AI, Auto, Force 
 
 This app requires Homey and a Marstek Venus battery system.
 
-- When using the **local API driver** the Homey and battery must be connected to the same network with the local API enabled (see below). Auto-detection of Marstek Venus batteries is supported on the same local network and when IP range is 192.168.x.y; it will search within the last octet (y) from 1 to 254.
+- When using the **local API driver** the Homey and battery must be connected to the same network with the local API enabled (see below). Auto-detection of Marstek Venus batteries is supported on the same local network; it will search within the last octet (y) from 1 to 254.
 - When using the **cloud driver** you need an active Marstek cloud/app account. During pairing Homey will ask for the username and password to authenticate with the Marstek cloud service.
 
 ### DEVICE PAIRING (CLOUD)
