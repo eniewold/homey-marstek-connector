@@ -31,12 +31,8 @@ export default class MarstekVenusDriver extends Homey.Driver {
     // Cast pointer to our app
     private socket?: MarstekSocket = undefined;
 
-    // Index of the message currently being broadcast.
-    private pollMessage: number = 0;
-
-    // Rotating list of messages that should be broadcast to request device status.
+    // List of messages that should be broadcast to request device status.
     private pollMessages: PollRequest[] = [
-        { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
         { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
         { payload: { method: 'Bat.GetStatus', params: { id: 0 } }, broadcast: true },
         { payload: { method: 'Wifi.GetStatus', params: { id: 0 } }, broadcast: false },
@@ -151,67 +147,68 @@ export default class MarstekVenusDriver extends Homey.Driver {
     }
 
     /**
-     * Broadcasts a status request to the connected devices based on the rotating poll configuration.
-     * @returns {Promise<void>} Resolves once the message has been broadcast.
+     * Broadcasts status requests to the connected devices for all poll messages.
+     * @returns {Promise<void>} Resolves once all messages have been sent.
      */
     async poll() {
         const socket = this.getSocket();
         if (socket) {
-            try {
-                const pollRequest = this.pollMessages[this.pollMessage];
-                const message: MarsteRequest = {
-                    id: this.getUniqueID(),
-                    ...pollRequest.payload,
-                };
-                const json = JSON.stringify(message);
-                // if message is broadcast type, only send message as broadcast
-                if (pollRequest.broadcast) {
-                    if (this.debug) this.log('Ready to broadcast:', json);
-                    await socket.broadcast(json);
-                } else {
-                    // if not forced broadcast, send to each device individually (except when device configured for broadcast)
-                    const devices = this.getDevices();
-                    let alsoBroadcast: boolean = false;
-                    for (const device of devices) {
-                        try {
-                            const broadcastSetting: boolean = !!device.getSetting('broadcast');
-                            if (broadcastSetting) alsoBroadcast = true;
-                            if (!broadcastSetting) {
-                                const src = device.getSetting('src');
-                                if (!src) throw new Error('Device without a "src" setting');
+            for (const pollRequest of this.pollMessages) {
+                try {
+                    const message: MarsteRequest = {
+                        id: this.getUniqueID(),
+                        ...pollRequest.payload,
+                    };
+                    const json = JSON.stringify(message);
+                    // if message is broadcast type, only send message as broadcast
+                    if (pollRequest.broadcast) {
+                        if (this.debug) this.log('Ready to broadcast:', json);
+                        await socket.broadcast(json);
+                    } else {
+                        // if not forced broadcast, send to each device individually (except when device configured for broadcast)
+                        const devices = this.getDevices();
+                        let alsoBroadcast: boolean = false;
+                        for (const device of devices) {
+                            try {
+                                const broadcastSetting: boolean = !!device.getSetting('broadcast');
+                                if (broadcastSetting) alsoBroadcast = true;
+                                if (!broadcastSetting) {
+                                    const src = device.getSetting('src');
+                                    if (!src) throw new Error('Device without a "src" setting');
 
-                                const index = this.pollDevices.indexOf(src);
-                                if (index < 0) {
-                                    if (this.debug) this.log('Device not part of polling array:', src);
-                                    continue;
+                                    const index = this.pollDevices.indexOf(src);
+                                    if (index < 0) {
+                                        if (this.debug) this.log('Device not part of polling array:', src);
+                                        continue;
+                                    }
+
+                                    const address = device.getStoreValue('address');
+                                    if (!address) {
+                                        this.error('Device missing IP; next broadcast may fix this.');
+                                        continue;
+                                    }
+
+                                    if (this.debug) this.log('Ready to send:', json, address);
+                                    await socket.send(json, address);
+
+                                    // Wait 100ms between sends to avoid overwhelming
+                                    await new Promise<void>((resolve) => this.homey.setTimeout(resolve, 100));
                                 }
-
-                                const address = device.getStoreValue('address');
-                                if (!address) {
-                                    this.error('Device missing IP; next broadcast may fix this.');
-                                    continue;
-                                }
-
-                                if (this.debug) this.log('Ready to send:', json, address);
-                                await socket.send(json, address);
-
-                                // Wait 1 second between sends
-                                await new Promise<void>((resolve) => this.homey.setTimeout(resolve, 1000));
+                            } catch (err) {
+                                this.error('Error sending to device:', err);
                             }
-                        } catch (err) {
-                            this.error('Error sending to device:', err);
+                        }
+                        // if at least one device is configured for broadcast, also send broadcast
+                        if (alsoBroadcast) {
+                            if (this.debug) this.log('Also broadcasting:', json);
+                            await socket.broadcast(json);
                         }
                     }
-                    // if at least one device is configured for broadcast, also send broadcast
-                    if (alsoBroadcast) {
-                        if (this.debug) this.log('Also broadcasting:', json);
-                        await socket.broadcast(json);
-                    }
+                    // Wait 200ms between different message types
+                    await new Promise<void>((resolve) => this.homey.setTimeout(resolve, 200));
+                } catch (err) {
+                    this.error('Error transmitting:', err);
                 }
-            } catch (err) {
-                this.error('Error transmitting:', err);
-            } finally {
-                this.pollMessage = (this.pollMessage + 1) % this.pollMessages.length;
             }
         }
     }

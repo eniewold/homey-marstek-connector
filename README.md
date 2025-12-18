@@ -12,8 +12,12 @@ When a device is detected and communication is working, the device will display 
 - Current power output or intake (Watt)
 - Battery Temperature
 - Charge and discharge totals (kWh)
+- Phase A/B/C Power (Watt)
+- Total Power (Watt)
+- CT State (Connected/Not Connected)
+- Current Battery Mode
 
-You can also send commands to the battery to change the operating mode to 'Manual', 'AI', 'Passive' or 'Auto'. These commands can be transmitted using Homey flows ('Then...').
+You can control the battery mode directly from the device page (AI, Auto, Force Charge, Force Discharge) or send commands to change the operating mode to 'Manual', 'AI', 'Passive' or 'Auto' using Homey flows ('Then...'). Force Charge and Force Discharge power levels are configurable in device settings. A simplified manual mode flow card allows setting manual mode with text input for start time and auto-calculated 2-hour duration.
 
 ## REQUIREMENTS
 
@@ -48,6 +52,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 ## VERSION HISTORY
 
+- 0.8.9 - Added direct battery mode control from device page (AI, Auto, Force Charge, Force Discharge). Added current mode display. Added configurable force charge/discharge power settings. Added EM.GetStatus polling for phase powers and CT state. Added simplified manual mode flow card with auto-calculated 2-hour duration.
 - 0.8.8 - UDP broadcast or sending individual UDP packages to individual batteries is now configurable (defaults to broadcast).
 - 0.8.7 - The 'ES.GetStatus' messages are no longer using UDP broadcast but now directly target the IP address of the device, sending out one request per device.
 - 0.8.6 - Debugging added when message details source does not match configured source(s).

@@ -66,7 +66,6 @@ export default class MarstekVenusDevice extends Homey.Device {
     async resetCapabilities() {
         const capabilities = [
             'battery_charging_state',      // Charte state (Possible values: "idle", "charging", "discharging")
-            'battery_current_mode',        // Current battery mode (read-only)
             'battery_mode',                // Battery mode (Possible values: "ai", "auto", "force_charge", "force_discharge")
             'meter_power',                 // Power remaining (In kWh)
             'measure_power',               // Power usage/delivery (In Watts)
@@ -235,7 +234,6 @@ export default class MarstekVenusDevice extends Homey.Device {
                 // Current battery mode
                 if (result.mode) {
                     const mode = result.mode.toLowerCase();
-                    await this.setCapabilityValue('battery_current_mode', mode);
                     // Only set battery_mode if it's a setable mode
                     if (['ai', 'auto', 'force_charge', 'force_discharge'].includes(mode)) {
                         await this.setCapabilityValue('battery_mode', mode);
@@ -243,7 +241,15 @@ export default class MarstekVenusDevice extends Homey.Device {
                 }
 
                 // EM status
-                if (result.ct_state !== undefined) await this.setCapabilityValue('measure_ct_state', result.ct_state.toString());
+                if (result.ct_state !== undefined) {
+                    const currentCtState = await this.getCapabilityValue('measure_ct_state');
+                    const newCtState = result.ct_state.toString();
+                    if (currentCtState !== newCtState) {
+                        await this.setCapabilityValue('measure_ct_state', newCtState);
+                        // Trigger flow
+                        await this.homey.flow.getTriggerCard('marstek_ct_state_changed').trigger(this, { state: result.ct_state });
+                    }
+                }
                 if (!isNaN(result.a_power)) await this.setCapabilityValue('measure_power.a', result.a_power);
                 if (!isNaN(result.b_power)) await this.setCapabilityValue('measure_power.b', result.b_power);
                 if (!isNaN(result.c_power)) await this.setCapabilityValue('measure_power.c', result.c_power);

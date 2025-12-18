@@ -16,7 +16,6 @@
   "class": "battery",
   "capabilities": [
     "battery_charging_state",
-    "battery_current_mode",
     "battery_mode",
     "meter_power",
     "meter_power.imported",
@@ -116,6 +115,25 @@
       "capabilities": [
         "battery_charging_state",
         "measure_battery",
+        "battery_mode"
+      ]
+    },
+    "temperature_group": {
+      "name": {
+        "en": "Temperature",
+        "nl": "Temperatuur",
+        "da": "Temperatur",
+        "de": "Temperatur",
+        "es": "Temperatura",
+        "fr": "Température",
+        "it": "Temperatura",
+        "no": "Temperatur",
+        "sv": "Temperatur",
+        "pl": "Temperatura",
+        "ru": "Температура",
+        "ko": "온도"
+      },
+      "capabilities": [
         "measure_temperature"
       ]
     },

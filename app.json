@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.niewold.marstek",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "compatibility": ">=12.5.0",
   "sdk": 3,
   "brandColor": "#555555",
@@ -52,6 +52,64 @@
   "source": "https://github.com/eniewold/homey-marstek-connector",
   "homeyCommunityTopicId": 143139,
   "flow": {
+    "triggers": [
+      {
+        "title": {
+          "en": "CT State changed",
+          "nl": "CT Status gewijzigd",
+          "da": "CT Status ændret",
+          "de": "CT Status geändert",
+          "es": "Estado CT cambiado",
+          "fr": "État CT changé",
+          "it": "Stato CT cambiato",
+          "no": "CT Status endret",
+          "sv": "CT Status ändrad",
+          "pl": "Stan CT zmieniony",
+          "ru": "Состояние CT изменено",
+          "ko": "CT 상태 변경됨"
+        },
+        "titleFormatted": {
+          "en": "CT State changed to [[state]]",
+          "nl": "CT Status gewijzigd naar [[state]]",
+          "da": "CT Status ændret til [[state]]",
+          "de": "CT Status geändert zu [[state]]",
+          "es": "Estado CT cambiado a [[state]]",
+          "fr": "État CT changé à [[state]]",
+          "it": "Stato CT cambiato a [[state]]",
+          "no": "CT Status endret til [[state]]",
+          "sv": "CT Status ändrad till [[state]]",
+          "pl": "Stan CT zmieniony na [[state]]",
+          "ru": "Состояние CT изменено на [[state]]",
+          "ko": "CT 상태가 [[state]]로 변경됨"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus"
+          },
+          {
+            "name": "state",
+            "type": "number",
+            "title": {
+              "en": "State",
+              "nl": "Status",
+              "da": "Status",
+              "de": "Status",
+              "es": "Estado",
+              "fr": "État",
+              "it": "Stato",
+              "no": "Status",
+              "sv": "Status",
+              "pl": "Stan",
+              "ru": "Состояние",
+              "ko": "상태"
+            }
+          }
+        ],
+        "id": "marstek_ct_state_changed"
+      }
+    ],
     "actions": [
       {
         "id": "marstek_ai_mode",
@@ -543,7 +601,6 @@
       "class": "battery",
       "capabilities": [
         "battery_charging_state",
-        "battery_current_mode",
         "battery_mode",
         "meter_power",
         "meter_power.imported",
@@ -643,6 +700,25 @@
           "capabilities": [
             "battery_charging_state",
             "measure_battery",
+            "battery_mode"
+          ]
+        },
+        "temperature_group": {
+          "name": {
+            "en": "Temperature",
+            "nl": "Temperatuur",
+            "da": "Temperatur",
+            "de": "Temperatur",
+            "es": "Temperatura",
+            "fr": "Température",
+            "it": "Temperatura",
+            "no": "Temperatur",
+            "sv": "Temperatur",
+            "pl": "Temperatura",
+            "ru": "Температура",
+            "ko": "온도"
+          },
+          "capabilities": [
             "measure_temperature"
           ]
         },
@@ -1388,96 +1464,6 @@
     }
   ],
   "capabilities": {
-    "battery_current_mode": {
-      "type": "enum",
-      "title": {
-        "en": "Current Battery Mode",
-        "nl": "Huidige Batterijmodus",
-        "da": "Nuværende Batteritilstand",
-        "de": "Aktueller Batteriemodus",
-        "es": "Modo de Batería Actual",
-        "fr": "Mode de Batterie Actuel",
-        "it": "Modalità Batteria Corrente",
-        "no": "Gjeldende Batterimodus",
-        "sv": "Aktuell Batteriläge",
-        "pl": "Bieżący Tryb Baterii",
-        "ru": "Текущий Режим Батареи",
-        "ko": "현재 배터리 모드"
-      },
-      "values": [
-        {
-          "id": "ai",
-          "title": {
-            "en": "AI",
-            "nl": "AI",
-            "da": "AI",
-            "de": "AI",
-            "es": "IA",
-            "fr": "IA",
-            "it": "AI",
-            "no": "AI",
-            "sv": "AI",
-            "pl": "AI",
-            "ru": "ИИ",
-            "ko": "AI"
-          }
-        },
-        {
-          "id": "auto",
-          "title": {
-            "en": "Self-Consumption",
-            "nl": "Zelfverbruik",
-            "da": "Selvforbrug",
-            "de": "Eigenverbrauch",
-            "es": "Autoconsumo",
-            "fr": "Autoconsommation",
-            "it": "Autoconsumo",
-            "no": "Selvforbruk",
-            "sv": "Självförbrukning",
-            "pl": "Samowystarczalność",
-            "ru": "Самопотребление",
-            "ko": "자가 소비"
-          }
-        },
-        {
-          "id": "manual",
-          "title": {
-            "en": "Manual",
-            "nl": "Handmatig",
-            "da": "Manuel",
-            "de": "Manuell",
-            "es": "Manual",
-            "fr": "Manuel",
-            "it": "Manuale",
-            "no": "Manuell",
-            "sv": "Manuell",
-            "pl": "Ręczny",
-            "ru": "Ручной",
-            "ko": "수동"
-          }
-        },
-        {
-          "id": "passive",
-          "title": {
-            "en": "Passive",
-            "nl": "Passief",
-            "da": "Passiv",
-            "de": "Passiv",
-            "es": "Pasivo",
-            "fr": "Passif",
-            "it": "Passivo",
-            "no": "Passiv",
-            "sv": "Passiv",
-            "pl": "Pasywny",
-            "ru": "Пассивный",
-            "ko": "수동"
-          }
-        }
-      ],
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor"
-    },
     "battery_mode": {
       "type": "enum",
       "title": {
