@@ -35,8 +35,7 @@ Choose the “Marstek Venus (Cloud)” device during pairing, sign in with your 
 The Local API is disabled by default, this needs te be enabled on the Marstek Venus battery system. This can be done in two ways:
 - Use the BLE Test Tool (https://rweijnen.github.io/marstek-venus-monitor/latest/) on your smartphone (or laptop) near the battery. Connect and use 'Enable Local API (30000)' button in 'System' tab.
 - Contact Marstek support to have them enable the Local API for you. This can take a few days.
-
-*The local API must be enabled for port number 30000 (on each device). Currently no other port numbers are supported.*
+- In the settings of the Marstek Venus battery syste using the APP (newer versions), make sure the 'Local API' is enabled and the port number is set to 30000.
 
 ## STEP BY STEP INSTRUCTIONS
 
@@ -87,9 +86,8 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 - This app uses the 'API over UDP' features as mentioned in the API documentation. 
 - The app is developed and tested with a Venus E v2.0 battery system (firmware v153, communication module 202409090159). Let me know if any other models work as well!
-- When the device can't be auto-detected, please check if the Marstek Venus battery is powered on and connected to the same network as Homey.
+- When the device can't be auto-detected you can manually add the device using the IP address of the battery. If the device is not found, please check if the Marstek Venus battery is powered on and connected to the same network as Homey.
 - Support for multiple Marstek Venus batteries is implemented, but since I only have one battery to test with, some is uncharted.
-- Only UDP port 30000 is currently supported on the local API.
 - When upgrading the app, it might be needed to remove already added battery devices first and then adding them again. 
 - The Marstek Cloud API is undocumented, so things might change without notice.
 - Battery mode changes have an automatic retry for a maximum of 5 tries with a 15 seconds timeout.
