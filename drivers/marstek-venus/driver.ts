@@ -190,15 +190,15 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @param {string} device - Unique identifier of the device to poll.
      */
     pollStart(device: string) {
-        if (!device) {
-            this.error('pollStart called without a device identifier');
-            return;
-        }
+        if (!device) return this.error('pollStart called without a device identifier');
 
+        // Add device if not already added
         if (!this.pollDevices.includes(device)) {
             this.pollDevices.push(device);
+        } else {
+            if (this.debug) this.log('Device already in pollDevices array', device);
         }
-
+        // Start the main polling meganism, if not already (one interval per driver, many devices)
         if (!this.pollTimeout) {
             const interval = this.getPollInterval();
             if (this.debug) this.log('Started background polling with interval', interval);
@@ -558,7 +558,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
             // Handler for messages received
             const handler = (json: any, remote: dgram.RemoteInfo) => {
                 // Always log received data during detection
-                if (this.debug) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(remote));
+                if (this.debug) this.log(`Received for ${json?.src}:`, JSON.stringify(json), JSON.stringify(remote));
                 // Only further check messages that have the correct properties
                 if (json && json.src && json.result && json.result.device) {
                     // Detect if device is alread in array
