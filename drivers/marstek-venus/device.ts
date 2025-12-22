@@ -104,6 +104,7 @@ export default class MarstekVenusDevice extends Homey.Device {
         if (this.debug) this.log('Start polling');
         this.myDriver.pollStart(this.getSetting('src'));
         // Also start updating the last received message capability
+        if (this.timeout) this.homey.clearInterval(this.timeout);
         this.timeout = this.homey.setInterval(async () => {
             if (this.timestamp) {
                 const now = new Date();
@@ -119,7 +120,10 @@ export default class MarstekVenusDevice extends Homey.Device {
     stopPolling() {
         if (this.debug) this.log('Stop polling');
         this.myDriver.pollStop(this.getSetting('src'));
-        if (this.timeout) this.homey.clearInterval(this.timeout);
+        if (this.timeout) {
+            this.homey.clearInterval(this.timeout);
+            this.timeout = undefined;
+        }
     }
 
     /**
