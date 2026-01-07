@@ -1,4 +1,7 @@
 ﻿{
+  "0.8.9": {
+    "en": "Made all factors that are applied when receiving API data configurable. Also included default factors for different hardware and firmware versions."
+  },
   "0.8.8": {
     "en": "UDP broadcast or sending individual UDP packages to individual batteries is now configurable (defaults to broadcast)."
   },

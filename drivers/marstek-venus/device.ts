@@ -5,6 +5,26 @@ import MarstekVenusDriver from './driver';
 // Import our loaded config
 import { config } from '../../lib/config';
 
+type CapabilitySetting = {
+    capabilityId: string;
+    settingId: string | null;
+}
+
+const capabilities: Array<CapabilitySetting> = [
+    { capabilityId: 'battery_charging_state', settingId: null },                                    // Charge state (Possible values: "idle", "charging", "discharging")
+    { capabilityId: 'meter_power', settingId: 'factor_bat_capacity' },                              // Power remaining (In kWh)
+    { capabilityId: 'measure_power', settingId: 'factor_bat_power' },                               // Power usage/delivery (In Watts)
+    { capabilityId: 'measure_temperature', settingId: 'factor_bat_temp' },                          // Main battery temperature (In degrees celcius)
+    { capabilityId: 'measure_battery', settingId: null },                                           // State of Charge in %
+    { capabilityId: 'meter_power.imported', settingId: 'factor_total_grid_input_energy' },          // Total power imported (in kWh)
+    { capabilityId: 'meter_power.exported', settingId: 'factor_total_grid_output_energy' },         // Total power exported (in kWh) 
+    { capabilityId: 'meter_power.load', settingId: 'factor_total_load_energy' },                    // Total power consumend off grid (in kWh)
+    { capabilityId: 'measure_power_ongrid', settingId: 'factor_ongrid_power' },                     // Current power usage of on-grid port (in W)
+    { capabilityId: 'measure_power_offgrid', settingId: 'factor_offgrid_power' },                   // Current power usage of off-grid port (in W)
+    { capabilityId: 'measure_power_pv', settingId: 'factor_pv_power' },                             // Current power usage of off-grid port (in W)
+    { capabilityId: 'last_message_received', settingId: null },                                     // number of seconds the last received message
+]
+
 /**
  * Represents a Marstek Venus device connected locally via UDP.
  * The device listens for broadcast messages, keeps capabilities in sync,
@@ -58,23 +78,10 @@ export default class MarstekVenusDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once all capabilities are synchronised.
      */
     async resetCapabilities() {
-        const capabilities = [
-            'battery_charging_state',      // Charte state (Possible values: "idle", "charging", "discharging")
-            'meter_power',                 // Power remaining (In kWh)
-            'measure_power',               // Power usage/delivery (In Watts)
-            'measure_temperature',         // Main battery temperature (In degrees celcius)
-            'measure_battery',             // State of Charge in %
-            'meter_power.imported',        // Total power imported (in kWh)
-            'meter_power.exported',        // Total power exported (in kWh)
-            'meter_power.load',            // Total power exported (in kWh)
-            'measure_power_ongrid',        // Current power usage of on-grid port (in W)
-            'measure_power_offgrid',       // Current power usage of off-grid port (in W)
-            'measure_power_pv',            // Current power usage of off-grid port (in W)
-            'last_message_received',       // number of seconds the last received message
-        ];
         for (const cap of capabilities) {
-            if (!this.hasCapability(cap)) await this.addCapability(cap);
-            await this.setCapabilityValue(cap, null);
+            const capId = cap.capabilityId;
+            if (!this.hasCapability(capId)) await this.addCapability(capId);
+            await this.setCapabilityValue(capId, null);
         }
     }
 
@@ -178,36 +185,31 @@ export default class MarstekVenusDevice extends Homey.Device {
                 await this.setCapabilityValue('last_message_received', 0);       // number of seconds the last received message
 
                 // Main battery temperature (In degrees celcius)
-                if (!isNaN(result.bat_temp)) {
-                    // TODO: figure out what the actual multipliers are per firmware, for now, use sanity check
-                    if (result.bat_temp > 50) result.bat_temp /= 10.0;
-                    await this.setCapabilityValue('measure_temperature', result.bat_temp);
-                }
+                await this.setValue('measure_temperature', result.bat_temp);
 
                 // Power remaining (In kWh)
-                if (!isNaN(result.bat_capacity)) await this.setCapabilityValue('meter_power', result.bat_capacity / ((firmware >= 154) ? 1000.0 : 100.0));
+                await this.setValue('meter_power', result.bat_capacity); // firmware >= 154) ? 1000.0 : 100.0
 
                 // Battery state of charge
-                if (!isNaN(result.bat_soc)) await this.setCapabilityValue('measure_battery', result.bat_soc);
+                await this.setValue('measure_battery', result.bat_soc);
 
                 // Battery power and charging state
                 if (!isNaN(result.bat_power)) {
                     // Charge state (Possible values: "idle", "charging", "discharging")
                     await this.setCapabilityValue('battery_charging_state', (result.bat_power > 0) ? 'charging' : (result.bat_power < 0) ? 'discharging' : 'idle');
-                    await this.setCapabilityValue('measure_power', result.bat_power / ((firmware >= 154) ? 1.0 : 10.0));
+                    await this.setValue('measure_power', result.bat_power);
                 }
 
                 // Input and output energy (kWh)
-                if (!isNaN(result.total_grid_input_energy)) await this.setCapabilityValue('meter_power.imported', result.total_grid_input_energy / ((firmware >= 154) ? 10.0 : 100.0));
-                if (!isNaN(result.total_grid_output_energy)) await this.setCapabilityValue('meter_power.exported', result.total_grid_output_energy / ((firmware >= 154) ? 10.0 : 100.0));
-                if (!isNaN(result.total_load_energy)) await this.setCapabilityValue('meter_power.load', result.total_load_energy / ((firmware >= 154) ? 10.0 : 100.0));
+                await this.setValue('meter_power.imported', result.total_grid_input_energy);
+                await this.setValue('meter_power.exported', result.total_grid_output_energy);
+                await this.setValue('meter_power.load', result.total_load_energy);
 
                 // Additional capabilities as communicated by Marstek to display in Homey (Watt)
-                if (!isNaN(result.ongrid_power)) await this.setCapabilityValue('measure_power_ongrid', result.ongrid_power * -1);
-                if (!isNaN(result.offgrid_power)) await this.setCapabilityValue('measure_power_offgrid', result.offgrid_power * -1);
-                if (!isNaN(result.pv_power)) await this.setCapabilityValue('measure_power_pv', result.pv_power * -1);
+                await this.setValue('measure_power_ongrid', result.ongrid_power);
+                await this.setValue('measure_power_offgrid', result.offgrid_power);
+                await this.setValue('measure_power_pv', result.pv_power);
             }
-
         }
         catch (error) {
             this.error('Error processing incoming message:', error);
@@ -216,10 +218,24 @@ export default class MarstekVenusDevice extends Homey.Device {
     }
 
     /**
+     * Sets the capability value for this device, taken the factor from settings into account.
+     * @returns {Promise<void>} Resolves once the value has been set.
+     */
+    async setValue(capabilityId: string, value: any) {
+        if (!isNaN(value)) {
+            const settingId = capabilities.find(cap => cap.capabilityId === capabilityId)?.settingId;
+            const actualValue = settingId ? (value / Number(this.getSetting(settingId) || 1)) : value;
+            if (this.debug && actualValue) this.log('Capability value:', JSON.stringify({ capabilityId, settingId, value, actualValue }));
+            return await this.setCapabilityValue(capabilityId, actualValue);
+        }
+    }
+
+    /**
      * Called by Homey when settings are changed. Will make sure that polling is disabled according to setting.
      * @param {any} event Homey populated structure with old and new sttings
      */
     async onSettings(event: any) {
+        // If polling setting is changed, start or stop polling
         if (event.changedKeys.includes('poll')) {
             if (event.newSettings.poll !== false) {
                 this.startPolling();
@@ -234,7 +250,10 @@ export default class MarstekVenusDevice extends Homey.Device {
                 this.myDriver.pollIntervalUpdate();
             }, 1000);
         }
-
+        // If factor settings are changed, reset capabilities to force recalculation on next message
+        if (event.changedKeys.some((key: string) => key.startsWith('factor_'))) {
+            this.resetCapabilities();
+        }
     }
 
     /**

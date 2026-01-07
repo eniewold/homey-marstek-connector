@@ -18,6 +18,49 @@ interface MarsteRequest extends MessagePayload {
     id: number; // int16 max
 }
 
+// Factor defaults per device type and firmware version
+const factorDefaults: { [key: string]: { [key: number]: { [key: string]: number } } } = {
+    "default": {
+        0: {
+            factor_bat_capacity: 100,
+            factor_bat_soc: 1,
+            factor_bat_power: 10,
+            factor_bat_temp: 1,
+            factor_total_grid_input_energy: 100,
+            factor_total_grid_output_energy: 100,
+            factor_total_load_energy: 100,
+            factor_ongrid_power: -1,
+            factor_offgrid_power: -1,
+            factor_pv_power: -1,
+        }
+    },
+    "VenusE": {
+        0: {
+        },
+        154: {
+            factor_bat_capacity: 1000,
+            factor_bat_power: 1,
+            factor_bat_temp: 1,
+            factor_total_grid_input_energy: 10,
+            factor_total_grid_output_energy: 10,
+            factor_total_load_energy: 10,
+        }
+    },
+    "VenusE 3.0": {
+        0: {
+            factor_bat_capacity: 1000,
+            factor_bat_power: 1,
+            factor_total_grid_input_energy: 1000,
+            factor_total_grid_output_energy: 1000,
+            factor_total_load_energy: 1000,
+        },
+        139: {
+            factor_bat_temp: 10,
+            factor_bat_capacity: 100,
+        },
+    }
+}
+
 /**
  * Driver responsible for managing Marstek Venus devices that communicate over UDP.
  * It provides device discovery, background polling, flow card actions and command handling.
@@ -535,6 +578,26 @@ export default class MarstekVenusDriver extends Homey.Driver {
         });
     }
 
+    // Helper function to select and combine factor properties based on model and version
+    retrieveFactorDefaults(model: string, version: number) {
+        const baseDefaults = factorDefaults["default"][0];
+        const modelVersions = factorDefaults[model];
+        if (!modelVersions) return baseDefaults;
+        // find highest version of modelVersions that is less than or equal to version number
+        let versionDefaults = {
+            ...baseDefaults,
+            ...modelVersions[0]
+        };
+        // Keep applying factors up to the device version
+        for (const verStr of Object.keys(modelVersions)) {
+            const ver = parseInt(verStr);
+            if (ver > 0 && ver <= version) {
+                Object.assign(versionDefaults, modelVersions[ver]);
+            }
+        }
+        return versionDefaults;
+    }
+
     /**
      * Discovers Marstek Venus devices by broadcasting a detection message and collecting responses.
      * @returns {Promise<Array<{name: string, data: {id: string}, settings: object, store: object}>>} Resolves with the discovered devices.
@@ -553,6 +616,12 @@ export default class MarstekVenusDriver extends Homey.Driver {
                     // Detect if device is alread in array
                     const unique = json.src;
                     if (!devices.find((element) => element.data.id === unique)) {
+
+                        // Find factor defaults for this model and version
+                        const factorDefaults = this.retrieveFactorDefaults(json.result.device, json.result.ver);
+                        if (this.debug) this.log('Device default factors:', JSON.stringify(factorDefaults));
+
+                        // Add device to array
                         devices.push({
                             name: unique,
                             data: {
@@ -561,9 +630,11 @@ export default class MarstekVenusDriver extends Homey.Driver {
                             settings: {
                                 poll: !!this.homey.settings.get('default_poll_enabled'),
                                 interval: this.homey.settings.get('default_poll_interval') || 60,
+                                broadcast: false,
                                 src: unique,
                                 model: `${json.result.device} v${json.result.ver}`,
                                 firmware: String(json.result.ver),      // firmware number, make sure to cast to string due to label (read-only) configuration
+                                ...factorDefaults,                      // apply factor defaults
                             },
                             store: {
                                 address: remote.address,                // Store initial IP address
@@ -575,7 +646,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
             socket.on(handler);
 
             // Message to detect batteries as documented in the API
-            const message = '{"id":"Homey-Detect","method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
+            const message = '{"id":31999,"method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
             if (this.debug) this.log('Detection broadcasting:', message);
             socket.broadcast(message).then(() => {
                 // Start broadcasting message

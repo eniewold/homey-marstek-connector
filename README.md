@@ -48,6 +48,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 ## VERSION HISTORY
 
+- 0.8.9 - Made all factors that are applied when receiving API data configurable. Also included default factors for different hardware and firmware versions.
 - 0.8.8 - UDP broadcast or sending individual UDP packages to individual batteries is now configurable (defaults to broadcast).
 - 0.8.7 - The 'ES.GetStatus' messages are no longer using UDP broadcast but now directly target the IP address of the device, sending out one request per device.
 - 0.8.6 - Debugging added when message details source does not match configured source(s).
