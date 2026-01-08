@@ -1,2 +1,2 @@
-- name: Homey App — Translate
-  uses: athombv/github-action-homey-app-translate@v1
+name: Homey App — Translate
+uses: athombv/github-action-homey-app-translate@v1
