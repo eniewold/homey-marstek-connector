@@ -15,15 +15,15 @@ const capabilities: Array<CapabilitySetting> = [
     { capabilityId: 'meter_power', settingId: 'factor_bat_capacity' },                              // Power remaining (In kWh)
     { capabilityId: 'measure_power', settingId: 'factor_bat_power' },                               // Power usage/delivery (In Watts)
     { capabilityId: 'measure_temperature', settingId: 'factor_bat_temp' },                          // Main battery temperature (In degrees celcius)
-    { capabilityId: 'measure_battery', settingId: null },                                           // State of Charge in %
+    { capabilityId: 'measure_battery', settingId: 'factor_bat_soc' },                               // State of Charge in %
     { capabilityId: 'meter_power.imported', settingId: 'factor_total_grid_input_energy' },          // Total power imported (in kWh)
-    { capabilityId: 'meter_power.exported', settingId: 'factor_total_grid_output_energy' },         // Total power exported (in kWh) 
+    { capabilityId: 'meter_power.exported', settingId: 'factor_total_grid_output_energy' },         // Total power exported (in kWh)
     { capabilityId: 'meter_power.load', settingId: 'factor_total_load_energy' },                    // Total power consumend off grid (in kWh)
     { capabilityId: 'measure_power_ongrid', settingId: 'factor_ongrid_power' },                     // Current power usage of on-grid port (in W)
     { capabilityId: 'measure_power_offgrid', settingId: 'factor_offgrid_power' },                   // Current power usage of off-grid port (in W)
     { capabilityId: 'measure_power_pv', settingId: 'factor_pv_power' },                             // Current power usage of off-grid port (in W)
     { capabilityId: 'last_message_received', settingId: null },                                     // number of seconds the last received message
-]
+];
 
 /**
  * Represents a Marstek Venus device connected locally via UDP.
@@ -78,10 +78,33 @@ export default class MarstekVenusDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once all capabilities are synchronised.
      */
     async resetCapabilities() {
+        const model: Array<string> = (this.getSetting('model') || 'default v0').split(' v');
+        const factorDefaults = this.myDriver.retrieveFactorDefaults(model[0], Number(model[1]));
+        const missingSettings: Array<Record<string, number>> = [];
+
         for (const cap of capabilities) {
+            // Make sure capability exists
             const capId = cap.capabilityId;
             if (!this.hasCapability(capId)) await this.addCapability(capId);
             await this.setCapabilityValue(capId, null);
+
+            // Also retrieve settings default factors
+            const settingId = cap.settingId;
+            if (settingId) {
+                const settingValue = this.getSetting(settingId);
+                if (!settingValue) {
+                    const defaultValue = factorDefaults[settingId];
+                    missingSettings.push({ [settingId]: defaultValue });
+                }
+            }
+        }
+
+        // Apply any missing settings with default values
+        if (missingSettings.length > 0) {
+            await this.setSettings(Object.assign({}, ...missingSettings));
+            if (this.debug) this.log('Missing settings:', JSON.stringify(Object.assign({}, ...missingSettings)));
+            const newSettings = this.getSettings();
+            if (this.debug) this.log('New settings:', JSON.stringify(newSettings));
         }
     }
 
@@ -224,8 +247,9 @@ export default class MarstekVenusDevice extends Homey.Device {
     async setValue(capabilityId: string, value: any) {
         if (!isNaN(value)) {
             const settingId = capabilities.find(cap => cap.capabilityId === capabilityId)?.settingId;
-            const actualValue = settingId ? (value / Number(this.getSetting(settingId) || 1)) : value;
-            if (this.debug && actualValue) this.log('Capability value:', JSON.stringify({ capabilityId, settingId, value, actualValue }));
+            const settingValue = settingId ? this.getSetting(settingId) : null;
+            const actualValue = value / (settingValue || 1);
+            if (this.debug && actualValue) this.log('Capability value:', JSON.stringify({ capabilityId, settingId, settingValue, value, actualValue }));
             return await this.setCapabilityValue(capabilityId, actualValue);
         }
     }

@@ -19,13 +19,14 @@ interface MarsteRequest extends MessagePayload {
 }
 
 // Factor defaults per device type and firmware version
-const factorDefaults: { [key: string]: { [key: number]: { [key: string]: number } } } = {
+type FactorDefaults = Record<string, Record<number, Record<string, number>>>;
+const factorDefaults: FactorDefaults = {
     "default": {
         0: {
             factor_bat_capacity: 100,
             factor_bat_soc: 1,
             factor_bat_power: 10,
-            factor_bat_temp: 1,
+            factor_bat_temp: 10,
             factor_total_grid_input_energy: 100,
             factor_total_grid_output_energy: 100,
             factor_total_load_energy: 100,
@@ -55,8 +56,10 @@ const factorDefaults: { [key: string]: { [key: number]: { [key: string]: number 
             factor_total_load_energy: 1000,
         },
         139: {
-            factor_bat_temp: 10,
             factor_bat_capacity: 100,
+        },
+        145: {
+            factor_bat_capacity: 1000,
         },
     }
 }
@@ -630,7 +633,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
                             settings: {
                                 poll: !!this.homey.settings.get('default_poll_enabled'),
                                 interval: this.homey.settings.get('default_poll_interval') || 60,
-                                broadcast: false,
+                                broadcast: true,
                                 src: unique,
                                 model: `${json.result.device} v${json.result.ver}`,
                                 firmware: String(json.result.ver),      // firmware number, make sure to cast to string due to label (read-only) configuration

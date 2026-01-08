@@ -1,4 +1,7 @@
 ﻿{
+  "0.8.10": {
+    "en": "Applied corrections to default factors for hardware/firmware combinations, based on community feedback. Broadcast setting now default true during device discovery. Missing factors are now set to default when updating the app."
+  },
   "0.8.9": {
     "en": "Made all factors that are applied when receiving API data configurable. Also included default factors for different hardware and firmware versions."
   },
