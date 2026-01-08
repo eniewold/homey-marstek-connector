@@ -211,7 +211,7 @@ export default class MarstekVenusDevice extends Homey.Device {
                 await this.setValue('measure_temperature', result.bat_temp);
 
                 // Power remaining (In kWh)
-                await this.setValue('meter_power', result.bat_capacity); // firmware >= 154) ? 1000.0 : 100.0
+                await this.setValue('meter_power', result.bat_capacity);
 
                 // Battery state of charge
                 await this.setValue('measure_battery', result.bat_soc);

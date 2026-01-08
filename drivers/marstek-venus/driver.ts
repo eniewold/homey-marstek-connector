@@ -56,9 +56,10 @@ const factorDefaults: FactorDefaults = {
             factor_total_load_energy: 1000,
         },
         139: {
+            factor_bat_power: 10,
             factor_bat_capacity: 100,
         },
-        145: {
+        144: {
             factor_bat_capacity: 1000,
         },
     }

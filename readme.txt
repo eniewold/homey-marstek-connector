@@ -46,6 +46,40 @@ The Local API is disabled by default, this needs te be enabled on the Marstek Ve
 
 You can devices from both API and Cloud. See settings of each battery for additional details. 
 
+## VERSION HISTORY
+
+- 0.8.10 - Applied corrections to default factors for hardware/firmware combinations, based on community feedback. Broadcast setting now default true during device discovery. Missing factors are now set to default when updating the app.
+- 0.8.9 - Made all factors that are applied when receiving API data configurable. Also included default factors for different hardware and firmware versions.
+- 0.8.8 - UDP broadcast or sending individual UDP packages to individual batteries is now configurable (defaults to broadcast).
+- 0.8.7 - The 'ES.GetStatus' messages are no longer using UDP broadcast but now directly target the IP address of the device, sending out one request per device.
+- 0.8.6 - Debugging added when message details source does not match configured source(s).
+- 0.8.5 - Additional debugging logs added for improving Marstek Venus compatibility, only for TEST version of this app.
+- 0.8.4 - Polling interval could not always be determined when upgrading the Homey app from previous versions, added a fallback interval value.
+- 0.8.3 - Bug removed that caused no data to be processed from the local API. Debug flag is now always set for TEST versions fo the app.
+- 0.8.2 - Default settings can be given during pairing of local API devices. Added escaping of strings during cloud login. Unique id for messages limited to 16bits integer.
+- 0.8.1 - **[current LIVE release]** Added settings to disable polling for data from local API, but flows sending battery commands are still possible, to alleviate communication issues when used together with CT002/CT003.
+- 0.8.0 - Code structure changes and github cleanup. Converted source to TypeScript only.
+- 0.7.6 - Cloud data stopped updating when initial response of Marstek Cloud service was slow, causing a concurrency problem.
+- 0.7.5 - Incorrect password for Marstek Cloud could not be corrected without removing app first. Technical errors on the Marstek Cloud service are not correctly caught.
+- 0.7.4 - Temperature reported by same firmware has different multiplier; sanity calculation added. Marstek Cloud login problems were not handled correctly.
+- 0.7.3 - Cloud login could fail for users with multiple devices. Added some translations.
+- 0.7.2 - Temperature for firmware 154 was reported incorrectly. Added retry meganism to the flow cards that set battery mode. Improved readability of some library classes.
+- 0.7.1 - Added flow card for changing the battery charging mode through local API.
+- 0.7.0 - Added support for a Marstek cloud driver that retrieves battery statistics using your Marstek cloud account credentials.
+- 0.6.3 - Added a property that monitors the number of seconds the last message was received from battery. Added icons for custom capabilities.
+- 0.6.2 - Firmware setting was stored as incorrect settings type.
+- 0.6.1 - Firmware 154 seems to communicate values with a different multipliers. The app now detects the firmware and corrects this.
+- 0.6.0 - Auto re-connect implemented; retry port binding at every broadcast when listener is no longer available. Fixed errors on multiple devices trying to start connecting at the same time. Couple of other minor bugs in several places fixed.
+- 0.5.7 - Correctly implemented setting of Homey capabilities as async calls.
+- 0.5.6 - Scope seems no longer available during close event handling, so logging close event is now hard-coded to console.
+- 0.5.5 - The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App.
+- 0.5.4 - Log structure changed to try to catch connectivity problems. Solved problem in clean-up function.
+- 0.5.3 - Applied bug fix to broadcast IP address discovery (caused problems when no address is found).
+- 0.5.2 - Added an increment unique id to all messages to battery. Restructured the way details are retrieved from messages into Homey capability values. Additional onUninit handling for removal of UDP listener. Added more capabilities received from battery (unverified).
+- 0.5.1 - Handling of errors on socket binding and broadcast flag settings for better debugging of future port binding errors. Removed some mandatory settings that gave problems during discovery.
+- 0.5.0 - Added additional readings from the battery API and energy system that are now visualised in Homey as their guideliness for batteries.
+(older history details are left out)
+
 ## NOTES
 
 - This app uses the 'API over UDP' features as mentioned in the API documentation. 

@@ -105,7 +105,7 @@
         "id": "marstek_manual_mode",
         "title": {
           "en": "Set battery mode to 'Manual'",
-          "nl": "Stel batterijweiser in op 'Handmatig'",
+          "nl": "Stel batterijmodus in op 'Handmatig'",
           "da": "Indstil batteritilstand til 'Manuel'",
           "de": "Batteriemodus auf 'Manuell' einstellen",
           "es": "Establecer el modo de batería en 'Manual'",
@@ -119,7 +119,7 @@
         },
         "titleFormatted": {
           "en": "Set battery mode to 'Manual' using from [[start_time]] to [[end_time]] on [[days]] with [[power]] Watt and enable [[enable]]",
-          "nl": "Stel batterijweiser in op 'Handmatig' van [[start_time]] tot [[end_time]] op [[days]] met [[power]] Watt en inschakelen [[enable]]",
+          "nl": "Stel batterijmodus in op 'Handmatig' van [[start_time]] tot [[end_time]] op [[days]] met [[power]] Watt en inschakelen [[enable]]",
           "da": "Indstil batteritilstand til 'Manuel' fra [[start_time]] til [[end_time]] på [[days]] med [[power]] Watt og aktiver [[enable]]",
           "de": "Batteriemodus auf 'Manuell' einstellen von [[start_time]] bis [[end_time]] an [[days]] mit [[power]] Watt und aktivieren [[enable]]",
           "es": "Establecer el modo de batería en 'Manual' desde [[start_time]] hasta [[end_time]] en [[days]] con [[power]] Vatios y habilitar [[enable]]",
