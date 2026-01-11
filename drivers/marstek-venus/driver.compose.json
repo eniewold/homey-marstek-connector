@@ -37,32 +37,34 @@
       "title": {
         "en": "Charged (grid)",
         "nl": "Opgeladen (net)",
-        "da": "Opladet (net)",
+        "da": "Opladet (netværk)",
         "de": "Aufgeladen (Netz)",
         "es": "Cargado (red)",
         "fr": "Chargé (réseau)",
-        "it": "Carico (rete)",
+        "it": "Caricato (rete)",
         "no": "Ladet (nett)",
-        "sv": "Laddad (nät)",
-        "pl": "Naładowany (sieć)",
+        "sv": "Laddad (nätverk)",
+        "pl": "Naładowany (siec)",
         "ru": "Заряжено (сеть)",
-        "ko": "충전됨 (그리드)"
+        "ko": "충전됨 (그리드)",
+        "ar": "مشحون (شبكة)"
       }
     },
     "meter_power.exported": {
       "title": {
         "en": "Discharged (grid)",
         "nl": "Ontladen (net)",
-        "da": "Afladet (net)",
+        "da": "Afladet (netværk)",
         "de": "Entladen (Netz)",
         "es": "Descargado (red)",
         "fr": "Déchargé (réseau)",
-        "it": "Scaricato (rete)",
+        "it": "Scarico (rete)",
         "no": "Utladet (nett)",
-        "sv": "Utladdad (nät)",
-        "pl": "Rozładowany (sieć)",
+        "sv": "Utladdad (nätverk)",
+        "pl": "Rozładowany (siec)",
         "ru": "Разряжено (сеть)",
-        "ko": "방전됨 (그리드)"
+        "ko": "방전됨 (그리드)",
+        "ar": "مفرغ (شبكة)"
       }
     },
     "meter_power.load": {
@@ -73,12 +75,13 @@
         "de": "Last (oder off-grid) verbraucht",
         "es": "Carga (u fuera de la red) consumida",
         "fr": "Charge (ou hors réseau) consommée",
-        "it": "Carico (o off-grid) consumato",
-        "no": "Belastning (eller off-grid) forbrukt",
-        "sv": "Belastning (eller off-grid) förbrukad",
-        "pl": "Obciążenie (lub off-grid) zużyte",
+        "it": "Carico (o fuori rete) consumato",
+        "no": "Belastning (eller off-grid) konsumert",
+        "sv": "Belastning (eller off-grid) konsumerad",
+        "pl": "Obciążenie (lub poza siecią) zużyte",
         "ru": "Потреблено (или вне сети)",
-        "ko": "로드(또는 오프 그리드) 소모됨"
+        "ko": "로드(또는 오프 그리드) 소모됨",
+        "ar": "تحميل (أو خارج الشبكة) مستهلك"
       }
     }
   },

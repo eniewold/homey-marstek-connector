@@ -188,7 +188,10 @@ export default class MarstekVenusDevice extends Homey.Device {
             if (this.debug) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(remote));
 
             // Update remote IP address of device (can change due to DHCP leases)
-            if (remote.address) this.setStoreValue('address', remote.address);
+            if (remote.address) {
+                this.setStoreValue('address', remote.address);
+                this.setSettings({ address: remote.address });
+            }
 
             // Try to retrieve the firmware version from the settings (including deprecated method)
             let firmware = 0;
