@@ -329,6 +329,26 @@ export default class MarstekVenusDriver extends Homey.Driver {
         register('marstek_auto_mode', async ({ device }: { device: Homey.Device }) => this.setModeAuto(device));
         register('marstek_ai_mode', async ({ device }: { device: Homey.Device }) => this.setModeAI(device));
         register(
+            'marstek_ups_mode',
+            async ({
+                device,
+                enable,
+            }: {
+                device: Homey.Device,
+                enable: boolean,
+            }) => this.setModeUPS(device, enable),
+        );
+        register(
+            'marstek_led_control',
+            async ({
+                device,
+                state,
+            }: {
+                device: Homey.Device,
+                state: boolean,
+            }) => this.setLedState(device, state),
+        );
+        register(
             'marstek_manual_mode',
             async ({
                 device,
@@ -484,6 +504,43 @@ export default class MarstekVenusDriver extends Homey.Driver {
         };
 
         await this.setModeConfiguration(device, config);
+    }
+
+    /**
+     * Configures the device for UPS mode.
+     * @param {Homey.device} device - Target device instance.
+     * @param {boolean} enable Whether UPS mode should be enabled.
+     * @returns {Promise<void>} Resolves once the command succeeds.
+     */
+    async setModeUPS(device: Homey.Device, enable: boolean) {
+        const config = {
+            mode: 'UPS',
+            ups_cfg: {
+                enable: enable ? 1 : 0,
+            },
+        };
+        await this.setModeConfiguration(device, config);
+    }
+
+    /**
+     * Controls the device LEDs using the local API.
+     * @param {Homey.device} device Target device instance.
+     * @param {boolean} state Whether the LEDs should be switched on.
+     * @returns {Promise<void>} Resolves once the command succeeds.
+     */
+    async setLedState(device: Homey.Device, state: boolean) {
+        const result = await this.sendCommand(
+            device,
+            'Led.Ctrl',
+            {
+                id: 0,
+                state: state ? 1 : 0,
+            },
+        );
+
+        if (result && typeof result === 'object' && 'set_result' in result && !result.set_result) {
+            throw new Error('Device rejected the requested LED change');
+        }
     }
 
     /**

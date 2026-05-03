@@ -48,6 +48,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 ## VERSION HISTORY
 
+- 0.8.12 - Dependency updates. New Homey SDK. Added flow card for new 'UPS' battery mode (with enabled argument). Added flow card for setting LED display status (on/off) through local API.
 - 0.8.11 - The stored IP address of local API devices are now shown in settings (read only).
 - 0.8.10 - Applied corrections to default factors for hardware/firmware combinations, based on community feedback. Broadcast setting now default true during device discovery. Missing factors are now set to default when updating the app.
 - 0.8.9 - Made all factors that are applied when receiving API data configurable. Also included default factors for different hardware and firmware versions.
@@ -67,18 +68,6 @@ You can devices from both API and Cloud. See settings of each battery for additi
 - 0.7.2 - Temperature for firmware 154 was reported incorrectly. Added retry meganism to the flow cards that set battery mode. Improved readability of some library classes.
 - 0.7.1 - Added flow card for changing the battery charging mode through local API.
 - 0.7.0 - Added support for a Marstek cloud driver that retrieves battery statistics using your Marstek cloud account credentials.
-- 0.6.3 - Added a property that monitors the number of seconds the last message was received from battery. Added icons for custom capabilities.
-- 0.6.2 - Firmware setting was stored as incorrect settings type.
-- 0.6.1 - Firmware 154 seems to communicate values with a different multipliers. The app now detects the firmware and corrects this.
-- 0.6.0 - Auto re-connect implemented; retry port binding at every broadcast when listener is no longer available. Fixed errors on multiple devices trying to start connecting at the same time. Couple of other minor bugs in several places fixed.
-- 0.5.7 - Correctly implemented setting of Homey capabilities as async calls.
-- 0.5.6 - Scope seems no longer available during close event handling, so logging close event is now hard-coded to console.
-- 0.5.5 - The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App.
-- 0.5.4 - Log structure changed to try to catch connectivity problems. Solved problem in clean-up function.
-- 0.5.3 - Applied bug fix to broadcast IP address discovery (caused problems when no address is found).
-- 0.5.2 - Added an increment unique id to all messages to battery. Restructured the way details are retrieved from messages into Homey capability values. Additional onUninit handling for removal of UDP listener. Added more capabilities received from battery (unverified).
-- 0.5.1 - Handling of errors on socket binding and broadcast flag settings for better debugging of future port binding errors. Removed some mandatory settings that gave problems during discovery.
-- 0.5.0 - Added additional readings from the battery API and energy system that are now visualised in Homey as their guideliness for batteries.
 (older history details are left out)
 
 ## NOTES

@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.niewold.marstek",
-  "version": "0.8.11",
+  "version": "0.8.12",
   "compatibility": ">=12.5.0",
   "sdk": 3,
   "brandColor": "#555555",
@@ -102,6 +102,65 @@
             "name": "device",
             "type": "device",
             "filter": "driver_id=marstek-venus"
+          }
+        ]
+      },
+      {
+        "id": "marstek_led_control",
+        "title": {
+          "en": "Control device LEDs",
+          "nl": "Bedien apparaat-LEDs",
+          "da": "Styr enhedens LED'er",
+          "de": "Geraete-LEDs steuern",
+          "es": "Controlar LEDs del dispositivo",
+          "fr": "Controler les LED de l'appareil",
+          "it": "Controlla i LED del dispositivo",
+          "no": "Kontroller enhetens LED-er",
+          "sv": "Styr enhetens LED-lampor",
+          "pl": "Steruj diodami LED urzadzenia",
+          "ru": "Upravlenie svetodiodami ustroystva",
+          "ko": "Jangchi LED jeeo",
+          "ar": "Control device LEDs"
+        },
+        "titleFormatted": {
+          "en": "Set device LEDs on [[state]]",
+          "nl": "Zet apparaat-LEDs aan [[state]]",
+          "da": "Saet enhedens LED'er til [[state]]",
+          "de": "Geraete-LEDs auf [[state]] setzen",
+          "es": "Establecer LEDs del dispositivo en [[state]]",
+          "fr": "Definir les LED de l'appareil sur [[state]]",
+          "it": "Imposta i LED del dispositivo su [[state]]",
+          "no": "Sett enhetens LED-er til [[state]]",
+          "sv": "Stall enhetens LED-lampor pa [[state]]",
+          "pl": "Ustaw diody LED urzadzenia na [[state]]",
+          "ru": "Ustanovit svetodiody ustroystva v [[state]]",
+          "ko": "Jangchi LED-reul [[state]]ro seoljeong",
+          "ar": "Set device LEDs on [[state]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus"
+          },
+          {
+            "name": "state",
+            "type": "checkbox",
+            "title": {
+              "en": "On",
+              "nl": "Aan",
+              "da": "Til",
+              "de": "Ein",
+              "es": "Encendido",
+              "fr": "Allume",
+              "it": "Acceso",
+              "no": "Pa",
+              "sv": "Pa",
+              "pl": "Wlacz",
+              "ru": "Vkl",
+              "ko": "Keum",
+              "ar": "On"
+            }
           }
         ]
       },
@@ -448,6 +507,65 @@
             },
             "min": 0,
             "step": 60
+          }
+        ]
+      },
+      {
+        "id": "marstek_ups_mode",
+        "title": {
+          "en": "Set battery mode to 'UPS'",
+          "nl": "Stel batterijmodus in op 'UPS'",
+          "da": "Indstil batteritilstanden til 'UPS'",
+          "de": "Setze den Batteriemodus auf 'UPS'",
+          "es": "Establecer el modo de bateria en 'UPS'",
+          "fr": "Regler le mode de la batterie sur 'UPS'",
+          "it": "Imposta la modalita batteria su 'UPS'",
+          "no": "Sett batterimodus til 'UPS'",
+          "sv": "Stall in batterilaget pa 'UPS'",
+          "pl": "Ustaw tryb baterii na 'UPS'",
+          "ru": "Ustanovit rezhim batarei na 'UPS'",
+          "ko": "Baeteori modeureul 'UPS'ro seoljeong",
+          "ar": "Set battery mode to 'UPS'"
+        },
+        "titleFormatted": {
+          "en": "Set battery mode to 'UPS' and enable [[enable]]",
+          "nl": "Stel batterijmodus in op 'UPS' en inschakelen [[enable]]",
+          "da": "Indstil batteritilstanden til 'UPS' og aktiver [[enable]]",
+          "de": "Setze den Batteriemodus auf 'UPS' und aktivieren [[enable]]",
+          "es": "Establecer el modo de bateria en 'UPS' y habilitar [[enable]]",
+          "fr": "Regler le mode de la batterie sur 'UPS' et activer [[enable]]",
+          "it": "Imposta la modalita batteria su 'UPS' e abilita [[enable]]",
+          "no": "Sett batterimodus til 'UPS' og aktiver [[enable]]",
+          "sv": "Stall in batterilaget pa 'UPS' och aktivera [[enable]]",
+          "pl": "Ustaw tryb baterii na 'UPS' i wlacz [[enable]]",
+          "ru": "Ustanovit rezhim batarei na 'UPS' i vklyuchit [[enable]]",
+          "ko": "Baeteori modeureul 'UPS'ro seoljeong mit [[enable]]",
+          "ar": "Set battery mode to 'UPS' and enable [[enable]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus"
+          },
+          {
+            "name": "enable",
+            "type": "checkbox",
+            "title": {
+              "en": "Enable",
+              "nl": "Inschakelen",
+              "da": "Aktiver",
+              "de": "Aktivieren",
+              "es": "Habilitar",
+              "fr": "Activer",
+              "it": "Abilita",
+              "no": "Aktiver",
+              "sv": "Aktivera",
+              "pl": "Wlacz",
+              "ru": "Vklyuchit",
+              "ko": "Hwalseonghwa",
+              "ar": "Enable"
+            }
           }
         ]
       }

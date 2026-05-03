@@ -1,5 +1,4 @@
 import os from 'os';
-import ip from 'ip';            // For converting broadcast IP address
 import dgram from 'dgram';      // For UDP binding and sending
 
 import Homey from 'homey';
@@ -171,8 +170,9 @@ export default class MarstekSocket {
     getBroadcastAddress() {
         const iface = this.getInterface();
         if (iface) {
-            const subnet = ip.subnet(iface.address, iface.netmask);
-            return subnet ? subnet.broadcastAddress : undefined;
+            const broadcastAddr = (addr: string, mask: string) =>
+                addr.split('.').map((o, i) => Number(o) | (~Number(mask.split('.')[i]) & 255)).join('.');
+            return broadcastAddr(iface.address, iface.netmask);
         } else {
             this.error('No external IPv4 interface found; broadcast address could not be determined');
         }
