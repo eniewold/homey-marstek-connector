@@ -1,4 +1,4 @@
-﻿{
+{
   "0.8.11": {
     "en": "The stored IP address of local API devices are now shown in settings (read only)."
   },
@@ -136,5 +136,8 @@
   },
   "0.1.0": {
     "en": "Initial version (reads basic battery stats)"
+  },
+  "0.8.12": {
+    "en": "Dependency updates. New Homey SDK. Added flow card for new 'UPS' battery mode (with enabled argument). Added flow card for setting LED display status (on/off) through local API."
   }
 }
