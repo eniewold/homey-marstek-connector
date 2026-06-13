@@ -36,7 +36,7 @@ export default class MarstekVenusDevice extends Homey.Device {
     // Handler bound to the socket listener so it can be registered/unregistered.
     private handler = this.onMessage.bind(this);
 
-    //Identifier for the interval that updates the last received timestamp.
+    // Identifier for the interval that updates the last received timestamp.
     private timeout?: NodeJS.Timeout = undefined;
 
     // Cast pointer to our app
@@ -89,7 +89,7 @@ export default class MarstekVenusDevice extends Homey.Device {
             await this.setCapabilityValue(capId, null);
 
             // Also retrieve settings default factors
-            const settingId = cap.settingId;
+            const { settingId } = cap;
             if (settingId) {
                 const settingValue = this.getSetting(settingId);
                 if (!settingValue) {
@@ -180,7 +180,7 @@ export default class MarstekVenusDevice extends Homey.Device {
 
             // Check if message is for this instance (only)
             if (json.src !== this.getSetting('src')) {
-                if (this.debug) this.log('Source mismatch (expected >1 devices)', this.getSetting('src'), JSON.stringify(remote), JSON.stringify(json))
+                if (this.debug) this.log('Source mismatch (expected >1 devices)', this.getSetting('src'), JSON.stringify(remote), JSON.stringify(json));
                 return;
             }
 
@@ -189,22 +189,13 @@ export default class MarstekVenusDevice extends Homey.Device {
 
             // Update remote IP address of device (can change due to DHCP leases)
             if (remote.address) {
-                this.setStoreValue('address', remote.address);
-                this.setSettings({ address: remote.address });
-            }
-
-            // Try to retrieve the firmware version from the settings (including deprecated method)
-            let firmware = 0;
-            if (this.getSetting('firmware')) {
-                firmware = Number(this.getSetting('firmware'));
-            } else {
-                const model = this.getSetting('model');
-                if (model) firmware = Number(model.split(' v')[1]);
+                await this.setStoreValue('address', remote.address);
+                await this.setSettings({ address: remote.address });
             }
 
             // Determine the capabilities to changed based on the content of the received message
             if (json.result) {
-                const result = json.result;
+                const { result } = json;
 
                 // Remember our timestamp for last message received
                 this.timestamp = new Date();
@@ -220,9 +211,12 @@ export default class MarstekVenusDevice extends Homey.Device {
                 await this.setValue('measure_battery', result.bat_soc);
 
                 // Battery power and charging state
-                if (!isNaN(result.bat_power)) {
+                if (!Number.isNaN(Number(result.bat_power))) {
                     // Charge state (Possible values: "idle", "charging", "discharging")
-                    await this.setCapabilityValue('battery_charging_state', (result.bat_power > 0) ? 'charging' : (result.bat_power < 0) ? 'discharging' : 'idle');
+                    let chargingState = 'idle';
+                    if (result.bat_power > 0) chargingState = 'charging';
+                    if (result.bat_power < 0) chargingState = 'discharging';
+                    await this.setCapabilityValue('battery_charging_state', chargingState);
                     await this.setValue('measure_power', result.bat_power);
                 }
 
@@ -236,10 +230,9 @@ export default class MarstekVenusDevice extends Homey.Device {
                 await this.setValue('measure_power_offgrid', result.offgrid_power);
                 await this.setValue('measure_power_pv', result.pv_power);
             }
-        }
-        catch (error) {
+        } catch (error) {
             this.error('Error processing incoming message:', error);
-            return;
+
         }
     }
 
@@ -248,12 +241,16 @@ export default class MarstekVenusDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once the value has been set.
      */
     async setValue(capabilityId: string, value: any) {
-        if (!isNaN(value)) {
-            const settingId = capabilities.find(cap => cap.capabilityId === capabilityId)?.settingId;
+        if (!Number.isNaN(Number(value))) {
+            const settingId = capabilities.find((cap) => cap.capabilityId === capabilityId)?.settingId;
             const settingValue = settingId ? this.getSetting(settingId) : null;
             const actualValue = value / (settingValue || 1);
-            if (this.debug && actualValue) this.log('Capability value:', JSON.stringify({ capabilityId, settingId, settingValue, value, actualValue }));
-            return await this.setCapabilityValue(capabilityId, actualValue);
+            if (this.debug && actualValue) {
+                this.log('Capability value:', JSON.stringify({
+                    capabilityId, settingId, settingValue, value, actualValue,
+                }));
+            }
+            await this.setCapabilityValue(capabilityId, actualValue);
         }
     }
 
@@ -268,7 +265,7 @@ export default class MarstekVenusDevice extends Homey.Device {
                 this.startPolling();
             } else {
                 this.stopPolling();
-                this.resetCapabilities();
+                await this.resetCapabilities();
             }
         }
         // If interval is changed, schedule a poll interval update because settings is not yet changed
@@ -279,7 +276,7 @@ export default class MarstekVenusDevice extends Homey.Device {
         }
         // If factor settings are changed, reset capabilities to force recalculation on next message
         if (event.changedKeys.some((key: string) => key.startsWith('factor_'))) {
-            this.resetCapabilities();
+            await this.resetCapabilities();
         }
     }
 
@@ -305,14 +302,14 @@ export default class MarstekVenusDevice extends Homey.Device {
         if (this.debug) this.log('MarstekVenusDevice has been uninitialized');
     }
 
-    /** Retrieve our current debug setting, based on actual setting and version 
+    /** Retrieve our current debug setting, based on actual setting and version
      * @returns {boolean} True when debug logging is enabled (through settings or test version)
      */
     get debug(): boolean {
         return (this.getSetting('debug') === true) || config.isTestVersion;
     }
 
-};
+}
 
 // Also use module.exports for Homey
 module.exports = MarstekVenusDevice;

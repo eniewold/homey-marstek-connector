@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.niewold.marstek",
-  "version": "0.8.12",
+  "version": "0.8.13",
   "compatibility": ">=12.5.0",
   "sdk": 3,
   "brandColor": "#555555",
@@ -505,7 +505,7 @@
               "ko": "초",
               "ar": "ثواني"
             },
-            "min": 0,
+            "min": 1,
             "step": 60
           }
         ]

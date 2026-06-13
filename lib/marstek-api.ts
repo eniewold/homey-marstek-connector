@@ -86,16 +86,18 @@ export default class MarstekSocket {
                     type: 'udp4',
                     //    reuseAddr: true,
                     //    reusePort: true,
-                }, async (message, remote) => {
+                }, (message, remote) => {
                     // ignore messages from our own broadcast
                     if (remote.address !== this.getLocalIPAddress()) {
                         this.log('Message received from', remote.address);
                         try {
                             const json = JSON.parse(message.toString());
                             this.log('Message parsed', JSON.stringify(json));
-                            await this.callback(json, remote);
+                            this.callback(json, remote).catch((err) => {
+                                this.error('Problem encountered processing callback', (err as Error).message || err);
+                            });
                         } catch (err) {
-                            this.error('Problem encountered processing received message data (with parsing or callback)', message ? message.toString() : "", (err as Error).message || err);
+                            this.error('Problem encountered parsing received message data', message ? message.toString() : '', (err as Error).message || err);
                         }
                     }
                 });
@@ -170,12 +172,11 @@ export default class MarstekSocket {
     getBroadcastAddress() {
         const iface = this.getInterface();
         if (iface) {
-            const broadcastAddr = (addr: string, mask: string) =>
-                addr.split('.').map((o, i) => Number(o) | (~Number(mask.split('.')[i]) & 255)).join('.');
+            const broadcastAddr = (addr: string, mask: string) => addr.split('.').map((o, i) => Number(o) | (~Number(mask.split('.')[i]) & 255)).join('.');
             return broadcastAddr(iface.address, iface.netmask);
-        } else {
-            this.error('No external IPv4 interface found; broadcast address could not be determined');
         }
+        this.error('No external IPv4 interface found; broadcast address could not be determined');
+
         return undefined;
     }
 
@@ -246,7 +247,7 @@ export default class MarstekSocket {
             } catch (err) {
                 this.error('Exception transmitting message:', err, address);
                 reject(err);
-                return;
+
             }
         });
     }

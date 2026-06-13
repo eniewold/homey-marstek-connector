@@ -1,11 +1,15 @@
 {
   "name": "com.niewold.marstek",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=16"
+  },
   "scripts": {
     "dev": "homey app run --remote",
     "build": "tsc",
     "clean": "rmdir /s /q .homeybuild",
-    "lint": "eslint --ext .js,.ts --ignore-path .gitignore ."
+    "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
+    "install": "homey app install"
   },
   "devDependencies": {
     "@tsconfig/node16": "^16.1.5",
@@ -16,6 +20,7 @@
     "typescript": "^5.9.3"
   },
   "overrides": {
-    "minimatch": ">=9.0.7"
+    "minimatch@<9": "3.1.5",
+    "minimatch@>=9 <10": "9.0.9"
   }
 }

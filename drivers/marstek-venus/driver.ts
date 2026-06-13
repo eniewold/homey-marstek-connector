@@ -21,7 +21,7 @@ interface MarsteRequest extends MessagePayload {
 // Factor defaults per device type and firmware version
 type FactorDefaults = Record<string, Record<number, Record<string, number>>>;
 const factorDefaults: FactorDefaults = {
-    "default": {
+    default: {
         0: {
             factor_bat_capacity: 100,
             factor_bat_soc: 1,
@@ -33,9 +33,9 @@ const factorDefaults: FactorDefaults = {
             factor_ongrid_power: -1,
             factor_offgrid_power: -1,
             factor_pv_power: -1,
-        }
+        },
     },
-    "VenusE": {
+    VenusE: {
         0: {
         },
         154: {
@@ -45,9 +45,9 @@ const factorDefaults: FactorDefaults = {
             factor_total_grid_input_energy: 10,
             factor_total_grid_output_energy: 10,
             factor_total_load_energy: 10,
-        }
+        },
     },
-    "VenusE 3.0": {
+    'VenusE 3.0': {
         0: {
             factor_bat_capacity: 1000,
             factor_bat_power: 1,
@@ -62,8 +62,8 @@ const factorDefaults: FactorDefaults = {
         144: {
             factor_bat_capacity: 1000,
         },
-    }
-}
+    },
+};
 
 /**
  * Driver responsible for managing Marstek Venus devices that communicate over UDP.
@@ -242,9 +242,13 @@ export default class MarstekVenusDriver extends Homey.Driver {
             const interval = this.getPollInterval();
             if (this.debug) this.log('Started background polling with interval', interval);
             this.pollTimeout = this.homey.setInterval(() => {
-                this.poll().catch(err => { this.error('Error during polling', err) });
+                this.poll().catch((err) => {
+                    this.error('Error during polling', err);
+                });
             }, interval);
-            this.poll().catch(err => { this.error('Error during polling', err) });
+            this.poll().catch((err) => {
+                this.error('Error during polling', err);
+            });
         }
     }
 
@@ -443,7 +447,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
     async setModeManual(device: Homey.Device, start_time: string, end_time: string, days: string[], power: number, enable: boolean) {
         const bitArray = [...'00000000'];
         days.forEach((day: string) => {
-            bitArray[parseInt(day)] = '1';
+            bitArray[parseInt(day, 10)] = '1';
         });
         const bitString = bitArray.join('');
         const bitValue = parseInt(bitString, 2);
@@ -491,8 +495,8 @@ export default class MarstekVenusDriver extends Homey.Driver {
         if (Number.isNaN(numericPower) || Number.isNaN(numericSeconds)) {
             throw new Error('Power and seconds must be numbers');
         }
-        if (numericPower < 0 || numericSeconds < 0) {
-            throw new Error('Power and seconds must be zero or greater');
+        if (numericSeconds < 1) {
+            throw new Error('Seconds must be one or greater');
         }
 
         const config = {
@@ -608,20 +612,11 @@ export default class MarstekVenusDriver extends Homey.Driver {
         };
 
         return new Promise((resolve, reject) => {
-            const timer = this.homey.setTimeout(() => {
-                this.error('Timeout while waiting for mode change response');
-                cleanup();
-                reject(new Error('Timed out waiting for device response'));
-            }, timeout);
-
-             const cleanup = () => {
-                socket.off(handler);
-                this.homey.clearTimeout(timer);
-            };
-
+            let timer: NodeJS.Timeout;
             const handler = (json: any, remote: dgram.RemoteInfo) => {
                 if (json.id === unique) {
-                    cleanup();
+                    socket.off(handler);
+                    this.homey.clearTimeout(timer);
                     if (json?.result) {
                         resolve(json.result ?? null);
                     } else {
@@ -630,10 +625,17 @@ export default class MarstekVenusDriver extends Homey.Driver {
                 }
             };
 
+            timer = this.homey.setTimeout(() => {
+                this.error('Timeout while waiting for mode change response');
+                socket.off(handler);
+                reject(new Error('Timed out waiting for device response'));
+            }, timeout);
+
             socket.on(handler);
 
             socket.send(JSON.stringify(payload), address).catch((err: Error) => {
-                cleanup();
+                socket.off(handler);
+                this.homey.clearTimeout(timer);
                 reject(err);
             });
         });
@@ -641,17 +643,17 @@ export default class MarstekVenusDriver extends Homey.Driver {
 
     // Helper function to select and combine factor properties based on model and version
     retrieveFactorDefaults(model: string, version: number) {
-        const baseDefaults = factorDefaults["default"][0];
+        const baseDefaults = factorDefaults['default'][0];
         const modelVersions = factorDefaults[model];
         if (!modelVersions) return baseDefaults;
         // find highest version of modelVersions that is less than or equal to version number
-        let versionDefaults = {
+        const versionDefaults = {
             ...baseDefaults,
-            ...modelVersions[0]
+            ...modelVersions[0],
         };
         // Keep applying factors up to the device version
         for (const verStr of Object.keys(modelVersions)) {
-            const ver = parseInt(verStr);
+            const ver = parseInt(verStr, 10);
             if (ver > 0 && ver <= version) {
                 Object.assign(versionDefaults, modelVersions[ver]);
             }
