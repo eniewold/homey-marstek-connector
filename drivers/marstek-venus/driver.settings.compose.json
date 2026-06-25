@@ -13,7 +13,8 @@
       "sv": "Inställningar för batteridataåterhämtning (polling)",
       "pl": "Ustawienia pobierania danych z baterii (sondowanie)",
       "ru": "Настройки извлечения данных о батарее (опрос)",
-      "ko": "배터리 데이터 검색 (폴링) 설정"
+      "ko": "배터리 데이터 검색 (폴링) 설정",
+      "ar": "إعدادات استرجاع بيانات البطارية (الاستطلاع)"
     },
     "children": [
       {
@@ -31,7 +32,8 @@
           "sv": "Aktivera (periodisk hämtning)",
           "pl": "Włącz (okresowe pobieranie)",
           "ru": "Включить (периодическое извлечение)",
-          "ko": "활성화 (주기적 검색)"
+          "ko": "활성화 (주기적 검색)",
+          "ar": "تفعيل (الاسترجاع الدوري)"
         },
         "hint": {
           "en": "Turn this off if you only want to use command flows (Turn off for all batteries to reduce local API communication problems).",
@@ -45,7 +47,8 @@
           "sv": "Stäng av detta om du bara vill använda kommandoflöden (Stäng av för alla batterier för att minska lokala API-kommunikationsproblem).",
           "pl": "Wyłącz to, jeśli chcesz korzystać tylko z przepływów poleceń (Wyłącz dla wszystkich baterii, aby zmniejszyć problemy z komunikacją lokalnego API).",
           "ru": "Отключите это, если вы хотите использовать только потоки команд (отключите для всех батарей, чтобы уменьшить проблемы с локальной API-коммуникацией).",
-          "ko": "명령 플로우만 사용하려면 이를 끄십시오 (로컬 API 통신 문제를 줄이기 위해 모든 배터리에 대해 끄세요)."
+          "ko": "명령 플로우만 사용하려면 이를 끄십시오 (로컬 API 통신 문제를 줄이기 위해 모든 배터리에 대해 끄세요).",
+          "ar": "قم بإيقاف تشغيل هذا إذا كنت ترغب فقط في استخدام تدفقات الأوامر (قم بإيقاف التشغيل لجميع البطاريات لتقليل مشاكل الاتصال بواجهة برمجة التطبيقات المحلية)."
         },
         "value": true
       },
@@ -64,7 +67,8 @@
           "sv": "Pollfrekvens (lägst)",
           "pl": "Częstotliwość ankiety (najniższa)",
           "ru": "Частота опроса (минимальная)",
-          "ko": "폴링 빈도 (최저)"
+          "ko": "폴링 빈도 (최저)",
+          "ar": "تردد الاستطلاع (الأدنى)"
         },
         "hint": {
           "en": "Interval data is request from ALL batteries (lowest interval value is used, make sure to update settings of all batteries)",
@@ -78,7 +82,8 @@
           "sv": "Intervalldata begärs från ALLA batterier (lägsta intervallvärde används, se till att uppdatera inställningarna för alla batterier)",
           "pl": "Dane interwałów są pobierane z WSZYSTKICH baterii (używana jest najniższa wartość interwału, upewnij się, że wszystkie baterie mają zaktualizowane ustawienia)",
           "ru": "Интервальные данные запрашиваются от ВСЕХ батарей (используется минимальное значение интервала, убедитесь, что настройки всех батарей обновлены)",
-          "ko": "간격 데이터를 모든 배터리에서 요청합니다 (최저 간격 값을 사용하므로 모든 배터리의 설정을 업데이트하십시오)"
+          "ko": "간격 데이터를 모든 배터리에서 요청합니다 (최저 간격 값을 사용하므로 모든 배터리의 설정을 업데이트하십시오)",
+          "ar": "يتم طلب بيانات الفاصل الزمني من جميع البطاريات (يتم استخدام أقل قيمة للفاصل الزمني، تأكد من تحديث إعدادات جميع البطاريات)"
         },
         "value": 60,
         "min": 15,
@@ -94,7 +99,8 @@
           "sv": "sekunder",
           "pl": "sekund",
           "ru": "секунды",
-          "ko": "초"
+          "ko": "초",
+          "ar": "ثوانٍ"
         }
       },
       {
@@ -112,7 +118,8 @@
           "sv": "Använd UDP-sändning",
           "pl": "Użyj transmisji UDP",
           "ru": "Использовать UDP-вещание",
-          "ko": "UDP 브로드캐스트 사용"
+          "ko": "UDP 브로드캐스트 사용",
+          "ar": "استخدم بث UDP"
         },
         "hint": {
           "en": "When checked (default) requests are transmitted through UDP broadcast. If unchecked, this device will received direct UDP communication. Broadcast is recommended, as using this setting uniformly across all devices.",
@@ -126,7 +133,8 @@
           "sv": "När det är markerat (standard) sänds förfrågningar via UDP-sändning. Om det inte är markerat kommer denna enhet mottar direkt UDP-kommunikation. Sändning rekommenderas, eftersom denna inställning används enhetligt på alla enheter.",
           "pl": "Gdy zaznaczone (domyślne), żądania są przesyłane przez transmisję UDP. Jeśli nie zaznaczone, to urządzenie otrzyma bezpośrednią komunikację UDP. Transmisja jest zalecana, ponieważ używa tego ustawienia jednolicie na wszystkich urządzeniach.",
           "ru": "Когда установлен флажок (по умолчанию), запросы передаются через UDP-вещание. Если не установлено, это устройство получает прямую UDP-коммуникацию. Рекомендуется вещание, так как использование этой настройки одинаково на всех устройствах.",
-          "ko": "체크된 경우 (기본값) 요청이 UDP 브로드캐스트를 통해 전송됩니다. 체크되지 않은 경우, 이 장치는 직접 UDP 통신을 수신합니다. 브로드캐스트는 이 설정이 모든 장치에 균일하게 사용되기 때문에 권장됩니다."
+          "ko": "체크된 경우 (기본값) 요청이 UDP 브로드캐스트를 통해 전송됩니다. 체크되지 않은 경우, 이 장치는 직접 UDP 통신을 수신합니다. 브로드캐스트는 이 설정이 모든 장치에 균일하게 사용되기 때문에 권장됩니다.",
+          "ar": "عند التحديد (الإعداد الافتراضي)، يتم إرسال الطلبات عبر بث UDP. إذا لم يتم التحديد، سيتلقى هذا الجهاز اتصال UDP مباشر. يُوصى بالبث، حيث يُستخدم هذا الإعداد بشكل موحد عبر جميع الأجهزة."
         },
         "value": true
       }
@@ -146,7 +154,8 @@
       "sv": "Mätkorrektionsfaktorer",
       "pl": "Współczynniki korekcji pomiarów",
       "ru": "Коэффициенты Исправления Измерений",
-      "ko": "측정 보정 계수"
+      "ko": "측정 보정 계수",
+      "ar": "عوامل تصحيح القياس"
     },
     "children": [
       {
@@ -164,7 +173,8 @@
           "sv": "Kapacitetsfaktor",
           "pl": "Współczynnik pojemności",
           "ru": "Фактор Ёмкости",
-          "ko": "용량 계수"
+          "ko": "용량 계수",
+          "ar": "عامل السعة"
         },
         "hint": {
           "en": "Factor to divide the received battery data (bat_capacity) for Capacity",
@@ -178,7 +188,8 @@
           "sv": "Faktor för att dela de mottagna batteridata (bat_capacity) för kapacitet",
           "pl": "Współczynnik do podzielenia otrzymanych danych dotyczących akumulatora (bat_capacity) dla pojemności",
           "ru": "Коэффициент для деления полученных данных о батарее (bat_capacity) для ёмкости",
-          "ko": "수용량에 대한 수신된 배터리 데이터를 나누는 계수 (bat_capacity)"
+          "ko": "수용량에 대한 수신된 배터리 데이터를 나누는 계수 (bat_capacity)",
+          "ar": "عامل لتقسيم بيانات البطارية المستلمة (bat_capacity) للسعة"
         },
         "units": {
           "en": "kWh",
@@ -192,7 +203,8 @@
           "sv": "kWh",
           "pl": "kWh",
           "ru": "кВтч",
-          "ko": "kWh"
+          "ko": "kWh",
+          "ar": "كيلوواط ساعة"
         },
         "value": 100
       },
@@ -211,7 +223,8 @@
           "sv": "Laddningstillståndsfaktor",
           "pl": "Współczynnik stanu naładowania",
           "ru": "Фактор состояния заряда",
-          "ko": "충전 상태 계수"
+          "ko": "충전 상태 계수",
+          "ar": "عامل حالة الشحن"
         },
         "hint": {
           "en": "Factor to divide the received battery data (bat_soc) for State of Charge",
@@ -225,7 +238,8 @@
           "sv": "Faktor för att dela de mottagna batteridata (bat_soc) för laddningstillståndet",
           "pl": "Współczynnik do podzielenia otrzymanych danych dotyczących akumulatora (bat_soc) dla stanu naładowania",
           "ru": "Коэффициент для деления полученных данных о батарее (bat_soc) для состояния заряда",
-          "ko": "충전 상태에 대한 수신된 배터리 데이터를 나누는 계수 (bat_soc)"
+          "ko": "충전 상태에 대한 수신된 배터리 데이터를 나누는 계수 (bat_soc)",
+          "ar": "العامل لتقسيم بيانات البطارية المستلمة (bat_soc) لحالة الشحن"
         },
         "units": {
           "en": "%",
@@ -239,7 +253,8 @@
           "sv": "%",
           "pl": "%",
           "ru": "%",
-          "ko": "%"
+          "ko": "%",
+          "ar": "٪"
         },
         "value": 1
       },
@@ -258,7 +273,8 @@
           "sv": "Batterikraftfaktor",
           "pl": "Współczynnik mocy akumulatora",
           "ru": "Фактор мощности батареи",
-          "ko": "배터리 전력 계수"
+          "ko": "배터리 전력 계수",
+          "ar": "عامل قدرة البطارية"
         },
         "hint": {
           "en": "Factor to divide the received battery data (bat_capacity) for Power usage",
@@ -272,7 +288,8 @@
           "sv": "Faktor för att dela de mottagna batteridata (bat_capacity) för energianvändning",
           "pl": "Współczynnik do podzielenia otrzymanych danych dotyczących akumulatora (bat_capacity) dla zużycia energii",
           "ru": "Коэффициент для деления полученных данных о батарее (bat_capacity) для использования мощности",
-          "ko": "전력 사용에 대한 수신된 배터리 데이터를 나누는 계수 (bat_capacity)"
+          "ko": "전력 사용에 대한 수신된 배터리 데이터를 나누는 계수 (bat_capacity)",
+          "ar": "عامل لتقسيم بيانات البطارية المستلمة (bat_capacity) لاستخدام الطاقة"
         },
         "units": {
           "en": "W",
@@ -286,7 +303,8 @@
           "sv": "W",
           "pl": "W",
           "ru": "Вт",
-          "ko": "W"
+          "ko": "W",
+          "ar": "د"
         },
         "value": 10
       },
@@ -305,7 +323,8 @@
           "sv": "Batteritemperaturfaktor",
           "pl": "Współczynnik temperatury akumulatora",
           "ru": "Фактор температуры батареи",
-          "ko": "배터리 온도 계수"
+          "ko": "배터리 온도 계수",
+          "ar": "عامل درجة حرارة البطارية"
         },
         "hint": {
           "en": "Factor to divide the received battery data (bat_temp) for Battery Temperature",
@@ -319,7 +338,8 @@
           "sv": "Faktor för att dela de mottagna batteridata (bat_temp) för batteritemperaturen",
           "pl": "Współczynnik do podzielenia otrzymanych danych dotyczących akumulatora (bat_temp) dla temperatury baterii",
           "ru": "Коэффициент для деления полученных данных о батарее (bat_temp) для температуры батареи",
-          "ko": "배터리 온도에 대한 수신된 배터리 데이터를 나누는 계수 (bat_temp)"
+          "ko": "배터리 온도에 대한 수신된 배터리 데이터를 나누는 계수 (bat_temp)",
+          "ar": "عامل لتقسيم بيانات البطارية المستلمة (bat_temp) لدرجة حرارة البطارية"
         },
         "units": {
           "en": "°C",
@@ -333,7 +353,8 @@
           "sv": "°C",
           "pl": "°C",
           "ru": "°C",
-          "ko": "°C"
+          "ko": "°C",
+          "ar": "درجة مئوية"
         },
         "value": 10
       },
@@ -352,7 +373,8 @@
           "sv": "Total laddad batterifaktor",
           "pl": "Całkowity współczynnik ładowania baterii",
           "ru": "Общий фактор заряда батареи",
-          "ko": "총 배터리 충전 계수"
+          "ko": "총 배터리 충전 계수",
+          "ar": "عامل إجمالي شحن البطارية"
         },
         "hint": {
           "en": "Factor to divide the received battery data (total_grid_input_energy) for Total Charged",
@@ -366,7 +388,8 @@
           "sv": "Faktor för att dela de mottagna batteridata (total_grid_input_energy) för total laddning",
           "pl": "Współczynnik do podzielenia otrzymanych danych dotyczących akumulatora (total_grid_input_energy) dla całkowitej wartości naładowanej",
           "ru": "Коэффициент для деления полученных данных о батарее (total_grid_input_energy) для общего заряда",
-          "ko": "총 충전에 대한 수신된 배터리 데이터를 나누는 계수 (total_grid_input_energy)"
+          "ko": "총 충전에 대한 수신된 배터리 데이터를 나누는 계수 (total_grid_input_energy)",
+          "ar": "عامل لتقسيم بيانات البطارية المستلمة (total_grid_input_energy) لإجمالي الشحن"
         },
         "units": {
           "en": "kWh",
@@ -380,7 +403,8 @@
           "sv": "kWh",
           "pl": "kWh",
           "ru": "кВтч",
-          "ko": "kWh"
+          "ko": "kWh",
+          "ar": "كيلوواط ساعة"
         },
         "value": 100
       },
@@ -399,7 +423,8 @@
           "sv": "Total urladdad batterifaktor",
           "pl": "Całkowity współczynnik rozładowania baterii",
           "ru": "Общий фактор разряда батареи",
-          "ko": "총 배터리 방전 계수"
+          "ko": "총 배터리 방전 계수",
+          "ar": "عامل إجمالي تفريغ البطارية"
         },
         "hint": {
           "en": "Factor to divide the received battery data (total_grid_output_energy) for Total Discharged",
@@ -413,7 +438,8 @@
           "sv": "Faktor för att dela de mottagna batteridata (total_grid_output_energy) för total urladdning",
           "pl": "Współczynnik do podzielenia otrzymanych danych dotyczących akumulatora (total_grid_output_energy) dla całkowitej wartości rozładowanej",
           "ru": "Коэффициент для деления полученных данных о батарее (total_grid_output_energy) для общего разряда",
-          "ko": "총 방전에 대한 수신된 배터리 데이터를 나누는 계수 (total_grid_output_energy)"
+          "ko": "총 방전에 대한 수신된 배터리 데이터를 나누는 계수 (total_grid_output_energy)",
+          "ar": "عامل لتقسيم بيانات البطارية المستلمة (total_grid_output_energy) لإجمالي التفريغ"
         },
         "units": {
           "en": "kWh",
@@ -427,7 +453,8 @@
           "sv": "kWh",
           "pl": "kWh",
           "ru": "кВтч",
-          "ko": "kWh"
+          "ko": "kWh",
+          "ar": "كيلوواط ساعة"
         },
         "value": 100
       },
@@ -446,7 +473,8 @@
           "sv": "Last (eller off-grid) förbrukad faktor",
           "pl": "Ładowanie (lub off-grid) zużyty współczynnik",
           "ru": "Загрузка (или вне сети) потребленный фактор",
-          "ko": "부하 (또는 오프 그리드) 소모 계수"
+          "ko": "부하 (또는 오프 그리드) 소모 계수",
+          "ar": "عامل الاستهلاك (أو خارج الشبكة)"
         },
         "hint": {
           "en": "Factor to divide the received battery data (total_load_energy) for load/off-grid consumed",
@@ -460,7 +488,8 @@
           "sv": "Faktor för att dela de mottagna batteridata (total_load_energy) för förbrukad last/off-grid",
           "pl": "Współczynnik do podzielenia otrzymanych danych dotyczących akumulatora (total_load_energy) dla całkowitej wartości naładowanej/off-grid",
           "ru": "Коэффициент для деления полученных данных о батарее (total_load_energy) для нагрузки/потребленного вне сети",
-          "ko": "부하/오프 그리드 소모에 대한 수신된 배터리 데이터를 나누는 계수 (total_load_energy)"
+          "ko": "부하/오프 그리드 소모에 대한 수신된 배터리 데이터를 나누는 계수 (total_load_energy)",
+          "ar": "عامل لتقسيم بيانات البطارية المستلمة (total_load_energy) لاستهلاك الحمل/خارج الشبكة"
         },
         "units": {
           "en": "kWh",
@@ -474,7 +503,8 @@
           "sv": "kWh",
           "pl": "kWh",
           "ru": "кВтч",
-          "ko": "kWh"
+          "ko": "kWh",
+          "ar": "كيلوواط ساعة"
         },
         "value": 10
       },
@@ -493,7 +523,8 @@
           "sv": "On-Grid effektfaktor",
           "pl": "Współczynnik mocy On-Grid",
           "ru": "Коэффициент мощности на сети",
-          "ko": "On-Grid 전력 계수"
+          "ko": "On-Grid 전력 계수",
+          "ar": "عامل القدرة على الشبكة"
         },
         "hint": {
           "en": "Factor to divide the received battery data (measure_power_ongrid) for On-Grid power",
@@ -507,7 +538,8 @@
           "sv": "Faktor för att dela de mottagna batteridata (measure_power_ongrid) för On-Grid effekt",
           "pl": "Współczynnik do podzielenia otrzymanych danych dotyczących akumulatora (measure_power_ongrid) dla mocy On-Grid",
           "ru": "Коэффициент для деления полученных данных о батарее (measure_power_ongrid) для сетевой мощности",
-          "ko": "On-Grid 전력에 대한 수신된 배터리 데이터를 나누는 계수 (measure_power_ongrid)"
+          "ko": "On-Grid 전력에 대한 수신된 배터리 데이터를 나누는 계수 (measure_power_ongrid)",
+          "ar": "العامل لتقسيم بيانات البطارية المستلمة (measure_power_ongrid) للطاقة على الشبكة"
         },
         "units": {
           "en": "W",
@@ -521,7 +553,8 @@
           "sv": "W",
           "pl": "W",
           "ru": "Вт",
-          "ko": "W"
+          "ko": "W",
+          "ar": "د"
         },
         "value": -1
       },
@@ -540,7 +573,8 @@
           "sv": "Off-Grid effektfaktor",
           "pl": "Współczynnik mocy poza siecią",
           "ru": "Коэффициент мощности вне сети",
-          "ko": "오프 그리드 전력 계수"
+          "ko": "오프 그리드 전력 계수",
+          "ar": "عامل القدرة خارج الشبكة"
         },
         "hint": {
           "en": "Factor to divide the received battery data (measure_power_offgrid) for Off-Grid power",
@@ -554,7 +588,8 @@
           "sv": "Faktor för att dela de mottagna batteridata (measure_power_offgrid) för Off-Grid effekt",
           "pl": "Współczynnik do podzielenia otrzymanych danych dotyczących akumulatora (measure_power_offgrid) dla mocy poza siecią",
           "ru": "Коэффициент для деления полученных данных о батарее (measure_power_offgrid) для мощности вне сети",
-          "ko": "오프 그리드 전력에 대한 수신된 배터리 데이터를 나누는 계수 (measure_power_offgrid)"
+          "ko": "오프 그리드 전력에 대한 수신된 배터리 데이터를 나누는 계수 (measure_power_offgrid)",
+          "ar": "عامل لتقسيم بيانات البطارية المستلمة (measure_power_offgrid) للطاقة خارج الشبكة"
         },
         "units": {
           "en": "W",
@@ -568,7 +603,8 @@
           "sv": "W",
           "pl": "W",
           "ru": "Вт",
-          "ko": "W"
+          "ko": "W",
+          "ar": "د"
         },
         "value": -1
       },
@@ -587,7 +623,8 @@
           "sv": "Solkraftfaktor",
           "pl": "Współczynnik mocy słonecznej",
           "ru": "Фактор солнечной энергии",
-          "ko": "태양광 전력 계수"
+          "ko": "태양광 전력 계수",
+          "ar": "عامل الطاقة الشمسية"
         },
         "hint": {
           "en": "Factor to divide the received battery data (measure_power_pv) for Solar power",
@@ -601,7 +638,8 @@
           "sv": "Faktor för att dela de mottagna batteridata (measure_power_pv) för solkraft",
           "pl": "Współczynnik do podzielenia otrzymanych danych dotyczących akumulatora (measure_power_pv) dla energii słonecznej",
           "ru": "Коэффициент для деления полученных данных о батарее (measure_power_pv) для энергии солнца",
-          "ko": "태양광 전력에 대한 수신된 배터리 데이터를 나누는 계수 (measure_power_pv)"
+          "ko": "태양광 전력에 대한 수신된 배터리 데이터를 나누는 계수 (measure_power_pv)",
+          "ar": "عامل لتقسيم بيانات البطارية المستلمة (measure_power_pv) للطاقة الشمسية"
         },
         "units": {
           "en": "W",
@@ -615,7 +653,8 @@
           "sv": "W",
           "pl": "W",
           "ru": "Вт",
-          "ko": "W"
+          "ko": "W",
+          "ar": "د"
         },
         "value": -1
       }
@@ -636,7 +675,8 @@
       "sv": "Aktivera mer loggning (för diagnostikrapporter)",
       "pl": "Włącz więcej logowania (dla raportów diagnostycznych)",
       "ru": "Включить больше логирования (для диагностических отчетов)",
-      "ko": "더 많은 로깅 활성화 (진단 보고서용)"
+      "ko": "더 많은 로깅 활성화 (진단 보고서용)",
+      "ar": "تفعيل المزيد من تسجيل الأحداث (لتقارير التشخيص)"
     },
     "hint": {
       "en": "Turn this on to log extra details for troubleshooting received values for this device.",
@@ -650,7 +690,8 @@
       "sv": "Slå på detta för att logga extra detaljer för att felsöka mottagna värden för denna enhet.",
       "pl": "Włącz to, aby logować dodatkowe szczegóły do rozwiązywania problemów z otrzymanymi wartościami dla tego urządzenia.",
       "ru": "Включите это, чтобы записывать дополнительные детали для устранения неполадок с полученными значениями для этого устройства.",
-      "ko": "이 장치의 수신된 값 문제 해결을 위해 추가 세부 정보를 로깅하려면 이 옵션을 켜세요."
+      "ko": "이 장치의 수신된 값 문제 해결을 위해 추가 세부 정보를 로깅하려면 이 옵션을 켜세요.",
+      "ar": "قم بتفعيل هذا الخيار لتسجيل تفاصيل إضافية للمساعدة في حل المشكلات المتعلقة بالقيم المستلمة لهذا الجهاز."
     },
     "value": false
   },
@@ -668,7 +709,8 @@
       "sv": "Enhetsdetaljer (endast läsning)",
       "pl": "Szczegóły urządzenia (tylko do odczytu)",
       "ru": "Детали устройства (только для чтения)",
-      "ko": "장치 세부정보 (읽기 전용)"
+      "ko": "장치 세부정보 (읽기 전용)",
+      "ar": "تفاصيل الجهاز (للقراءة فقط)"
     },
     "children": [
       {
@@ -686,7 +728,8 @@
           "sv": "Batterikällans namn",
           "pl": "Nazwa źródła baterii",
           "ru": "Название источника батареи",
-          "ko": "배터리 소스 이름"
+          "ko": "배터리 소스 이름",
+          "ar": "اسم مصدر البطارية"
         },
         "value": ""
       },
@@ -705,7 +748,8 @@
           "sv": "Batteri-IP-adress (auto upptäckt)",
           "pl": "Adres IP baterii (automatycznie wykryty)",
           "ru": "IP-адрес батареи (автоматически обнаружено)",
-          "ko": "배터리 IP 주소 (자동 감지됨)"
+          "ko": "배터리 IP 주소 (자동 감지됨)",
+          "ar": "عنوان IP للبطارية (تم اكتشافه تلقائيًا)"
         },
         "value": ""
       },
@@ -724,7 +768,8 @@
           "sv": "UDP-portnummer (fast)",
           "pl": "Numer portu UDP (stały)",
           "ru": "Номер UDP-порта (фиксированный)",
-          "ko": "UDP 포트 번호 (고정됨)"
+          "ko": "UDP 포트 번호 (고정됨)",
+          "ar": "رقم منفذ UDP (ثابت)"
         },
         "value": "30000",
         "hint": {
@@ -739,7 +784,8 @@
           "sv": "Denna Homey-app kräver att alla batterier är inställda på UDP-port 30000",
           "pl": "Ta aplikacja Homey wymaga, aby wszystkie baterie były ustawione na port UDP 30000",
           "ru": "Это приложение Homey требует, чтобы все батареи были настроены на UDP-порт 30000",
-          "ko": "이 Homey 앱은 모든 배터리를 UDP 포트 30000으로 설정해야 합니다"
+          "ko": "이 Homey 앱은 모든 배터리를 UDP 포트 30000으로 설정해야 합니다",
+          "ar": "يتطلب هذا التطبيق من Homey ضبط جميع البطاريات على منفذ UDP 30000."
         }
       },
       {
@@ -757,7 +803,8 @@
           "sv": "Modellnamn",
           "pl": "Nazwa modelu",
           "ru": "Наименование модели",
-          "ko": "모델명"
+          "ko": "모델명",
+          "ar": "اسم الطراز"
         },
         "value": "(model)"
       },
@@ -776,7 +823,8 @@
           "sv": "Firmware",
           "pl": "Oprogramowanie układowe",
           "ru": "Прошивка",
-          "ko": "펌웨어"
+          "ko": "펌웨어",
+          "ar": "البرامج الثابتة"
         },
         "value": "(unknown)"
       }
