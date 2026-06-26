@@ -38,6 +38,15 @@ const factorDefaults: FactorDefaults = {
     VenusE: {
         0: {
         },
+        // firmware 153 uses the same new data format as 154
+        153: {
+            factor_bat_capacity: 1000,
+            factor_bat_power: 1,
+            factor_bat_temp: 1,
+            factor_total_grid_input_energy: 10,
+            factor_total_grid_output_energy: 10,
+            factor_total_load_energy: 10,
+        },
         154: {
             factor_bat_capacity: 1000,
             factor_bat_power: 1,
@@ -204,7 +213,8 @@ export default class MarstekVenusDriver extends Homey.Driver {
 
                                 const address = device.getStoreValue('address');
                                 if (!address) {
-                                    this.error('Device missing IP; next broadcast may fix this.');
+                                    this.log('Device missing IP; falling back to broadcast.');
+                                    alsoBroadcast = true;
                                     continue;
                                 }
 

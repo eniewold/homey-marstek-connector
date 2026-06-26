@@ -18,6 +18,8 @@ export default class MarstekSocket {
     private connected: boolean = false;
     private socket?: dgram.Socket;
     private handlers: Array<Function> = [];
+    private destroyed: boolean = false;
+    private reconnectTimer?: NodeJS.Timeout;
 
     /**
      * Creates a new MarstekSocket instance.
@@ -130,12 +132,14 @@ export default class MarstekSocket {
                     this.error('onError', err);
                     this.disconnect();
                     this.connected = false;
+                    if (!this.destroyed) this.scheduleReconnect();
                 });
 
                 // Handle close events
                 this.socket.on('close', () => {
                     this.error('onClose');
                     this.connected = false;
+                    if (!this.destroyed) this.scheduleReconnect();
                 });
 
             } catch (err) {
@@ -297,6 +301,26 @@ export default class MarstekSocket {
     }
 
     /**
+     * Schedule a reconnect attempt after a delay, with exponential backoff up to 60 seconds.
+     * @param {number} delayMs Milliseconds to wait before reconnecting (default 5000)
+     */
+    private scheduleReconnect(delayMs: number = 5000) {
+        if (this.reconnectTimer) return;
+        this.log('Scheduling socket reconnect in', delayMs, 'ms');
+        this.reconnectTimer = setTimeout(() => {
+            this.reconnectTimer = undefined;
+            if (this.destroyed) return;
+            this.log('Attempting socket reconnect...');
+            this.connect().then(() => {
+                this.log('Socket reconnected successfully');
+            }).catch((err) => {
+                this.error('Socket reconnect failed:', (err as Error).message || err);
+                if (!this.destroyed) this.scheduleReconnect(Math.min(delayMs * 2, 60000));
+            });
+        }, delayMs);
+    }
+
+    /**
      * Disconnect the dgram UDP socket and destroy the instance
      */
     disconnect() {
@@ -312,6 +336,11 @@ export default class MarstekSocket {
      * Makes sure to disconnect and clear handler references.
      */
     destroy() {
+        this.destroyed = true;
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = undefined;
+        }
         this.disconnect();
         this.handlers = [];
     }
