@@ -38,6 +38,15 @@ const factorDefaults: FactorDefaults = {
     VenusE: {
         0: {
         },
+        // firmware 153 uses the same new data format as 154
+        153: {
+            factor_bat_capacity: 1000,
+            factor_bat_power: 1,
+            factor_bat_temp: 1,
+            factor_total_grid_input_energy: 10,
+            factor_total_grid_output_energy: 10,
+            factor_total_load_energy: 10,
+        },
         154: {
             factor_bat_capacity: 1000,
             factor_bat_power: 1,
@@ -97,6 +106,10 @@ export default class MarstekVenusDriver extends Homey.Driver {
 
     // Identifiers of devices currently participating in polling.
     private pollDevices: Array<string> = [];
+
+    // Timestamp of the last broadcast sent as fallback for devices without a stored IP.
+    private lastMissingIpBroadcastMs: number = 0;
+    private static readonly MISSING_IP_BROADCAST_INTERVAL_MS = 30 * 1000;
 
     /**
      * Called when the driver is initialised.
@@ -188,6 +201,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
                     // if not forced broadcast, send to each device individually (except when device configured for broadcast)
                     const devices = this.getDevices();
                     let alsoBroadcast: boolean = false;
+                    let missingIpDevice: boolean = false;
                     for (const device of devices) {
                         try {
                             const broadcastSetting: boolean = !!device.getSetting('broadcast');
@@ -204,7 +218,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
 
                                 const address = device.getStoreValue('address');
                                 if (!address) {
-                                    this.error('Device missing IP; next broadcast may fix this.');
+                                    missingIpDevice = true;
                                     continue;
                                 }
 
@@ -216,6 +230,15 @@ export default class MarstekVenusDriver extends Homey.Driver {
                             }
                         } catch (err) {
                             this.error('Error sending to device:', err);
+                        }
+                    }
+                    // throttle missing-IP broadcast to at most once per interval
+                    if (missingIpDevice) {
+                        const now = Date.now();
+                        if (now - this.lastMissingIpBroadcastMs >= MarstekVenusDriver.MISSING_IP_BROADCAST_INTERVAL_MS) {
+                            this.log('Device missing IP; falling back to broadcast.');
+                            alsoBroadcast = true;
+                            this.lastMissingIpBroadcastMs = now;
                         }
                     }
                     // if at least one device is configured for broadcast, also send broadcast

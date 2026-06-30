@@ -18,6 +18,10 @@ export default class MarstekSocket {
     private connected: boolean = false;
     private socket?: dgram.Socket;
     private handlers: Array<Function> = [];
+    private destroyed: boolean = false;
+    private reconnectTimer?: NodeJS.Timeout;
+    private connectingPromise?: Promise<unknown>;
+    private closingIntentionally: boolean = false;
 
     /**
      * Creates a new MarstekSocket instance.
@@ -65,15 +69,13 @@ export default class MarstekSocket {
      * @returns {Promise<dgram.Socket>} Socket that is connected
      */
     async connect() {
-        // Return a promise structure
-        return new Promise((resolve, reject) => {
-            // If socket already exists, just resolve
-            if (this.socket && this.connected) {
-                this.log('Socket already exists, resolve without binding');
-                resolve(this.socket);
-                return;
-            }
+        if (this.socket && this.connected) {
+            this.log('Socket already exists, resolve without binding');
+            return this.socket;
+        }
+        if (this.connectingPromise) return this.connectingPromise;
 
+        this.connectingPromise = (new Promise((resolve, reject) => {
             // If socket not found, create and connect (bind)
             try {
                 this.log('Create and bind socket');
@@ -130,12 +132,18 @@ export default class MarstekSocket {
                     this.error('onError', err);
                     this.disconnect();
                     this.connected = false;
+                    if (!this.destroyed) this.scheduleReconnect();
                 });
 
                 // Handle close events
                 this.socket.on('close', () => {
                     this.error('onClose');
                     this.connected = false;
+                    if (this.closingIntentionally) {
+                        this.closingIntentionally = false;
+                        return;
+                    }
+                    if (!this.destroyed) this.scheduleReconnect();
                 });
 
             } catch (err) {
@@ -144,7 +152,11 @@ export default class MarstekSocket {
                 reject(err);
             }
 
+        })).finally(() => {
+            this.connectingPromise = undefined;
         });
+
+        return this.connectingPromise;
     }
 
     /**
@@ -296,11 +308,47 @@ export default class MarstekSocket {
         await Promise.all(tasks);
     }
 
+    private static readonly MAX_RECONNECT_ATTEMPTS = 5;
+    private static readonly RECONNECT_COOLDOWN_MS = 5 * 60 * 1000;
+
+    /**
+     * Schedule a reconnect attempt. Retries up to MAX_RECONNECT_ATTEMPTS times with
+     * exponential backoff, then waits RECONNECT_COOLDOWN_MS before starting over.
+     */
+    private scheduleReconnect(delayMs: number = 5000, attempt: number = 0) {
+        if (this.reconnectTimer) return;
+
+        if (attempt >= MarstekSocket.MAX_RECONNECT_ATTEMPTS) {
+            const cooldownSec = MarstekSocket.RECONNECT_COOLDOWN_MS / 1000;
+            this.error(`Socket reconnect gave up after ${attempt} attempts; retrying in ${cooldownSec}s`);
+            this.reconnectTimer = setTimeout(() => {
+                this.reconnectTimer = undefined;
+                if (!this.destroyed) this.scheduleReconnect(5000, 0);
+            }, MarstekSocket.RECONNECT_COOLDOWN_MS);
+            return;
+        }
+
+        this.log(`Scheduling socket reconnect in ${delayMs}ms (attempt ${attempt + 1}/${MarstekSocket.MAX_RECONNECT_ATTEMPTS})`);
+        this.reconnectTimer = setTimeout(() => {
+            this.reconnectTimer = undefined;
+            if (this.destroyed) return;
+            this.log('Attempting socket reconnect...');
+            this.connect().then(() => {
+                if (this.destroyed) { this.disconnect(); return; }
+                this.log('Socket reconnected successfully');
+            }).catch((err) => {
+                this.error('Socket reconnect failed:', (err as Error).message || err);
+                if (!this.destroyed) this.scheduleReconnect(Math.min(delayMs * 2, 60000), attempt + 1);
+            });
+        }, delayMs);
+    }
+
     /**
      * Disconnect the dgram UDP socket and destroy the instance
      */
     disconnect() {
         if (this.socket) {
+            this.closingIntentionally = true;
             this.socket.close();
             this.socket = undefined;
         }
@@ -312,6 +360,11 @@ export default class MarstekSocket {
      * Makes sure to disconnect and clear handler references.
      */
     destroy() {
+        this.destroyed = true;
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = undefined;
+        }
         this.disconnect();
         this.handlers = [];
     }
